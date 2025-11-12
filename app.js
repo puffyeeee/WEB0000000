@@ -1,4 +1,3 @@
-<script>
 (function(){
   // ====== グローバルUI参照入れ物 ======
   const ui = {};
@@ -813,32 +812,6 @@
           case 'createStaffNote': { const p=args[0]||{}; const n={NoteID:id('N-'), Category:p.Category||'', Title:p.Title||'', Audience:p.Audience||'', Pinned:!!p.Pinned, Body:p.Body||'', CreatedAt:new Date().toISOString()}; S.notes.unshift(n); return n; }
           case 'listStaffNotes': { return S.notes.slice(0,20); }
           case 'createTicket': { const p=args[0]||{}; const t={TicketID:id('T-'), Category:p.Category||'', Title:p.Title||'', Related:p.Related||'', Assignee:p.Assignee||'', Impact:p.Impact||'', Desc:p.Desc||'', CreatedAt:new Date().toISOString()}; S.tickets.unshift(t); return t; }
-          case 'listTickets': { return S.tickets.slice(0,20); }
-          case 'getCustomerBundle': {
-            const cid=args[0]; const customer=S.customers.find(c=>c.CustomerID===cid); const pets=S.pets.filter(p=>p.CustomerID===cid); const visits=S.visits.filter(v=>v.CustomerID===cid).sort((a,b)=> new Date(b.VisitDate)-new Date(a.VisitDate)); return {customer, pets, visits};
-          }
-          case 'getPetBundleUnified': { const pid=args[0]; const pet=S.pets.find(p=>p.PetID===pid); const visits=S.visits.filter(v=>v.PetID===pid).sort((a,b)=> new Date(b.VisitDate)-new Date(a.VisitDate)); return {pet, visits, images:[], journal:[]}; }
-          case 'upsertPetCard': return {ok:true};
-          case 'savePetImage': return {ok:true};
-          default: throw new Error('未対応のモック関数: '+fn);
-        }
-      }
-    };
-  })();
-
-  function canRun(){ return typeof google!=='undefined' && google.script && google.script.run; }
-  function callServer(fnName, ...args){
-    if (canRun()){
-      return new Promise((resolve, reject)=>{
-        try{ google.script.run.withSuccessHandler(resolve).withFailureHandler(reject)[fnName](...args); }
-        catch(e){ reject(e); }
-      });
-    }else{
-      try{ return Promise.resolve(mock.call(fnName, ...args)); }
-      catch(e){ return Promise.reject(e); }
-    }
-  }
-  @@ -816,190 +816,792 @@
           case 'listTickets': { return S.tickets.slice(0,20); }
           case 'getCustomerBundle': {
             const cid=args[0]; const customer=S.customers.find(c=>c.CustomerID===cid); const pets=S.pets.filter(p=>p.CustomerID===cid); const visits=S.visits.filter(v=>v.CustomerID===cid).sort((a,b)=> new Date(b.VisitDate)-new Date(a.VisitDate)); return {customer, pets, visits};
