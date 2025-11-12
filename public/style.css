@@ -429,6 +429,31 @@
     /* small screens use mobile mode by default if auto */
     @media (max-width:767px){ html[data-display-mode="auto"] .quick-nav{ position:fixed; left:0; right:0; bottom:0; margin:0 auto; width:100%; z-index:80; } html[data-display-mode="auto"] body{ padding-bottom:84px; } }
     @media (min-width:1024px){ html[data-display-mode="auto"] .quick-nav{ position:relative; } html[data-display-mode="auto"] body{ padding-bottom:48px; } }
+
+    /* Desktop: fixed left sidebar (vertical navigation) */
+    html[data-display-mode="desktop"] .quick-nav{
+      position:fixed;
+      left:20px;
+      top:24px;
+      bottom:24px;
+      width:72px;
+      flex-direction:column;
+      align-items:center;
+      gap:12px;
+      padding:12px 8px;
+      border-radius:16px;
+      z-index:90;
+    }
+    html[data-display-mode="desktop"] .nav-icon{ width:56px; height:56px; border-radius:12px; font-size:20px; }
+    html[data-display-mode="desktop"] body{ padding-left:120px; }
+    /* shift header/sections to allow space; use margin-left so centered max-width still applies */
+    html[data-display-mode="desktop"] body>header,
+    html[data-display-mode="desktop"] body>section,
+    html[data-display-mode="desktop"] body>main{
+      margin-left:120px;
+    }
+    /* slightly reduce store-switcher width on desktop to fit sidebar */
+    @media (min-width:1180px){ html[data-display-mode="desktop"] .store-switcher{ min-width:220px; } }
     .msg{ margin-top:8px; font-size:13px; color:var(--muted);} .msg.ok{ color:#166534 } .msg.err{ color:#b91c1c }
     .seg { display:inline-flex; gap:6px; padding:6px; background:rgba(255,255,255,.8); border-radius:999px; border:1px solid rgba(148,163,184,.28); box-shadow:0 16px 36px -26px rgba(15,23,42,.35); }
     .seg button { background:rgba(255,255,255,.9); border:1px solid transparent; padding:6px 14px; border-radius:999px; cursor:pointer; font-weight:600; color:#4b5563; transition:transform .15s ease, border-color .15s ease; }
