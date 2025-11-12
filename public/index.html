@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css" />
+      <!-- Feather icons (small, dependency-free SVG icon set) -->
+      <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js" defer></script>
 </head>
 <body>
 <header>
@@ -40,19 +42,19 @@
       </button>
     </div>
     <nav class="quick-nav" aria-label="メインメニュー">
-      <button type="button" class="nav-icon has-tooltip active" data-tab="home" aria-label="ホーム" title="ホーム" data-tooltip="ホーム">🏠</button>
-      <button type="button" class="nav-icon has-tooltip" data-tab="record" aria-label="カルテ検索" title="カルテ検索" data-tooltip="カルテ検索">🔎</button>
-      <button type="button" class="nav-icon has-tooltip" data-tab="directory" aria-label="顧客・会員" title="顧客・会員" data-tooltip="顧客・会員">📇</button>
-      <button type="button" class="nav-icon has-tooltip" data-tab="customer" aria-label="お客様登録" title="お客様登録" data-tooltip="お客様登録">👥</button>
-      <button type="button" class="nav-icon has-tooltip pet-only" data-tab="pet" aria-label="ご愛犬登録" title="ご愛犬登録" data-tooltip="ご愛犬登録">🐾</button>
-      <button type="button" class="nav-icon has-tooltip" data-tab="calendar" aria-label="予約" title="予約" data-tooltip="予約">📅</button>
-      <button type="button" class="nav-icon has-tooltip" data-tab="merch" aria-label="物販・在庫" title="物販・在庫" data-tooltip="物販・在庫">🛍️</button>
-      <button type="button" class="nav-icon has-tooltip" data-tab="events" aria-label="イベント管理" title="イベント管理" data-tooltip="イベント管理">🎪</button>
-      <button type="button" class="nav-icon has-tooltip" data-tab="ops" aria-label="オペレーションハブ" title="オペレーションハブ" data-tooltip="オペレーションハブ">🧭</button>
-      <button type="button" class="nav-icon has-tooltip" data-tab="billing" aria-label="売上・請求" title="売上・請求" data-tooltip="売上・請求">💰</button>
-      <button type="button" class="nav-icon has-tooltip" data-tab="notes" aria-label="スタッフ連絡事項" title="スタッフ連絡事項" data-tooltip="スタッフ連絡">📌</button>
-      <button type="button" class="nav-icon has-tooltip" data-tab="board" aria-label="申請/変更" title="申請/変更" data-tooltip="申請・改善">📝</button>
-      <button type="button" class="nav-icon has-tooltip" data-tab="settings" aria-label="設定" title="設定" data-tooltip="設定">⚙️</button>
+        <button type="button" class="nav-icon has-tooltip active" data-tab="home" aria-label="ホーム" title="ホーム" data-tooltip="ホーム"><i data-feather="home" class="icon" aria-hidden="true"></i></button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="record" aria-label="カルテ検索" title="カルテ検索" data-tooltip="カルテ検索"><i data-feather="search" class="icon" aria-hidden="true"></i></button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="directory" aria-label="顧客・会員" title="顧客・会員" data-tooltip="顧客・会員"><i data-feather="users" class="icon" aria-hidden="true"></i></button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="customer" aria-label="お客様登録" title="お客様登録" data-tooltip="お客様登録"><i data-feather="user" class="icon" aria-hidden="true"></i></button>
+        <button type="button" class="nav-icon has-tooltip pet-only" data-tab="pet" aria-label="ご愛犬登録" title="ご愛犬登録" data-tooltip="ご愛犬登録">🐾</button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="calendar" aria-label="予約" title="予約" data-tooltip="予約"><i data-feather="calendar" class="icon" aria-hidden="true"></i></button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="merch" aria-label="物販・在庫" title="物販・在庫" data-tooltip="物販・在庫"><i data-feather="shopping-bag" class="icon" aria-hidden="true"></i></button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="events" aria-label="イベント管理" title="イベント管理" data-tooltip="イベント管理"><i data-feather="calendar" class="icon" aria-hidden="true"></i></button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="ops" aria-label="オペレーションハブ" title="オペレーションハブ" data-tooltip="オペレーションハブ"><i data-feather="compass" class="icon" aria-hidden="true"></i></button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="billing" aria-label="売上・請求" title="売上・請求" data-tooltip="売上・請求"><i data-feather="dollar-sign" class="icon" aria-hidden="true"></i></button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="notes" aria-label="スタッフ連絡事項" title="スタッフ連絡事項" data-tooltip="スタッフ連絡"><i data-feather="bookmark" class="icon" aria-hidden="true"></i></button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="board" aria-label="申請/変更" title="申請/変更" data-tooltip="申請・改善"><i data-feather="file-text" class="icon" aria-hidden="true"></i></button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="settings" aria-label="設定" title="設定" data-tooltip="設定"><i data-feather="settings" class="icon" aria-hidden="true"></i></button>
     </nav>
     <div class="header-utilities">
       <div class="global-search" id="globalSearch">
@@ -1696,6 +1698,35 @@
   </section>
 </div>
 
+  <script>
+    // Small runtime mapping to replace remaining prominent emoji with Feather SVGs
+    document.addEventListener('DOMContentLoaded', function(){
+      try{
+        const mappings = [
+          { sel: '#btnQuickReservations .status-icon', icon: 'calendar' },
+          { sel: '#btnQuickNotes .status-icon', icon: 'bookmark' },
+          { sel: '#btnHelp', icon: 'help-circle' }
+        ];
+        mappings.forEach(({sel, icon}) => {
+          const el = document.querySelector(sel);
+          if(!el) return;
+          // clear emoji content and inject placeholder <i data-feather="...">
+          el.textContent = '';
+          const placeholder = document.createElement('i');
+          placeholder.setAttribute('data-feather', icon);
+          placeholder.className = 'icon';
+          placeholder.setAttribute('aria-hidden', 'true');
+          el.appendChild(placeholder);
+        });
+        if(window.feather && typeof feather.replace === 'function'){
+          feather.replace();
+        } else {
+          // try replacing shortly after if feather loaded a bit later
+          setTimeout(function(){ if(window.feather && feather.replace) feather.replace(); }, 250);
+        }
+      }catch(e){ console.error('icon replace:', e); }
+    });
+  </script>
   <script type="module" src="/app.js"></script>
 
 </body> 
