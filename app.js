@@ -5661,4 +5661,3 @@ function renderAvailList(slots, ctx){
   window.refreshVisits = window.refreshVisits || function(){};
   window.onSaveVisit = window.onSaveVisit || function(){};
 })(); /* IIFE */
-</script>
