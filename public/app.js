@@ -1479,6 +1479,7 @@ alert('app.js loaded');
     mountUI();
     bootGuard();
     __safeCall(initRolePresetsUI);
+    __safeCall(initDisplayMode);
     __safeCall(wireTabs);
     __safeCall(wireRecord);
     __safeCall(wireCustomer);
@@ -1539,6 +1540,8 @@ alert('app.js loaded');
     ui.helpBackdrop = byId('helpBackdrop');
     ui.btnHelpClose = byId('btnHelpClose');
   ui.roleSelector = byId('roleSelector');
+  ui.displayModeSelector = byId('displayModeSelector');
+  ui.displayModeAnnounce = byId('displayModeAnnounce');
     ui.btnQuickReservations = byId('btnQuickReservations');
     ui.btnQuickNotes = byId('btnQuickNotes');
     ui.todayReservationCount = byId('todayReservationCount');
@@ -1734,6 +1737,56 @@ alert('app.js loaded');
       const matched = keys.some(k=> priSet.has(k)) || pri.some(p => p && text.indexOf(p) !== -1);
       if (!matched) el.classList.add('hidden-by-role');
     });
+  }
+
+  // ===== Display mode (auto / mobile / desktop) =====
+  async function initDisplayMode(){
+    // UI element exists
+    if (!ui.displayModeSelector) return;
+    // set selector to current dataset value or localStorage
+    const current = document.documentElement.getAttribute('data-display-mode') || localStorage.getItem('displayMode') || 'auto';
+    try{ ui.displayModeSelector.value = current; }catch(e){}
+    // apply immediately
+    applyDisplayMode(current, {announce:false});
+
+    // attempt to fetch server-side saved value (one roundtrip)
+    try{
+      const res = await fetch('/me/settings', { method:'GET', credentials:'same-origin' });
+      if (res.ok){
+        const json = await res.json();
+        if (json && json.displayMode && json.displayMode !== current){
+          applyDisplayMode(json.displayMode);
+          try{ ui.displayModeSelector.value = json.displayMode; }catch(e){}
+        }
+      }
+    }catch(_){ /* server unavailable -> localStorage used */ }
+
+    ui.displayModeSelector.addEventListener('change', async ()=>{
+      const v = ui.displayModeSelector.value || 'auto';
+      applyDisplayMode(v);
+      // first try to persist to server (single roundtrip), fallback to localStorage
+      try{
+        const put = await fetch('/me/settings', { method:'PUT', credentials:'same-origin', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ displayMode: v }) });
+        if (!put.ok) throw new Error('put-failed');
+        // success -> also update localStorage for CSR fallback
+        localStorage.setItem('displayMode', v);
+      }catch(err){
+        // fallback
+        try{ localStorage.setItem('displayMode', v); }catch(_){ }
+      }
+    });
+  }
+
+  function applyDisplayMode(mode, opts){
+    opts = opts || {};
+    const key = mode === 'auto' ? 'auto' : (mode === 'mobile' ? 'mobile' : (mode === 'desktop' ? 'desktop' : 'auto'));
+    document.documentElement.setAttribute('data-display-mode', key);
+    // announce
+    if (ui.displayModeAnnounce && !opts.announce === false){
+      try{ ui.displayModeAnnounce.textContent = '表示モード: ' + (key === 'auto' ? '自動' : (key === 'mobile' ? 'モバイル' : 'デスクトップ')); }catch(e){}
+    } else if (ui.displayModeAnnounce){
+      try{ ui.displayModeAnnounce.textContent = '表示モード: ' + (key === 'auto' ? '自動' : (key === 'mobile' ? 'モバイル' : 'デスクトップ')); }catch(e){}
+    }
   }
 
   // Global loading overlay helpers

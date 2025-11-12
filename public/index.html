@@ -4,6 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Puffy App (Enhanced Results + New Tabs)</title>
+    <!-- Inline script to prevent FOUC: apply saved display mode from localStorage immediately -->
+    <script>try{(function(){var m=localStorage.getItem('displayMode');if(m&&document.documentElement){document.documentElement.setAttribute('data-display-mode',m);}})();}catch(e){};</script>
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -59,6 +61,15 @@
           <option value="reception">受付</option>
           <option value="accounting">会計</option>
         </select>
+      </div>
+      <div class="display-mode" id="displayModeWrap">
+        <label for="displayModeSelector" class="sr-only">表示モード</label>
+        <select id="displayModeSelector" aria-label="表示モード">
+          <option value="auto">Auto</option>
+          <option value="mobile">Mobile</option>
+          <option value="desktop">Desktop</option>
+        </select>
+        <span id="displayModeAnnounce" aria-live="polite" class="sr-only">表示モード: 自動</span>
       </div>
       <div class="global-search" id="globalSearch">
         <input type="search" id="globalSearchInput" placeholder="顧客・ご愛犬・予約を横断検索" aria-label="クイック検索">

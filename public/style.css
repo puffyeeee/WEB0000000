@@ -406,6 +406,29 @@
   /* Small role selector in header */
   .role-selector{ display:inline-flex; align-items:center; margin-right:8px; }
   .role-selector select{ padding:8px 10px; border-radius:10px; border:1px solid rgba(148,163,184,.26); background:linear-gradient(140deg, rgba(255,255,255,.95), rgba(255,255,255,.7)); font-weight:700; cursor:pointer; }
+
+    /* display-mode selector styling */
+    .display-mode{ display:inline-flex; align-items:center; gap:8px; margin-right:8px; }
+    .display-mode select{ padding:8px 10px; border-radius:10px; border:1px solid rgba(148,163,184,.26); background:linear-gradient(140deg, rgba(255,255,255,.95), rgba(255,255,255,.7)); font-weight:700; cursor:pointer; }
+
+    /* Mode-specific layout adjustments using html[data-display-mode] to allow quick overrides */
+    html[data-display-mode="mobile"] .quick-nav{
+      position:fixed; left:0; right:0; bottom:0; margin:0 auto; display:flex; justify-content:space-around; gap:6px; width:100%; max-width:100%; padding:10px 14px; z-index:80; border-radius:0; box-shadow:0 -8px 24px rgba(15,23,42,.12);
+    }
+    html[data-display-mode="mobile"] .nav-icon{ width:56px; height:56px; border-radius:12px; font-size:22px; }
+    html[data-display-mode="mobile"] header{ position:fixed; top:0; left:0; right:0; z-index:70; border-radius:0; }
+    html[data-display-mode="mobile"] body{ padding-top:72px; padding-bottom:84px; }
+    html[data-display-mode="mobile"] .global-search{ display:none; }
+
+    /* ensure touch targets are at least 44px */
+    html[data-display-mode="mobile"] button, html[data-display-mode="mobile"] .nav-icon{ min-width:44px; min-height:44px; }
+
+    html[data-display-mode="desktop"] .quick-nav{ position:relative; bottom:auto; left:auto; right:auto; width:auto; padding:10px 14px; }
+    html[data-display-mode="desktop"] header{ position:static; }
+
+    /* small screens use mobile mode by default if auto */
+    @media (max-width:767px){ html[data-display-mode="auto"] .quick-nav{ position:fixed; left:0; right:0; bottom:0; margin:0 auto; width:100%; z-index:80; } html[data-display-mode="auto"] body{ padding-bottom:84px; } }
+    @media (min-width:1024px){ html[data-display-mode="auto"] .quick-nav{ position:relative; } html[data-display-mode="auto"] body{ padding-bottom:48px; } }
     .msg{ margin-top:8px; font-size:13px; color:var(--muted);} .msg.ok{ color:#166534 } .msg.err{ color:#b91c1c }
     .seg { display:inline-flex; gap:6px; padding:6px; background:rgba(255,255,255,.8); border-radius:999px; border:1px solid rgba(148,163,184,.28); box-shadow:0 16px 36px -26px rgba(15,23,42,.35); }
     .seg button { background:rgba(255,255,255,.9); border:1px solid transparent; padding:6px 14px; border-radius:999px; cursor:pointer; font-weight:600; color:#4b5563; transition:transform .15s ease, border-color .15s ease; }
