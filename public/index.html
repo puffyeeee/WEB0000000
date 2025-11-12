@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Puffy App (Enhanced Results + New Tabs)</title>
     <!-- Inline script to prevent FOUC: apply saved display mode from localStorage immediately -->
-    <script>try{(function(){var m=localStorage.getItem('displayMode');if(m&&document.documentElement){document.documentElement.setAttribute('data-display-mode',m);}})();}catch(e){};</script>
+  <script>try{(function(){var m=localStorage.getItem('displayMode');if(m&&document.documentElement){document.documentElement.setAttribute('data-display-mode',m);}/* register SW if available */ if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(()=>{});} })();}catch(e){};</script>
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>

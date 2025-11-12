@@ -2579,8 +2579,12 @@ alert('app.js loaded');
     return `rgba(${r}, ${g}, ${b}, ${a})`;
   }
   function bootGuard(){
-    const inGAS = typeof google !== 'undefined' && google.script && google.script.run;
-    if (!inGAS){
+    // Show a local/dev banner only when the hostname indicates a local environment.
+    // This avoids showing "local" banner in production when GAS is not available but the site is served from the deploy URL.
+    const hostname = (location && location.hostname) ? location.hostname : '';
+    const localHosts = ['localhost','127.0.0.1','0.0.0.0','::1'];
+    const isLocal = localHosts.includes(hostname);
+    if (isLocal){
       const bar = document.createElement('div');
       bar.style.cssText = 'position:fixed;left:0;right:0;top:0;background:#fffbeb;color:#92400e;border-bottom:1px solid #fcd34d;padding:10px 14px;z-index:9999;font-weight:700';
       bar.textContent = 'これはローカル表示です。GAS未接続のためダミー保存で動作中（本番はデプロイURLから開いてください）。';
