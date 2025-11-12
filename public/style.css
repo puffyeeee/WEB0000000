@@ -399,6 +399,13 @@
     .btn-ghost:hover{ border-color:rgba(99,102,241,.35); }
     .tab-pane{ display:none; flex-direction:column; gap:28px; }
     .tab-pane.active{ display:flex; flex-direction:column; gap:28px; }
+
+  /* Role presets: hide UI elements not in the preset */
+  .hidden-by-role{ display:none !important; }
+
+  /* Small role selector in header */
+  .role-selector{ display:inline-flex; align-items:center; margin-right:8px; }
+  .role-selector select{ padding:8px 10px; border-radius:10px; border:1px solid rgba(148,163,184,.26); background:linear-gradient(140deg, rgba(255,255,255,.95), rgba(255,255,255,.7)); font-weight:700; cursor:pointer; }
     .msg{ margin-top:8px; font-size:13px; color:var(--muted);} .msg.ok{ color:#166534 } .msg.err{ color:#b91c1c }
     .seg { display:inline-flex; gap:6px; padding:6px; background:rgba(255,255,255,.8); border-radius:999px; border:1px solid rgba(148,163,184,.28); box-shadow:0 16px 36px -26px rgba(15,23,42,.35); }
     .seg button { background:rgba(255,255,255,.9); border:1px solid transparent; padding:6px 14px; border-radius:999px; cursor:pointer; font-weight:600; color:#4b5563; transition:transform .15s ease, border-color .15s ease; }

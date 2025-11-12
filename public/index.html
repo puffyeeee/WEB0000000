@@ -52,6 +52,14 @@
       <button type="button" class="nav-icon has-tooltip" data-tab="settings" aria-label="設定" title="設定" data-tooltip="設定">⚙️</button>
     </nav>
     <div class="header-utilities">
+      <div class="role-selector" id="roleSelectorWrap">
+        <label for="roleSelector" class="sr-only">表示プリセット</label>
+        <select id="roleSelector" aria-label="表示プリセット">
+          <option value="default">標準表示</option>
+          <option value="reception">受付</option>
+          <option value="accounting">会計</option>
+        </select>
+      </div>
       <div class="global-search" id="globalSearch">
         <input type="search" id="globalSearchInput" placeholder="顧客・ご愛犬・予約を横断検索" aria-label="クイック検索">
         <div class="global-search-panel" id="globalSearchPanel" hidden>

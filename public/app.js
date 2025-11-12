@@ -1458,6 +1458,19 @@ alert('app.js loaded');
     pet: []
   };
   const STORE_STORAGE_KEY = 'pfo-current-store';
+  // Role presets for simplified UI views. Only control visibility (display:none).
+  const ROLE_PRESETS = {
+    accounting: {
+      tabs: ['billing','ops','home'],
+      homePriority: ['billing','open-sales','open-reservations'] ,
+      quickTopN: 3
+    },
+    reception: {
+      tabs: ['home','calendar','customer','directory'],
+      homePriority: ['customer','calendar','open-search','open-reservations'],
+      quickTopN: 4
+    }
+  };
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
   else start();
@@ -1465,6 +1478,7 @@ alert('app.js loaded');
   function start(){
     mountUI();
     bootGuard();
+    __safeCall(initRolePresetsUI);
     __safeCall(wireTabs);
     __safeCall(wireRecord);
     __safeCall(wireCustomer);
@@ -1524,6 +1538,7 @@ alert('app.js loaded');
     ui.helpPanel = byId('helpPanel');
     ui.helpBackdrop = byId('helpBackdrop');
     ui.btnHelpClose = byId('btnHelpClose');
+  ui.roleSelector = byId('roleSelector');
     ui.btnQuickReservations = byId('btnQuickReservations');
     ui.btnQuickNotes = byId('btnQuickNotes');
     ui.todayReservationCount = byId('todayReservationCount');
@@ -1682,6 +1697,43 @@ alert('app.js loaded');
     // 既定値
     if (ui.avlDate) ui.avlDate.valueAsDate = new Date();
     if (ui.visitDate) ui.visitDate.valueAsDate = new Date();
+  }
+
+  // Initialize role preset UI and handlers
+  function initRolePresetsUI(){
+    if (!ui.roleSelector) return;
+    const saved = localStorage.getItem('pfo-role') || 'default';
+    try{ ui.roleSelector.value = saved; }catch(e){}
+    applyRolePreset(saved);
+    ui.roleSelector.addEventListener('change', ()=>{
+      const v = ui.roleSelector.value || 'default';
+      localStorage.setItem('pfo-role', v);
+      applyRolePreset(v);
+    });
+  }
+
+  function applyRolePreset(roleKey){
+    // clear previous hiding
+    document.querySelectorAll('.hidden-by-role').forEach(el=> el.classList.remove('hidden-by-role'));
+    if (!roleKey || roleKey === 'default') return;
+    const preset = ROLE_PRESETS[roleKey];
+    if (!preset) return;
+    const allowedTabs = new Set(preset.tabs || []);
+    // nav buttons
+    (ui.navButtons||[]).forEach(btn=>{
+      const tab = btn.dataset.tab;
+      if (!tab) return;
+      if (!allowedTabs.has(tab)) btn.classList.add('hidden-by-role');
+    });
+    // home tiles / shortcuts / status tiles
+    const pri = preset.homePriority || [];
+    const priSet = new Set(pri.map(String));
+    document.querySelectorAll('.home-tile, .home-status-tile, .home-shortcut-btn').forEach(el=>{
+      const keys = [el.dataset.action, el.dataset.tab, el.dataset.pane, el.dataset.mode, el.id].filter(Boolean).map(String);
+      const text = (el.textContent||'').trim();
+      const matched = keys.some(k=> priSet.has(k)) || pri.some(p => p && text.indexOf(p) !== -1);
+      if (!matched) el.classList.add('hidden-by-role');
+    });
   }
 
   // Global loading overlay helpers
