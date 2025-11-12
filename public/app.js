@@ -862,6 +862,7 @@ alert('app.js loaded');
   async function loadMerchDashboard(options={}){
     if (merchLoading && !options.force) return;
     merchLoading = true;
+    showLoading('merch', '物販ダッシュボードを読み込み中…', { cancelable: true });
     if (ui.btnReloadMerch) toggleBtn(ui.btnReloadMerch, true);
     const storeId = getCurrentStoreId();
     const payload = storeId ? { storeId } : {};
@@ -882,6 +883,7 @@ alert('app.js loaded');
       renderMerchDashboard(true);
     }finally{
       merchLoading = false;
+      hideLoading('merch');
       if (ui.btnReloadMerch) toggleBtn(ui.btnReloadMerch, false);
     }
   }
@@ -1015,6 +1017,7 @@ alert('app.js loaded');
   async function loadEventsDashboard(options={}){
     if (eventsLoading && !options.force) return;
     eventsLoading = true;
+    showLoading('events', 'イベント情報を読み込み中…', { cancelable: true });
     if (ui.btnReloadEvents) toggleBtn(ui.btnReloadEvents, true);
     const storeId = getCurrentStoreId();
     const payload = storeId ? { storeId } : {};
@@ -1035,6 +1038,7 @@ alert('app.js loaded');
       updateEventsSummary({});
     }finally{
       eventsLoading = false;
+      hideLoading('events');
       if (ui.btnReloadEvents) toggleBtn(ui.btnReloadEvents, false);
     }
   }
@@ -1141,6 +1145,7 @@ alert('app.js loaded');
   async function loadAccountingBreakdown(){
     if (accountingLoading) return;
     accountingLoading = true;
+    showLoading('accounting', '会計内訳を読み込み中…', { cancelable: true });
     toggleBtn(ui.btnAccountingReload, true);
     const params = {};
     const from = ui.accountingFrom?.value || '';
@@ -1160,6 +1165,7 @@ alert('app.js loaded');
       renderAccountingBreakdown(null, e);
     }finally{
       accountingLoading = false;
+      hideLoading('accounting');
       toggleBtn(ui.btnAccountingReload, false);
     }
   }
@@ -1221,17 +1227,20 @@ alert('app.js loaded');
     membersLoaded = false;
     const storeId = getCurrentStoreId();
     const payload = storeId ? { storeId } : {};
+    showLoading('members', '会員データを読み込み中…', { cancelable: true });
     return callServer('listStoreMembers', payload).then(res => {
       storeMembers = Array.isArray(res?.members) ? res.members : [];
       memberSummary = res?.summary || {};
       membersLoaded = true;
       renderDirectoryMembers();
+      hideLoading('members');
     }).catch(e => {
       console.error(e);
       storeMembers = [];
       memberSummary = {};
       membersLoaded = true;
       renderDirectoryMembers(true);
+      hideLoading('members');
     });
   }
 
@@ -1675,6 +1684,40 @@ alert('app.js loaded');
     if (ui.visitDate) ui.visitDate.valueAsDate = new Date();
   }
 
+  // Global loading overlay helpers
+  let __globalLoadingKey = null;
+  function showLoading(key, text, opts={}){
+    try{
+      __globalLoadingKey = key || String(Math.random()).slice(2);
+      const node = document.getElementById('globalLoading');
+      const txt = document.getElementById('globalLoadingText');
+      const cancel = document.getElementById('globalLoadingCancel');
+      if (txt) txt.textContent = text || '読み込み中…';
+      if (node){ node.hidden = false; node.setAttribute('aria-hidden','false'); }
+      if (cancel){
+        if (opts && opts.cancelable){ cancel.hidden = false; cancel.onclick = ()=>{
+          // mark cancelled by clearing key so callers can check
+          __globalLoadingKey = null;
+          cancel.hidden = true;
+          if (node){ node.hidden = true; node.setAttribute('aria-hidden','true'); }
+        }; }
+        else { cancel.hidden = true; cancel.onclick = null; }
+      }
+    }catch(e){ console.error('showLoading', e); }
+  }
+  function hideLoading(key){
+    try{
+      // if key provided only hide when matches, otherwise always hide
+      if (key && __globalLoadingKey && key !== __globalLoadingKey) return;
+      __globalLoadingKey = null;
+      const node = document.getElementById('globalLoading');
+      const cancel = document.getElementById('globalLoadingCancel');
+      if (node){ node.hidden = true; node.setAttribute('aria-hidden','true'); }
+      if (cancel){ cancel.hidden = true; cancel.onclick = null; }
+    }catch(e){ console.error('hideLoading', e); }
+  }
+
+
   function runShortcut(node){
     if (!node) return;
     const mode = node.dataset.mode || '';
@@ -1917,6 +1960,7 @@ alert('app.js loaded');
     if (!ui.journalPetSelect) return;
     if (isHumanStore()){ fillSelect(ui.journalPetSelect, [{value:'',label:'ビューティーケア（人）では不要です'}]); return; }
     try{
+      showLoading('journalPets','記録用のご愛犬を読み込み中…', { cancelable: true });
       const storeId = getCurrentStoreId();
       const pets = await callServer('searchPets', '', storeId ? { storeId } : {}) || [];
       const options = pets.map(p=>({
@@ -1924,9 +1968,11 @@ alert('app.js loaded');
         label: `${p.PetName || p.Name || '(無名)'}${p.OwnerName ? ` / ${p.OwnerName}` : ''}`
       })).filter(opt=> opt.value);
       fillSelect(ui.journalPetSelect, [{value:'',label:'ご愛犬を選択'}, ...options]);
+      hideLoading('journalPets');
     }catch(e){
       console.error(e);
       fillSelect(ui.journalPetSelect, [{value:'',label:'取得できません'}]);
+      hideLoading('journalPets');
     }
   }
 
@@ -2523,6 +2569,7 @@ alert('app.js loaded');
 
   function loadCustomersLite(){
     const storeParam = getCurrentStoreId();
+    showLoading('customers', '顧客一覧を読み込み中…', { cancelable: true });
     return callServer('listCustomersLite', storeParam ? { storeId: storeParam } : undefined).then(list=>{
       customersLite = (list||[]).filter(c=> belongsToCurrentStore(c.StoreID || c.storeId));
       customersLiteMap = new Map(customersLite.map(c=> [String(c.CustomerID||''), c]));
@@ -2530,6 +2577,7 @@ alert('app.js loaded');
       fillSelect(ui.calCustomer, [{value:'',label:'選択してください'}, ...customersLite.map(c=>({value:c.CustomerID,label:`${c.Name||'(無名)'}（${c.CustomerID}）`}))]);
       renderReservationQuickSummary();
       renderDirectoryCustomers();
+      hideLoading('customers');
     }).catch(()=>{
       customersLite = [];
       customersLiteMap = new Map();
@@ -2537,6 +2585,7 @@ alert('app.js loaded');
       fillSelect(ui.calCustomer, [{value:'',label:'選択してください'}]);
       renderReservationQuickSummary();
       renderDirectoryCustomers();
+      hideLoading('customers');
     });
   }
   function setupGlobalSearch(){

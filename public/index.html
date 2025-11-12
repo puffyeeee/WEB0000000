@@ -1693,6 +1693,20 @@
   </section>
 </div>
 
+</body> 
+</html>
+  <!-- Global loading overlay (controlled by app.js) -->
+  <div id="globalLoading" class="global-loading" hidden aria-hidden="true" role="status" aria-live="polite">
+    <div class="global-loading-inner">
+      <div class="spinner" aria-hidden="true"></div>
+      <div class="global-loading-text" id="globalLoadingText">読み込み中…</div>
+      <button type="button" id="globalLoadingCancel" class="btn-ghost" hidden>キャンセル</button>
+    </div>
+  </div>
+
+  <!-- Floating feedback button -->
+  <button type="button" id="feedbackBtn" class="feedback-button" title="フィードバックを送る">✉️</button>
+
   <script type="module" src="app.js"></script>
 
 </body> 
