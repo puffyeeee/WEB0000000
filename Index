@@ -1,0 +1,1699 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Puffy App (Enhanced Results + New Tabs)</title>
+  <?!= include('Style'); ?>
+</head>
+<body>
+<header>
+  <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+    <h1>PFO CRM Lite</h1>
+    <div class="store-switcher" id="storeSwitcher">
+      <span class="caption">店舗</span>
+      <div class="store-groups" id="storeGroups"></div>
+      <select id="storeSelect" aria-label="店舗を選択" class="sr-only" tabindex="-1"></select>
+      <div class="store-meta" id="storeMeta"></div>
+    </div>
+  </div>
+  <div class="header-actions">
+    <div class="header-status" id="headerStatus">
+      <button type="button" class="status-button has-tooltip" id="btnQuickReservations" data-tooltip="本日の予約サマリー" aria-controls="reservationPanel" aria-expanded="false">
+        <span class="status-icon" aria-hidden="true">📅</span>
+        <span class="status-text">
+          <span class="status-title">今日の予約</span>
+          <span class="status-value" id="todayReservationCount">0件</span>
+          <span class="status-sub" id="reservationStaffSummary">担当別 0件</span>
+        </span>
+      </button>
+      <button type="button" class="status-button has-tooltip" id="btnQuickNotes" data-tooltip="スタッフ連絡のサマリー" aria-controls="staffNotesPanel" aria-expanded="false">
+        <span class="status-icon" aria-hidden="true">📌</span>
+        <span class="status-text">
+          <span class="status-title">スタッフ連絡事項</span>
+          <span class="status-value" id="staffNotesSummaryCount">0件</span>
+          <span class="status-sub" id="staffNotesImportantSummary">重要: 0件</span>
+        </span>
+      </button>
+    </div>
+    <nav class="quick-nav" aria-label="メインメニュー">
+      <button type="button" class="nav-icon has-tooltip active" data-tab="home" aria-label="ホーム" title="ホーム" data-tooltip="ホーム">🏠</button>
+      <button type="button" class="nav-icon has-tooltip" data-tab="record" aria-label="カルテ検索" title="カルテ検索" data-tooltip="カルテ検索">🔎</button>
+      <button type="button" class="nav-icon has-tooltip" data-tab="directory" aria-label="顧客・会員" title="顧客・会員" data-tooltip="顧客・会員">📇</button>
+      <button type="button" class="nav-icon has-tooltip" data-tab="customer" aria-label="お客様登録" title="お客様登録" data-tooltip="お客様登録">👥</button>
+      <button type="button" class="nav-icon has-tooltip pet-only" data-tab="pet" aria-label="ご愛犬登録" title="ご愛犬登録" data-tooltip="ご愛犬登録">🐾</button>
+      <button type="button" class="nav-icon has-tooltip" data-tab="calendar" aria-label="予約" title="予約" data-tooltip="予約">📅</button>
+      <button type="button" class="nav-icon has-tooltip" data-tab="merch" aria-label="物販・在庫" title="物販・在庫" data-tooltip="物販・在庫">🛍️</button>
+      <button type="button" class="nav-icon has-tooltip" data-tab="events" aria-label="イベント管理" title="イベント管理" data-tooltip="イベント管理">🎪</button>
+      <button type="button" class="nav-icon has-tooltip" data-tab="ops" aria-label="オペレーションハブ" title="オペレーションハブ" data-tooltip="オペレーションハブ">🧭</button>
+      <button type="button" class="nav-icon has-tooltip" data-tab="billing" aria-label="売上・請求" title="売上・請求" data-tooltip="売上・請求">💰</button>
+      <button type="button" class="nav-icon has-tooltip" data-tab="notes" aria-label="スタッフ連絡事項" title="スタッフ連絡事項" data-tooltip="スタッフ連絡">📌</button>
+      <button type="button" class="nav-icon has-tooltip" data-tab="board" aria-label="申請/変更" title="申請/変更" data-tooltip="申請・改善">📝</button>
+      <button type="button" class="nav-icon has-tooltip" data-tab="settings" aria-label="設定" title="設定" data-tooltip="設定">⚙️</button>
+    </nav>
+    <div class="header-utilities">
+      <div class="global-search" id="globalSearch">
+        <input type="search" id="globalSearchInput" placeholder="顧客・ご愛犬・予約を横断検索" aria-label="クイック検索">
+        <div class="global-search-panel" id="globalSearchPanel" hidden>
+          <div class="global-search-head">
+            <span class="status" id="globalSearchStatus">キーワードを入力してください</span>
+            <button type="button" class="global-search-close" id="globalSearchClose">閉じる</button>
+          </div>
+          <div id="globalSearchResults" class="global-search-results"></div>
+          <div id="globalSearchEmpty" class="global-search-empty" hidden>該当する結果がありません。</div>
+        </div>
+      </div>
+      <div class="sync-control">
+        <button type="button" class="sync-button has-tooltip" id="btnSyncNow" aria-label="スプレッドシートから最新データを読み込み" data-tooltip="スプレッドシートから最新データを読み込み">
+          <span class="icon" aria-hidden="true">🔄</span>
+          <span class="label">最新に更新</span>
+        </button>
+        <span class="sync-status" id="syncStatus" role="status" aria-live="polite"></span>
+      </div>
+      <button type="button" class="help-icon has-tooltip" id="btnHelp" aria-haspopup="dialog" aria-controls="helpPanel" aria-label="使い方ガイド" title="使い方ガイド" data-tooltip="使い方ガイド">❔</button>
+    </div>
+  </div>
+</header>
+<div class="quick-panel" id="reservationPanel" role="dialog" aria-modal="false" aria-labelledby="reservationPanelTitle" hidden>
+  <div class="quick-panel-head">
+    <div class="quick-panel-title" id="reservationPanelTitle">本日の予約タイムライン</div>
+    <button type="button" class="quick-panel-close" id="btnCloseReservationPanel" aria-label="閉じる">✕</button>
+  </div>
+  <div class="quick-panel-body">
+    <div class="quick-panel-summary" id="reservationPanelSummary">本日の予約はありません。</div>
+    <div class="timeline-wrapper" id="reservationTimelineWrapper">
+      <div class="reservation-timeline" id="reservationTimeline" aria-live="polite"></div>
+      <div class="timeline-empty" id="reservationTimelineEmpty" hidden>本日のタイムラインに表示できる予約はありません。</div>
+    </div>
+  </div>
+</div>
+<div class="quick-panel" id="staffNotesPanel" role="dialog" aria-modal="false" aria-labelledby="staffNotesPanelTitle" hidden>
+  <div class="quick-panel-head">
+    <div class="quick-panel-title" id="staffNotesPanelTitle">スタッフ連絡事項</div>
+    <button type="button" class="quick-panel-close" id="btnCloseNotesPanel" aria-label="閉じる">✕</button>
+  </div>
+  <div class="quick-panel-body">
+    <section class="quick-section">
+      <h3>全体への連絡事項</h3>
+      <div class="quick-section-content" id="staffNotesGeneral">読み込み中です…</div>
+    </section>
+    <section class="quick-section">
+      <h3>スタッフ別の重要事項</h3>
+      <div class="quick-section-content" id="staffNotesByStaff">読み込み中です…</div>
+    </section>
+  </div>
+</div>
+<!-- ホーム -->
+<section id="tab-home" class="tab-pane active">
+  <div class="card home-card">
+    <div class="home-hero">
+      <h2>ホーム</h2>
+      <p>よく使う機能をアイコンからすばやく開き、カルテの情報整理や共有が迷わず行えます。</p>
+    </div>
+    <div class="home-groups">
+      <div class="home-group">
+        <div class="home-group-title">カルテと情報共有</div>
+        <div class="tile-grid">
+          <button type="button" class="home-tile" data-home-shortcut="1" data-tab="record" data-mode="owner">
+            <span class="icon">👥</span>
+            <span class="label">お客様カルテ</span>
+            <span class="desc">タグ・メモ・LINE連携状況まで一目で確認</span>
+            <span class="badge-note">キーワード/タグ検索対応</span>
+          </button>
+          <button type="button" class="home-tile pet-only" data-home-shortcut="1" data-tab="record" data-mode="pet">
+            <span class="icon">🐾</span>
+            <span class="label">ご愛犬カルテ</span>
+            <span class="desc">写真と記録ブックで施術履歴を整理</span>
+            <span class="badge-note">タグ・ピン留めに対応</span>
+          </button>
+          <button type="button" class="home-tile" data-home-shortcut="1" data-tab="customer">
+            <span class="icon">📝</span>
+            <span class="label">お客様登録</span>
+            <span class="desc">連絡先・LINE・タグをまとめて登録</span>
+          </button>
+          <button type="button" class="home-tile pet-only" data-home-shortcut="1" data-tab="pet">
+            <span class="icon">🐶</span>
+            <span class="label">ご愛犬登録</span>
+            <span class="desc">健康情報と写真・記録ブックを管理</span>
+          </button>
+        </div>
+      </div>
+      <div class="home-group">
+        <div class="home-group-title">日々のオペレーション</div>
+        <div class="tile-grid">
+          <button type="button" class="home-tile" data-home-shortcut="1" data-tab="calendar">
+            <span class="icon">📅</span>
+            <span class="label">予約カレンダー</span>
+            <span class="desc">空き枠の確認と予約登録・リマインド送信</span>
+          </button>
+          <button type="button" class="home-tile" data-home-shortcut="1" data-tab="billing">
+            <span class="icon">💰</span>
+            <span class="label">売上・請求</span>
+            <span class="desc">会計/戦略ビューで日次・月次の売上を把握</span>
+          </button>
+          <button type="button" class="home-tile pet-only" data-home-shortcut="1" data-tab="pet" data-pane="journal">
+            <span class="icon">📘</span>
+            <span class="label">ご愛犬記録ブック</span>
+            <span class="desc">施術ごとのメモと写真をカルテに残す</span>
+          </button>
+        </div>
+      </div>
+      <div class="home-group">
+        <div class="home-group-title">共有と設定</div>
+        <div class="tile-grid">
+          <button type="button" class="home-tile" data-home-shortcut="1" data-tab="notes">
+            <span class="icon">📌</span>
+            <span class="label">スタッフ連絡</span>
+            <span class="desc">ピン留めメモで注意事項を共有</span>
+          </button>
+          <button type="button" class="home-tile" data-home-shortcut="1" data-tab="board">
+            <span class="icon">📝</span>
+            <span class="label">申請・改善</span>
+            <span class="desc">変更申請や改善要望の履歴を管理</span>
+          </button>
+          <button type="button" class="home-tile" data-home-shortcut="1" data-tab="settings">
+            <span class="icon">⚙️</span>
+            <span class="label">設定</span>
+            <span class="desc">店舗・施術・スタッフ・支払い方法を整理</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card home-dashboard">
+    <div class="home-status-header">
+      <div class="section-title"><span class="emoji">🚀</span><span>今日のワークスペース</span></div>
+      <button type="button" class="home-dashboard-action" data-home-shortcut="1" data-action="sync-now" aria-label="最新データに更新">
+        <span class="icon" aria-hidden="true">🔄</span>
+        <span class="text">最新データに更新</span>
+      </button>
+    </div>
+    <div class="home-status-grid">
+      <button type="button" class="home-status-tile" data-home-shortcut="1" data-action="open-reservations" aria-describedby="homeReservationRange homeReservationStaff">
+        <div class="home-status-icon" aria-hidden="true">📅</div>
+        <div class="home-status-content">
+          <div class="home-status-label">今日の予約</div>
+          <div class="home-status-value" id="homeReservationCount">0件</div>
+          <div class="home-status-sub"><span class="label">次:</span><span id="homeReservationNext">予約はありません</span></div>
+          <div class="home-status-sub"><span class="label">時間帯:</span><span id="homeReservationRange">未設定</span></div>
+          <div class="home-status-sub"><span class="label">担当:</span><span id="homeReservationStaff">未割り当て</span></div>
+        </div>
+      </button>
+      <button type="button" class="home-status-tile" data-home-shortcut="1" data-action="open-notes">
+        <div class="home-status-icon" aria-hidden="true">📌</div>
+        <div class="home-status-content">
+          <div class="home-status-label">スタッフ連絡事項</div>
+          <div class="home-status-value" id="homeNotesGeneralCount">全体 0件</div>
+          <div class="home-status-sub"><span class="label">重要:</span><span id="homeNotesImportantCount">0件</span></div>
+          <div class="home-status-sub" id="homeNotesHighlight">優先メモはありません</div>
+        </div>
+      </button>
+      <button type="button" class="home-status-tile" data-home-shortcut="1" data-action="open-sales">
+        <div class="home-status-icon" aria-hidden="true">💹</div>
+        <div class="home-status-content">
+          <div class="home-status-label">売上サマリー</div>
+          <div class="home-status-value" id="homeSalesToday">今日 ¥0</div>
+          <div class="home-status-sub"><span class="label">今月:</span><span id="homeSalesMonth">¥0</span></div>
+          <div class="home-status-sub"><span class="label">トップ担当:</span><span id="homeSalesHighlight">なし</span></div>
+        </div>
+      </button>
+    </div>
+  </div>
+  <div class="card home-shortcuts-card">
+    <div class="section-title"><span class="emoji">⚡️</span><span>クイック操作</span></div>
+    <div class="home-shortcut-grid">
+      <div class="home-shortcut">
+        <h3>予約・受付</h3>
+        <div class="home-shortcut-list">
+          <button type="button" class="home-shortcut-btn" data-home-shortcut="1" data-action="open-reservations">
+            <span class="shortcut-icon" aria-hidden="true">🗓️</span>
+            <div class="shortcut-text">
+              <span class="shortcut-title">今日の予約を確認</span>
+              <span class="shortcut-desc">タイムラインを開いて状況を把握</span>
+            </div>
+          </button>
+          <button type="button" class="home-shortcut-btn" data-home-shortcut="1" data-tab="calendar">
+            <span class="shortcut-icon" aria-hidden="true">➕</span>
+            <div class="shortcut-text">
+              <span class="shortcut-title">新規予約を登録</span>
+              <span class="shortcut-desc">空き枠チェックとリマインド送信</span>
+            </div>
+          </button>
+          <button type="button" class="home-shortcut-btn" data-home-shortcut="1" data-action="open-search">
+            <span class="shortcut-icon" aria-hidden="true">🔍</span>
+            <div class="shortcut-text">
+              <span class="shortcut-title">顧客・予約を検索</span>
+              <span class="shortcut-desc">名前・電話・タグで横断検索</span>
+            </div>
+          </button>
+        </div>
+      </div>
+      <div class="home-shortcut">
+        <h3>カルテ・施術</h3>
+        <div class="home-shortcut-list">
+          <button type="button" class="home-shortcut-btn" data-home-shortcut="1" data-tab="record" data-mode="owner">
+            <span class="shortcut-icon" aria-hidden="true">👥</span>
+            <div class="shortcut-text">
+              <span class="shortcut-title">お客様カルテを開く</span>
+              <span class="shortcut-desc">タグ・メモ・来店履歴を確認</span>
+            </div>
+          </button>
+          <button type="button" class="home-shortcut-btn pet-only" data-tab="record" data-mode="pet">
+            <span class="shortcut-icon" aria-hidden="true">🐾</span>
+            <div class="shortcut-text">
+              <span class="shortcut-title">ご愛犬カルテを探す</span>
+              <span class="shortcut-desc">写真付きの施術履歴をチェック</span>
+            </div>
+          </button>
+          <button type="button" class="home-shortcut-btn pet-only" data-tab="pet" data-pane="journal">
+            <span class="shortcut-icon" aria-hidden="true">📘</span>
+            <div class="shortcut-text">
+              <span class="shortcut-title">記録ブックを更新</span>
+              <span class="shortcut-desc">施術後のメモと写真を共有</span>
+            </div>
+          </button>
+        </div>
+      </div>
+      <div class="home-shortcut">
+        <h3>共有・管理</h3>
+        <div class="home-shortcut-list">
+          <button type="button" class="home-shortcut-btn" data-home-shortcut="1" data-tab="ops">
+            <span class="shortcut-icon" aria-hidden="true">🧭</span>
+            <div class="shortcut-text">
+              <span class="shortcut-title">オペレーションハブ</span>
+              <span class="shortcut-desc">到着前の確認と受付準備</span>
+            </div>
+          </button>
+          <button type="button" class="home-shortcut-btn" data-home-shortcut="1" data-tab="notes">
+            <span class="shortcut-icon" aria-hidden="true">📌</span>
+            <div class="shortcut-text">
+              <span class="shortcut-title">スタッフ連絡を整理</span>
+              <span class="shortcut-desc">ピン留めメモを一括で確認</span>
+            </div>
+          </button>
+          <button type="button" class="home-shortcut-btn" data-home-shortcut="1" data-tab="billing">
+            <span class="shortcut-icon" aria-hidden="true">💰</span>
+            <div class="shortcut-text">
+              <span class="shortcut-title">売上ダッシュボード</span>
+              <span class="shortcut-desc">日別・月別の売上を把握</span>
+            </div>
+          </button>
+          <button type="button" class="home-shortcut-btn" data-home-shortcut="1" data-tab="merch">
+            <span class="shortcut-icon" aria-hidden="true">🛍️</span>
+            <div class="shortcut-text">
+              <span class="shortcut-title">物販・在庫をチェック</span>
+              <span class="shortcut-desc">在庫アラートと発注状況を確認</span>
+            </div>
+          </button>
+          <button type="button" class="home-shortcut-btn" data-home-shortcut="1" data-tab="events">
+            <span class="shortcut-icon" aria-hidden="true">🎪</span>
+            <div class="shortcut-text">
+              <span class="shortcut-title">イベントを管理</span>
+              <span class="shortcut-desc">開催予定と担当者を整理</span>
+            </div>
+          </button>
+          <button type="button" class="home-shortcut-btn" data-home-shortcut="1" data-tab="board">
+            <span class="shortcut-icon" aria-hidden="true">📝</span>
+            <div class="shortcut-text">
+              <span class="shortcut-title">申請・改善をフォロー</span>
+              <span class="shortcut-desc">未対応の申請をチェック</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card home-overview-card" id="homeOverview">
+    <div class="home-overview-header">
+      <div class="section-title"><span class="emoji">📊</span><span>ホームデータビュー</span></div>
+      <p class="home-overview-sub">フォームを離れずに、直近の予約・連絡・売上の推移と詳細をまとめて確認できます。</p>
+    </div>
+    <div class="home-overview-grid">
+      <section class="overview-section" aria-labelledby="homeReservationSectionTitle">
+        <header class="overview-header">
+          <div>
+            <h3 id="homeReservationSectionTitle">予約の推移と本日の明細</h3>
+            <p class="overview-hint">直近7日間の件数と本日のタイムライン</p>
+          </div>
+          <button type="button" class="overview-link" data-home-shortcut="1" data-action="open-reservations">詳細を開く</button>
+        </header>
+        <div class="spark-chart" id="homeReservationChart" role="img" aria-live="polite" aria-label="直近の予約件数の推移">
+          <div class="spark-bars" id="homeReservationChartBars"></div>
+        </div>
+        <div class="spark-legend" id="homeReservationChartLegend">最新データを読み込み中です…</div>
+        <div class="overview-list" id="homeReservationDetails" data-has-data="0">
+          <div class="muted-text">読み込み中です…</div>
+        </div>
+      </section>
+      <section class="overview-section" aria-labelledby="homeNotesSectionTitle">
+        <header class="overview-header">
+          <div>
+            <h3 id="homeNotesSectionTitle">スタッフ連絡事項</h3>
+            <p class="overview-hint">全体通知と重要メモをまとめて表示</p>
+          </div>
+          <button type="button" class="overview-link" data-home-shortcut="1" data-action="open-notes">詳細を開く</button>
+        </header>
+        <div class="overview-stats" id="homeNotesStats"></div>
+        <div class="overview-list" id="homeNotesDetails" data-has-data="0">
+          <div class="muted-text">読み込み中です…</div>
+        </div>
+      </section>
+      <section class="overview-section" aria-labelledby="homeSalesSectionTitle">
+        <header class="overview-header">
+          <div>
+            <h3 id="homeSalesSectionTitle">売上の推移と本日の内訳</h3>
+            <p class="overview-hint">直近7日間の売上推移と本日の来店状況</p>
+          </div>
+          <button type="button" class="overview-link" data-home-shortcut="1" data-action="open-sales">詳細を開く</button>
+        </header>
+        <div class="spark-chart sales" id="homeSalesChart" role="img" aria-live="polite" aria-label="直近の売上推移">
+          <div class="spark-bars" id="homeSalesChartBars"></div>
+        </div>
+        <div class="spark-legend" id="homeSalesChartLegend">最新データを読み込み中です…</div>
+        <div class="overview-list" id="homeSalesDetails" data-has-data="0">
+          <div class="muted-text">読み込み中です…</div>
+        </div>
+      </section>
+    </div>
+    <div class="overview-empty" id="homeOverviewEmpty">上部の「最新データに更新」ボタンを押すと、予約・連絡・売上の情報がここに表示されます。</div>
+  </div>
+  </section>
+  <!-- 顧客・会員ディレクトリ -->
+  <section id="tab-directory" class="tab-pane">
+    <div class="card directory-card">
+      <div class="section-toolbar">
+        <div class="section-title"><span class="emoji">📇</span><span>顧客・会員ディレクトリ</span></div>
+        <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+      </div>
+      <p class="lead">スプレッドシートを開かなくても、顧客一覧と STORES 会員のステータスをまとめて確認できます。検索やフィルタで目的の方を素早く見つけてください。</p>
+      <div class="directory-grid">
+        <section class="directory-section" aria-labelledby="directoryCustomersTitle">
+          <header class="directory-head">
+            <div>
+              <h3 id="directoryCustomersTitle">お客様一覧</h3>
+              <p class="muted-text">店舗の切り替えに合わせて自動で絞り込みます。</p>
+            </div>
+            <div class="directory-tools">
+              <input type="search" id="directoryCustomerFilter" placeholder="氏名・電話・タグで絞り込む">
+              <span class="directory-count" id="directoryCustomerSummary">0 件</span>
+            </div>
+          </header>
+          <div class="directory-list" id="directoryCustomerList" aria-live="polite"></div>
+        </section>
+        <section class="directory-section" aria-labelledby="directoryMembersTitle">
+          <header class="directory-head">
+            <div>
+              <h3 id="directoryMembersTitle">STORES 会員</h3>
+              <p class="muted-text">アクティブ会員・解約予定を一目で把握できます。</p>
+            </div>
+            <div class="directory-tools">
+              <input type="search" id="directoryMemberFilter" placeholder="会員名・プラン名で検索">
+              <span class="directory-count" id="directoryMemberSummary">-</span>
+            </div>
+          </header>
+          <div class="directory-list" id="directoryMemberList" aria-live="polite"></div>
+        </section>
+      </div>
+    </div>
+  </section>
+  <main>
+  <!-- 予約 -->
+  <section id="tab-calendar" class="tab-pane">
+    <div class="card">
+      <div class="section-toolbar">
+        <div class="section-title"><span class="emoji">📅</span><span>予約管理</span></div>
+        <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+      </div>
+      <p class="lead">お客様・ご愛犬・施術・担当者を選んで予約を登録できます。空き枠チェックで候補時間を確認し、必要に応じて前日リマインドの送信設定も行ってください。</p>
+      <div class="calendar-layout">
+        <section class="calendar-main">
+          <h3>予約登録</h3>
+          <div id="reservationForm" class="calendar-form">
+            <div class="grid">
+              <label>お客様
+                <select id="calCustomer">
+                  <option value="">選択してください</option>
+                </select>
+              </label>
+              <label>ご愛犬
+                <select id="calPet">
+                  <option value="">選択してください</option>
+                </select>
+              </label>
+              <label>施術
+                <select id="calService">
+                  <option value="">選択してください</option>
+                </select>
+              </label>
+              <label>担当者
+                <select id="calStaff">
+                  <option value="">選択してください</option>
+                </select>
+              </label>
+              <label class="field-sm">日付
+                <input type="date" id="calDate">
+              </label>
+              <label class="field-sm">開始
+                <input type="time" id="calStart" value="10:00">
+              </label>
+              <label class="field-sm">終了
+                <input type="time" id="calEnd" value="11:00">
+              </label>
+              <label>タイトル
+                <input type="text" id="calTitle" placeholder="例：シャンプーコース">
+              </label>
+              <label>備考
+                <textarea id="calNotes" rows="3" placeholder="共有したい連絡事項"></textarea>
+              </label>
+            </div>
+            <div class="calendar-reminder">
+              <label>前日リマインド
+                <select id="chkReminder">
+                  <option value="true" selected>送信する</option>
+                  <option value="false">送信しない</option>
+                </select>
+              </label>
+              <label>送信時刻
+                <input type="time" id="reminderTime" value="09:00">
+              </label>
+            </div>
+            <div class="calendar-actions">
+              <button type="button" class="btn-primary" id="btnCreateReservation">予約を登録</button>
+              <button type="button" class="btn-ghost" id="btnSendTomorrowReminders">明日のリマインドをテスト送信</button>
+            </div>
+            <div id="calMsg" class="msg"></div>
+          </div>
+        </section>
+        <aside class="calendar-side">
+          <section class="availability-card">
+            <h3>空き枠チェック</h3>
+            <div class="availability-grid">
+              <label>日付
+                <input type="date" id="avlDate">
+              </label>
+              <label>担当者
+                <select id="avlStaff">
+                  <option value="">選択してください</option>
+                </select>
+              </label>
+              <label>施術
+                <select id="avlService">
+                  <option value="">選択してください</option>
+                </select>
+              </label>
+              <label>開始
+                <input type="time" id="avlFrom" value="10:00">
+              </label>
+              <label>終了
+                <input type="time" id="avlTo" value="20:00">
+              </label>
+              <label>間隔
+                <select id="avlStep">
+                  <option value="15">15分刻み</option>
+                  <option value="30" selected>30分刻み</option>
+                  <option value="60">60分刻み</option>
+                </select>
+              </label>
+            </div>
+            <div class="calendar-actions">
+              <button type="button" class="btn-ghost" id="btnCheckAvail">空き枠を確認</button>
+            </div>
+            <div id="availList" class="availability-list">条件を選択して空き枠を確認してください。</div>
+          </section>
+          <section class="calendar-list-card">
+            <h3>登録済みの予約</h3>
+            <div id="reservationList" class="calendar-list">読み込み中です…</div>
+          </section>
+        </aside>
+      </div>
+    </div>
+  </section>
+  <!-- 物販・在庫管理 -->
+  <section id="tab-merch" class="tab-pane">
+    <div class="card merch-card">
+      <div class="section-toolbar">
+        <div class="section-title"><span class="emoji">🛍️</span><span>物販・在庫管理</span></div>
+        <div class="merch-toolbar">
+          <button type="button" class="btn-ghost" id="btnReloadMerch">最新に更新</button>
+          <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+        </div>
+      </div>
+      <p class="lead">物販商品の登録状況、店舗別の在庫残量、発注ステータスをワンビューで確認できます。低在庫や入荷予定をチェックしながら、適切なタイミングで補充してください。</p>
+      <div class="merch-summary" aria-live="polite">
+        <div><span class="label">登録商品</span><span class="value" id="merchSummaryTotal">0 件</span></div>
+        <div><span class="label">販売中</span><span class="value" id="merchSummaryActive">0 件</span></div>
+        <div><span class="label">平均単価</span><span class="value" id="merchSummaryAverage">¥0</span></div>
+        <div><span class="label">カテゴリ</span><span class="value" id="merchSummaryCategories">-</span></div>
+      </div>
+      <div class="merch-grid">
+        <section class="merch-section" aria-labelledby="merchGoodsTitle">
+          <header class="merch-head">
+            <h3 id="merchGoodsTitle">商品カタログ</h3>
+            <p class="muted-text">販売停止中の商品も含めて一覧表示します。行をタップすると詳細を確認できます。</p>
+          </header>
+          <div class="merch-list" id="merchGoodsList" aria-live="polite"></div>
+        </section>
+        <section class="merch-section" aria-labelledby="inventoryTitle">
+          <header class="merch-head">
+            <h3 id="inventoryTitle">在庫サマリー</h3>
+            <div class="inventory-summary" aria-live="polite">
+              <span>追跡数 <strong id="inventorySummaryTracked">0</strong></span>
+              <span>在庫合計 <strong id="inventorySummaryOnHand">0</strong></span>
+              <span>警戒中 <strong id="inventorySummaryAlerts">0</strong></span>
+            </div>
+          </header>
+          <div class="inventory-list" id="inventoryList" aria-live="polite"></div>
+        </section>
+        <section class="merch-section" aria-labelledby="purchaseTitle">
+          <header class="merch-head">
+            <h3 id="purchaseTitle">発注状況</h3>
+            <div class="purchase-summary" aria-live="polite">
+              <span>未入荷 <strong id="purchaseSummaryPending">0 件</strong></span>
+              <span>入荷予定数 <strong id="purchaseSummaryIncoming">0</strong></span>
+              <span>次の入荷 <strong id="purchaseSummaryNext">-</strong></span>
+            </div>
+          </header>
+          <div class="purchase-list" id="purchaseList" aria-live="polite"></div>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <!-- イベント管理 -->
+  <section id="tab-events" class="tab-pane">
+    <div class="card events-card">
+      <div class="section-toolbar">
+        <div class="section-title"><span class="emoji">🎪</span><span>イベント管理</span></div>
+        <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+      </div>
+      <p class="lead">ワークショップや店頭イベントのスケジュール、担当スタッフ、会場情報を管理します。キーワードとステータスで絞り込み、直近のイベント準備を抜け漏れなく進めましょう。</p>
+      <div class="events-toolbar">
+        <label class="sr-only" for="eventFilterKeyword">イベント検索</label>
+        <input type="search" id="eventFilterKeyword" placeholder="タイトル・担当者で検索">
+        <label class="sr-only" for="eventFilterStatus">ステータス</label>
+        <select id="eventFilterStatus">
+          <option value="">すべて</option>
+          <option value="upcoming">今後のイベント</option>
+          <option value="today">本日開催</option>
+          <option value="past">終了したイベント</option>
+        </select>
+        <button type="button" class="btn-ghost" id="btnReloadEvents">最新に更新</button>
+      </div>
+      <div class="events-summary" aria-live="polite">
+        <div><span class="label">今後</span><span class="value" id="eventSummaryUpcoming">0 件</span></div>
+        <div><span class="label">本日</span><span class="value" id="eventSummaryToday">0 件</span></div>
+        <div><span class="label">担当スタッフ</span><span class="value" id="eventSummaryStaff">0 名</span></div>
+        <div><span class="label">次のイベント</span><span class="value" id="eventSummaryNext">-</span></div>
+      </div>
+      <div class="events-list" id="eventsList" aria-live="polite"></div>
+      <div class="events-empty" id="eventsEmpty" hidden>イベントが登録されていません。</div>
+    </div>
+  </section>
+
+  <!-- オペレーションハブ -->
+  <section id="tab-ops" class="tab-pane">
+    <div class="card">
+      <div class="section-toolbar">
+        <div class="section-title"><span class="emoji">🧭</span><span>オペレーションハブ</span></div>
+        <div class="ops-toolbar">
+          <span class="ops-stats" id="opsStats"></span>
+          <button type="button" class="btn-ghost" id="btnOpsRefresh">最新に更新</button>
+          <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+        </div>
+      </div>
+      <p class="lead">予約・請求・共有メモをまとめて確認できます。受付・施術・マネージャーそれぞれの視点でフォローすべき項目を迷わず追えます。</p>
+      <div id="opsMsg" class="msg"></div>
+      <div class="ops-grid">
+        <article class="ops-column">
+          <h3>予約とタスク</h3>
+          <div class="ops-list" id="opsReservations"></div>
+          <div class="ops-empty" id="opsReservationsEmpty" hidden>直近の予約はありません。</div>
+        </article>
+        <article class="ops-column">
+          <h3>請求フォロー</h3>
+          <div class="ops-list" id="opsInvoices"></div>
+          <div class="ops-empty" id="opsInvoicesEmpty" hidden>フォローが必要な請求はありません。</div>
+        </article>
+        <article class="ops-column">
+          <h3>共有メモ・申請</h3>
+          <div class="ops-subhead">スタッフ連絡</div>
+          <div class="ops-list" id="opsNotes"></div>
+          <div class="ops-subhead">変更申請</div>
+          <div class="ops-list" id="opsBoard"></div>
+          <div class="ops-empty" id="opsCommEmpty" hidden>共有メモや申請はまだ登録されていません。</div>
+        </article>
+       <div class="divider"></div>
+        <section class="accounting-breakdown" aria-labelledby="accountingBreakdownTitle">
+          <div class="section-toolbar">
+            <div class="section-title"><span class="emoji">📊</span><span id="accountingBreakdownTitle">項目別会計内訳</span></div>
+            <div class="accounting-controls">
+              <label>開始日
+                <input type="date" id="accountingFrom">
+              </label>
+              <label>終了日
+                <input type="date" id="accountingTo">
+              </label>
+              <button type="button" class="btn-ghost" id="btnAccountingPreset7">直近7日</button>
+              <button type="button" class="btn-ghost" id="btnAccountingPreset30">直近30日</button>
+              <button type="button" class="btn-primary" id="btnAccountingReload">内訳を更新</button>
+            </div>
+          </div>
+          <p class="muted-text" id="accountingBreakdownPeriod">-</p>
+          <div class="accounting-summary" id="accountingSummary" aria-live="polite">
+            <div><span class="label">対象売上</span><span class="value" id="accountingTotalAmount">¥0</span></div>
+            <div><span class="label">来店件数</span><span class="value" id="accountingTotalVisits">0 件</span></div>
+            <div><span class="label">明細数</span><span class="value" id="accountingTotalItems">0 明細</span></div>
+          </div>
+          <div class="accounting-grid">
+            <section class="accounting-panel" aria-labelledby="accountingTypeTitle">
+              <h4 id="accountingTypeTitle">区分別</h4>
+              <ul class="accounting-pill-list" id="accountingTypeList"></ul>
+            </section>
+            <section class="accounting-panel" aria-labelledby="accountingCategoryTitle">
+              <h4 id="accountingCategoryTitle">カテゴリ別</h4>
+              <div class="accounting-table-wrapper">
+                <table>
+                  <thead><tr><th scope="col">カテゴリ</th><th scope="col">売上</th><th scope="col">数量</th></tr></thead>
+                  <tbody id="accountingCategoryBody"></tbody>
+                </table>
+              </div>
+            </section>
+            <section class="accounting-panel" aria-labelledby="accountingItemTitle">
+              <h4 id="accountingItemTitle">メニュー別</h4>
+              <div class="accounting-table-wrapper">
+                <table>
+                  <thead><tr><th scope="col">メニュー</th><th scope="col">カテゴリ</th><th scope="col">売上</th><th scope="col">数量</th></tr></thead>
+                  <tbody id="accountingItemBody"></tbody>
+                </table>
+              </div>
+            </section>
+            <section class="accounting-panel" aria-labelledby="accountingPaymentTitle">
+              <h4 id="accountingPaymentTitle">決済別</h4>
+              <div class="accounting-table-wrapper">
+                <table>
+                  <thead><tr><th scope="col">決済方法</th><th scope="col">売上</th><th scope="col">件数</th><th scope="col">未収</th></tr></thead>
+                  <tbody id="accountingPaymentBody"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+          <div class="accounting-empty" id="accountingEmpty" hidden>指定期間の売上データがありません。</div>
+        </section> 
+      </div>
+    </div>
+  </section>
+
+  <!-- 請求管理 -->
+  <section id="tab-billing" class="tab-pane">
+    <div class="card">
+      <div class="section-toolbar">
+        <div class="section-title"><span class="emoji">💰</span><span>請求・売上管理</span></div>
+        <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+      </div>
+      <p class="lead">請求検索機能を使うと、支払待ちの請求を素早く把握したり、対象月の売上詳細をCSVでダウンロードできます。</p>
+      <div class="billing-filters" aria-label="請求検索条件">
+        <label>キーワード
+          <input type="text" id="invKeyword" placeholder="請求ID・顧客名・メモを検索">
+        </label>
+        <label>請求状態
+          <select id="invStatus">
+            <option value="">すべて</option>
+            <option value="PENDING">支払待ち</option>
+            <option value="PAID">支払済み</option>
+          </select>
+        </label>
+        <label>請求日(開始)
+          <input type="date" id="invFrom">
+        </label>
+        <label>請求日(終了)
+          <input type="date" id="invTo">
+        </label>
+        <label>支払い方法
+          <select id="invPayment"><option value="">すべて</option></select>
+        </label>
+      </div>
+      <div class="billing-actions">
+        <button type="button" id="btnInvoiceSearch" class="btn-primary">請求を検索</button>
+        <button type="button" id="btnInvoicePending" class="btn-ghost">支払待ちだけ表示</button>
+        <div class="billing-inline">
+          <label>対象月
+            <input type="month" id="invMonth">
+          </label>
+          <button type="button" id="btnDownloadSales" class="btn-primary">月次売上CSVダウンロード</button>
+        </div>
+      </div>
+      <div id="invoiceMsg" class="msg"></div>
+      <div id="invoiceSummary" class="billing-summary" style="display:none">
+        <div>
+          <div class="label">対象件数</div>
+          <div class="value" id="invoiceSummaryCount">0 件</div>
+        </div>
+        <div>
+          <div class="label">合計金額</div>
+          <div class="value" id="invoiceSummaryTotal">¥0</div>
+        </div>
+        <div>
+          <div class="label">支払待ち件数</div>
+          <div class="value" id="invoiceSummaryPendingCount">0 件</div>
+        </div>
+        <div>
+          <div class="label">支払待ち残高</div>
+          <div class="value" id="invoiceSummaryPendingTotal">¥0</div>
+        </div>
+        <div>
+          <div class="label">対象期間</div>
+          <div class="value" id="invoiceSummaryPeriod">-</div>
+        </div>
+      </div>
+      <div id="invoiceResults" class="invoice-results"></div>
+      <div id="invoiceEmpty" class="billing-empty" style="display:none">請求がまだ登録されていません。条件を変更してお試しください。</div>
+      <div class="divider"></div>
+      <div id="dailyReport" class="daily-report" aria-live="polite">
+        <div class="daily-report-head">
+          <div>
+            <h3>日別売上レポート</h3>
+            <p class="daily-report-lead">日毎の売上推移がグラフで確認できます。期間ボタンから表示期間を切り替え、ダウンロードでCSVを取得して売上管理に活用できます。</p>
+          </div>
+          <div class="daily-report-actions">
+            <button type="button" id="btnDailyRange" class="btn-ghost">期間</button>
+            <button type="button" id="btnDailyDownload" class="btn-primary">ダウンロード</button>
+          </div>
+        </div>
+        <div class="daily-range-info">
+          <span id="dailyRangeLabel">表示期間: -</span>
+          <span id="dailySummaryLine" class="muted-text"></span>
+        </div>
+        <div id="dailyRangeMenu" class="daily-range-menu" hidden>
+          <div class="menu-group" role="group" aria-label="期間プリセット">
+            <button type="button" data-range="7">直近7日</button>
+            <button type="button" data-range="14">直近14日</button>
+            <button type="button" data-range="30" class="active">直近30日</button>
+            <button type="button" data-range="90">直近90日</button>
+          </div>
+          <div class="menu-custom">
+            <div class="menu-custom-fields">
+              <label>開始日
+                <input type="date" id="dailyCustomFrom">
+              </label>
+              <label>終了日
+                <input type="date" id="dailyCustomTo">
+              </label>
+            </div>
+            <div class="menu-custom-actions">
+              <button type="button" id="btnDailyApply" class="btn-primary">適用</button>
+              <button type="button" id="btnDailyCancel" class="btn-ghost">閉じる</button>
+            </div>
+          </div>
+        </div>
+        <div class="daily-chart-area">
+          <svg id="dailySalesChart" viewBox="0 0 640 240" role="img" aria-labelledby="dailyChartTitle" preserveAspectRatio="none">
+            <title id="dailyChartTitle">日別売上推移グラフ</title>
+          </svg>
+          <div id="dailyChartEmpty" class="daily-chart-empty">日別の売上データがありません。</div>
+        </div>
+        <div id="dailyMsg" class="msg"></div>
+        <div id="dailySalesList" class="daily-sales-list">
+          <div class="daily-tables">
+            <section class="daily-table" aria-labelledby="dailyAccountingTitle">
+              <h4 id="dailyAccountingTitle">会計用サマリー <span class="tag">会計士向け</span></h4>
+              <table>
+                <thead>
+                  <tr><th scope="col">日付</th><th scope="col">総売上</th><th scope="col">現金</th><th scope="col">未収</th><th scope="col">前受金</th></tr>
+                </thead>
+                <tbody id="dailyAccountingBody"></tbody>
+              </table>
+            </section>
+            <section class="daily-table" aria-labelledby="dailyStrategyTitle">
+              <h4 id="dailyStrategyTitle">戦略用サマリー <span class="tag">店舗責任者向け</span></h4>
+              <table>
+                <thead>
+                  <tr><th scope="col">日付</th><th scope="col">売上</th><th scope="col">来店件数</th><th scope="col">顧客数</th><th scope="col">顧客単価</th></tr>
+                </thead>
+                <tbody id="dailyStrategyBody"></tbody>
+              </table>
+            </section>
+          </div>
+        </div>
+        <div id="dailyDetailPanel" class="daily-detail" style="display:none;">
+          <div class="daily-detail-head">
+            <div>
+              <h4 id="dailyDetailTitle">-</h4>
+              <p class="muted-text" id="dailyDetailStats"></p>
+            </div>
+          </div>
+          <div id="dailyDetailBody" class="daily-detail-body"></div>
+        </div>
+        <article class="report-howto">
+          <h4>売上報告書の作成ステップ</h4>
+          <p>売上報告書の作成は複数のステップを経て行われます。それぞれの手順を押さえておくことで、売上管理と情報共有をスムーズに進められます。</p>
+          <section>
+            <h5>1. データを集める</h5>
+            <p>まず、売上報告書の基礎となるデータを収集します。各部門や店舗から売上データを集め、自社の販売システムやエクセルシートを活用して最新の情報を抽出します。CRMシステムから顧客の購買履歴や行動データを取り込むことで、より詳細な分析が可能になります。</p>
+          </section>
+          <section>
+            <h5>2. データを整理する</h5>
+            <p>収集したデータをカテゴリー別・期間別に整理します。エクセルのフィルタやピボットテーブルを用いて、月別・イベント別・製品別の売上推移を可視化し、好調な施策や伸び悩む領域を把握します。犬種やお客様の属性別に分析することで、強みと改善点を明確にできます。</p>
+          </section>
+          <section>
+            <h5>3. 報告書を書く</h5>
+            <p>分析結果を基に売上報告書を作成します。概要で全体の売上状況と要点をまとめ、詳細データでは顧客層別・製品別・期間別・イベント別の情報を表やグラフで整理します。分析と考察では売上増減の要因や今後の戦略を記載し、必要に応じて売上推移グラフやキャンペーン資料などを付録として添付します。</p>
+          </section>
+        </article>
+      </div>
+    </div>
+    <div class="card home-role-card">
+      <div class="role-toolbar">
+        <div class="section-title"><span class="emoji">🧭</span><span>役割別ショートカット</span></div>
+        <div class="role-tabs" role="tablist" aria-label="役割を選択">
+          <button type="button" class="active" data-role="front" aria-selected="true">受付</button>
+          <button type="button" data-role="stylist" aria-selected="false">施術スタッフ</button>
+          <button type="button" data-role="manager" aria-selected="false">マネージャー</button>
+        </div>
+      </div>
+      <div class="role-panel active" data-role="front">
+        <ul>
+          <li><button type="button" class="role-link" data-home-shortcut="1" data-tab="ops"><span class="title">今日の予約と注意事項</span><span class="desc">オペレーションハブで到着前の確認と受付準備</span></button></li>
+          <li><button type="button" class="role-link" data-home-shortcut="1" data-action="open-search"><span class="title">クイック検索</span><span class="desc">名前・電話・タグでカルテや請求を即検索</span></button></li>
+          <li><button type="button" class="role-link" data-home-shortcut="1" data-tab="calendar"><span class="title">新規予約登録</span><span class="desc">空き枠の確認とリマインド設定</span></button></li>
+        </ul>
+      </div>
+      <div class="role-panel" data-role="stylist">
+        <ul>
+          <li><button type="button" class="role-link" data-home-shortcut="1" data-tab="record" data-mode="pet"><span class="title">ご愛犬カルテ確認</span><span class="desc">最新の施術履歴や注意事項を検索</span></button></li>
+          <li><button type="button" class="role-link" data-home-shortcut="1" data-tab="pet" data-pane="journal"><span class="title">記録ブック更新</span><span class="desc">施術後のメモと写真を共有</span></button></li>
+          <li><button type="button" class="role-link" data-home-shortcut="1" data-tab="notes"><span class="title">スタッフ連絡</span><span class="desc">ピン留めメモで当日の注意を確認</span></button></li>
+        </ul>
+      </div>
+      <div class="role-panel" data-role="manager">
+        <ul>
+          <li><button type="button" class="role-link" data-home-shortcut="1" data-tab="billing"><span class="title">売上ダッシュボード</span><span class="desc">請求状況と日別売上をチェック</span></button></li>
+          <li><button type="button" class="role-link" data-home-shortcut="1" data-tab="board"><span class="title">申請・改善フォロー</span><span class="desc">未対応の申請や改善要望を追跡</span></button></li>
+          <li><button type="button" class="role-link" data-home-shortcut="1" data-tab="settings"><span class="title">マスタ設定</span><span class="desc">店舗・施術・スタッフ・支払い方法を整理</span></button></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 検索 -->
+  <section id="tab-record" class="tab-pane">
+    <div class="card">
+      <div class="section-toolbar">
+        <div class="section-title"><span class="emoji">🔎</span><span>カルテ検索</span></div>
+        <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+      </div>
+      <div class="seg" role="tablist" aria-label="検索対象">
+        <button type="button" id="modeOwner" class="active" role="tab" aria-selected="true">お客様</button>
+        <button type="button" id="modePet" class="pet-only" role="tab" aria-selected="false">ご愛犬</button>
+      </div>
+      <div class="grid" style="margin-top:10px">
+        <label>キーワード
+          <input type="text" id="searchInput" placeholder="氏名／ペット名の一部で検索">
+        </label>
+        <div style="display:flex;align-items:end"><button type="button" id="btnSearch" class="btn-primary">検索</button></div>
+      </div>
+      <div class="filters" aria-label="絞り込み">
+        <label>対象期間(開始)
+          <input type="date" id="filterFrom">
+        </label>
+        <label>対象期間(終了)
+          <input type="date" id="filterTo">
+        </label>
+        <label>施術
+          <select id="filterService"><option value="">すべて</option></select>
+        </label>
+        <label class="pet-only">既往歴
+          <input id="filterHealth" placeholder="例：ヘルニア">
+        </label>
+        <label class="pet-only">アレルギー
+          <input id="filterAllergy" placeholder="例：小麦">
+        </label>
+        <label class="pet-only">タグ
+          <input id="filterTag" placeholder="例：VIP・アレルギー持ち">
+        </label>
+        <label>メモに含む
+          <input type="text" id="filterNotes" placeholder="キーワード">
+        </label>
+      </div>
+      <div class="actions" style="margin-top:6px">
+        <button type="button" id="btnClearFilters" class="btn-ghost">条件クリア</button>
+      </div>
+
+      <div id="resultsToolbar" class="results-toolbar" style="display:none">
+        <div class="left">
+          <span id="resCount">0 件</span>
+          <span id="resTime" class="sub"></span>
+          <span id="activeFilters" class="sub"></span>
+        </div>
+        <div class="right" style="display:flex;gap:8px;align-items:center;">
+          <label style="align-items:center;gap:6px;display:flex;font-weight:600;">
+            並び替え
+            <select id="sortSelect" style="min-width:180px;">
+              <option value="name-asc">名前 A→Z</option>
+              <option value="name-desc">名前 Z→A</option>
+              <option value="visit-desc">最新来店日 新しい順</option>
+              <option value="visit-asc">最新来店日 古い順</option>
+            </select>
+          </label>
+          <div class="seg2" role="group" aria-label="表示切替">
+            <button type="button" id="viewComfort" class="active">ゆったり</button>
+            <button type="button" id="viewCompact">コンパクト</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="searchResults" class="result-list" style="margin-top:6px"></div>
+      <div id="resultDetail" class="detail" style="display:none"></div>
+
+      <div id="recordForm" class="form" style="display:none">
+        <h3 id="selectedCustomerName"></h3>
+        <div class="grid">
+          <label class="pet-only field-sm">ご愛犬名 <select id="petSelect"></select></label>
+          <label>施術 <select id="serviceSelect"></select></label>
+          <label class="field-sm">回数 <input type="number" id="qtyInput" value="1" min="1"></label>
+          <label class="field-sm">支払方法 <select id="paymentSelect"></select></label>
+          <label class="field-sm">担当者 <select id="staffSelect"></select></label>
+          <label class="field-sm">来店日 <input type="date" id="visitDate"></label>
+          <label>前受金残高（自動）<input type="text" id="prepaidBalance" readonly></label>
+          <label class="field-sm">前受金の使用<select id="usePrepaid"><option value="true" selected>使用する（優先）</option><option value="false">使用しない</option></select></label>
+        </div>
+        <label>メモ <textarea id="notes" rows="3"></textarea></label>
+        <div class="actions">
+          <button type="button" id="btnSaveVisit" class="btn-primary">記録を保存</button>
+          <button type="button" id="btnAddPet" class="btn-ghost pet-only">新しいペットを追加</button>
+        </div>
+        <div id="visitMsg" class="msg"></div>
+
+        <h4>最新の履歴</h4>
+        <div id="visitList" class="list"></div>
+      </div>
+    </div>
+    <div class="card home-role-card">
+      <div class="role-toolbar">
+        <div class="section-title"><span class="emoji">🧭</span><span>役割別ショートカット</span></div>
+        <div class="role-tabs" role="tablist" aria-label="役割を選択">
+          <button type="button" class="active" data-role="front" aria-selected="true">受付</button>
+          <button type="button" data-role="stylist" aria-selected="false">施術スタッフ</button>
+          <button type="button" data-role="manager" aria-selected="false">マネージャー</button>
+        </div>
+      </div>
+      <div class="role-panel active" data-role="front">
+        <ul>
+          <li><button type="button" class="role-link" data-role-tab="ops"><span class="title">今日の予約と注意事項</span><span class="desc">オペレーションハブで到着前の確認と受付準備</span></button></li>
+          <li><button type="button" class="role-link" data-role-action="search"><span class="title">クイック検索</span><span class="desc">名前・電話・タグでカルテや請求を即検索</span></button></li>
+          <li><button type="button" class="role-link" data-role-tab="calendar"><span class="title">新規予約登録</span><span class="desc">空き枠の確認とリマインド設定</span></button></li>
+        </ul>
+      </div>
+      <div class="role-panel" data-role="stylist">
+        <ul>
+          <li><button type="button" class="role-link" data-role-tab="record" data-mode="pet"><span class="title">ご愛犬カルテ確認</span><span class="desc">最新の施術履歴や注意事項を検索</span></button></li>
+          <li><button type="button" class="role-link" data-role-tab="pet" data-pane="journal"><span class="title">記録ブック更新</span><span class="desc">施術後のメモと写真を共有</span></button></li>
+          <li><button type="button" class="role-link" data-role-tab="ops" data-role-action="notes"><span class="title">スタッフ連絡</span><span class="desc">ピン留めメモで当日の注意を確認</span></button></li>
+        </ul>
+      </div>
+      <div class="role-panel" data-role="manager">
+        <ul>
+          <li><button type="button" class="role-link" data-role-tab="billing"><span class="title">売上ダッシュボード</span><span class="desc">請求状況と日別売上をチェック</span></button></li>
+          <li><button type="button" class="role-link" data-role-tab="ops" data-role-action="board"><span class="title">申請・改善フォロー</span><span class="desc">未対応の申請や改善要望を追跡</span></button></li>
+          <li><button type="button" class="role-link" data-role-tab="settings"><span class="title">マスタ設定</span><span class="desc">店舗・施術・スタッフ・支払い方法を整理</span></button></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- お客様 -->
+  <section id="tab-customer" class="tab-pane">
+    <div class="card">
+      <div class="section-toolbar">
+        <div class="section-title"><span class="emoji">👥</span><span>お客様登録</span></div>
+        <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+      </div>
+      <div id="customerForm">
+        <div class="grid">
+          <label for="newCustName">
+            <span class="label-head">お名前 <span class="req">必須</span></span>
+            <input type="text" id="newCustName" class="is-required" placeholder="山田 太郎" autocomplete="name" required>
+          </label>
+
+          <label for="newCustPhone">
+            <span class="label-head">電話 <span class="req">必須</span></span>
+            <input type="tel" id="newCustPhone" class="is-required" placeholder="090-xxxx-xxxx" autocomplete="tel" required>
+          </label>
+
+          <label for="newCustEmail">メール
+            <input type="email" id="newCustEmail" placeholder="example@mail.jp" autocomplete="email">
+          </label>
+
+          <label for="newCustAddress">住所
+            <input type="text" id="newCustAddress" placeholder="東京都…" autocomplete="street-address">
+          </label>
+
+          <label for="newCustGender" class="field-xs">性別
+            <select id="newCustGender">
+              <option value="">選択してください</option>
+              <option value="女性">女性</option>
+              <option value="男性">男性</option>
+              <option value="その他">その他</option>
+            </select>
+          </label>
+
+          <label for="custNotes">メモ
+            <textarea rows="2" id="custNotes" placeholder="ご希望や注意事項など"></textarea>
+          </label>
+          <label for="custMemoDue" class="field-sm">メモ期限
+            <input type="date" id="custMemoDue">
+          </label>
+          <label for="custMemoPinned" class="field-sm">ピン留め
+            <select id="custMemoPinned">
+              <option value="false">ピン留めしない</option>
+              <option value="true">ピン留めする</option>
+            </select>
+          </label>
+          <label for="custLineId" class="field-xs">LINEユーザーID
+            <input type="text" id="custLineId" placeholder="Uxxxxxxxx">
+          </label>
+          <label for="custLineName" class="field-xs">LINE表示名
+            <input type="text" id="custLineName" placeholder="LINEの表示名">
+          </label>
+          <label for="custLineOptIn" class="field-xs">LINE通知
+            <select id="custLineOptIn">
+              <option value="">未設定</option>
+              <option value="true">許可</option>
+              <option value="false">停止</option>
+            </select>
+          </label>
+          <label for="custProfilePhoto">プロフィール写真URL
+            <input type="url" id="custProfilePhoto" placeholder="https://example.com/photo.jpg">
+            <small class="hint">お客様カルテやLINE共有で表示されます</small>
+          </label>
+          <div class="photo-preview" id="custPhotoPreview" aria-live="polite"></div>
+        </div>
+        <div class="tag-editor" id="customerTagEditor">
+          <h4>タグ管理</h4>
+          <div class="tag-inputs">
+            <input type="text" id="custTagInput" placeholder="タグ名 (例: VIP)">
+            <input type="color" id="custTagColor" value="#f97316" aria-label="タグカラー選択">
+            <button type="button" class="btn-ghost" id="btnAddCustTag">タグを追加</button>
+          </div>
+          <div class="tag-list" id="custTagList" aria-live="polite"></div>
+        </div>
+        <div class="actions">
+          <button type="button" class="btn-primary" id="btnCreateCustomer">登録</button>
+        </div>
+        <div id="custMsg" class="msg"></div>
+      </div>
+    </div>
+    <div class="card home-role-card">
+      <div class="role-toolbar">
+        <div class="section-title"><span class="emoji">🧭</span><span>役割別ショートカット</span></div>
+        <div class="role-tabs" role="tablist" aria-label="役割を選択">
+          <button type="button" class="active" data-role="front" aria-selected="true">受付</button>
+          <button type="button" data-role="stylist" aria-selected="false">施術スタッフ</button>
+          <button type="button" data-role="manager" aria-selected="false">マネージャー</button>
+        </div>
+      </div>
+      <div class="role-panel active" data-role="front">
+        <ul>
+          <li><button type="button" class="role-link" data-role-tab="ops"><span class="title">今日の予約と注意事項</span><span class="desc">オペレーションハブで到着前の確認と受付準備</span></button></li>
+          <li><button type="button" class="role-link" data-role-action="search"><span class="title">クイック検索</span><span class="desc">名前・電話・タグでカルテや請求を即検索</span></button></li>
+          <li><button type="button" class="role-link" data-role-tab="calendar"><span class="title">新規予約登録</span><span class="desc">空き枠の確認とリマインド設定</span></button></li>
+        </ul>
+      </div>
+      <div class="role-panel" data-role="stylist">
+        <ul>
+          <li><button type="button" class="role-link" data-role-tab="record" data-mode="pet"><span class="title">ご愛犬カルテ確認</span><span class="desc">最新の施術履歴や注意事項を検索</span></button></li>
+          <li><button type="button" class="role-link" data-role-tab="pet" data-pane="journal"><span class="title">記録ブック更新</span><span class="desc">施術後のメモと写真を共有</span></button></li>
+          <li><button type="button" class="role-link" data-role-tab="ops" data-role-action="notes"><span class="title">スタッフ連絡</span><span class="desc">ピン留めメモで当日の注意を確認</span></button></li>
+        </ul>
+      </div>
+      <div class="role-panel" data-role="manager">
+        <ul>
+          <li><button type="button" class="role-link" data-role-tab="billing"><span class="title">売上ダッシュボード</span><span class="desc">請求状況と日別売上をチェック</span></button></li>
+          <li><button type="button" class="role-link" data-role-tab="ops" data-role-action="board"><span class="title">申請・改善フォロー</span><span class="desc">未対応の申請や改善要望を追跡</span></button></li>
+          <li><button type="button" class="role-link" data-role-tab="settings"><span class="title">マスタ設定</span><span class="desc">店舗・施術・スタッフ・支払い方法を整理</span></button></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ご愛犬 -->
+  <section id="tab-pet" class="tab-pane pet-only">
+    <div class="card">
+      <div class="section-toolbar">
+        <div class="section-title"><span class="emoji">🐾</span><span>ご愛犬登録</span></div>
+        <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+      </div>
+      <div id="newPetForm">
+        <div class="grid">
+          <label>お客様登録
+            <select id="petOwnerSelect"><option value="">選択してください</option></select>
+            <small class="hint">顧客IDで紐付けます（IDは検索結果で確認できます）</small>
+          </label>
+
+          <label for="petName">
+            <span class="label-head">名前 <span class="req">必須</span></span>
+            <input type="text" id="petName" class="is-required" placeholder="パフィー" required>
+          </label>
+
+          <label for="petNameKana">カナ
+            <input type="text" id="petNameKana" placeholder="パフィー（カナ）">
+          </label>
+
+          <label for="petSpecies">種類
+            <input type="text" id="petSpecies" placeholder="ご愛犬／ご愛猫など">
+          </label>
+
+          <label for="petBreed">
+            <span class="label-head">犬種 <span class="req">必須</span></span>
+            <input type="text" id="petBreed" class="is-required" placeholder="トイプードルなど" required>
+          </label>
+
+          <label for="petSex" class="field-sm">
+            <span class="label-head">ご愛犬性別 <span class="req">必須</span></span>
+            <select id="petSex" class="is-required" required>
+              <option value="">選択してください</option>
+              <option value="女の子">女の子</option>
+              <option value="男の子">男の子</option>
+              <option value="不明">不明</option>
+            </select>
+          </label>
+
+          <label for="petDOB" class="field-sm">誕生日
+            <input type="date" id="petDOB">
+          </label>
+
+          <label for="petWeight">
+            <span class="label-head">体重(kg) <span class="req">必須</span></span>
+            <input type="number" id="petWeight" class="is-required" step="0.1" placeholder="例: 3.2" required>
+          </label>
+
+          <label for="petColor">毛色
+            <input type="text" id="petColor" placeholder="レッド、ブラック＆タン等">
+          </label>
+
+          <label for="petHospital">かかりつけの病院
+            <input type="text" id="petHospital" placeholder="〇〇動物病院">
+          </label>
+
+          <label for="petNeuter" class="field-sm">避妊・去勢
+            <select id="petNeuter">
+              <option value="">選択してください</option>
+              <option value="済み">済み</option>
+              <option value="未">未</option>
+              <option value="不明">不明</option>
+            </select>
+          </label>
+
+          <label for="petNeuterDate" class="field-sm">手術日
+            <input type="date" id="petNeuterDate" disabled>
+          </label>
+
+          <label for="pethealthHistory">既往歴
+            <input type="text" id="pethealthHistory" placeholder="椎間板ヘルニアなど">
+          </label>
+
+          <label for="petAllergies">アレルギー
+            <input type="text" id="petAllergies" placeholder="牛肉、鶏肉など">
+          </label>
+
+          <label for="petNotes">メモ
+            <textarea rows="2" id="petNotes" placeholder="性格・苦手など"></textarea>
+          </label>
+          <label for="petMemoDue" class="field-sm">メモ期限
+            <input type="date" id="petMemoDue">
+          </label>
+          <label for="petMemoPinned" class="field-sm">ピン留め
+            <select id="petMemoPinned">
+              <option value="false">ピン留めしない</option>
+              <option value="true">ピン留めする</option>
+            </select>
+          </label>
+          <label for="petFacePhoto">顔写真URL
+            <input type="url" id="petFacePhoto" placeholder="https://example.com/face.jpg">
+          </label>
+          <label for="petBodyPhoto">全身写真URL
+            <input type="url" id="petBodyPhoto" placeholder="https://example.com/body.jpg">
+          </label>
+          <label for="petProfilePhoto">お気に入り写真URL
+            <input type="url" id="petProfilePhoto" placeholder="https://example.com/favorite.jpg">
+          </label>
+          <div class="photo-preview" id="petPhotoPreview" aria-live="polite"></div>
+        </div>
+        <div class="tag-editor" id="petTagEditor">
+          <h4>タグ管理</h4>
+          <div class="tag-inputs">
+            <input type="text" id="petTagInput" placeholder="タグ名 (例: シニア)">
+            <input type="color" id="petTagColor" value="#6366f1" aria-label="タグカラー選択">
+            <button type="button" class="btn-ghost" id="btnAddPetTag">タグを追加</button>
+          </div>
+          <div class="tag-list" id="petTagList" aria-live="polite"></div>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn-primary" id="btnSavePet">ご愛犬を登録する</button>
+          <button type="button" class="btn-ghost" id="btnClear2">入力をクリア</button>
+        </div>
+        <div id="petMsg" class="msg"></div>
+      </div>
+    </div>
+    <div class="card pet-journal-card">
+      <div class="section-toolbar">
+        <div class="section-title"><span class="emoji">📘</span><span>ご愛犬記録ブック</span></div>
+        <div class="journal-actions">
+          <button type="button" class="btn-ghost" id="btnRefreshJournal">最新を読み込む</button>
+        </div>
+      </div>
+      <p class="lead">施術ごとの気づきやLINE共有したい要点を記録しておくと、スタッフ間やご家族とのコミュニケーションがスムーズになります。</p>
+      <div class="journal-form">
+        <div class="grid">
+          <label>対象のご愛犬
+            <select id="journalPetSelect"><option value="">ご愛犬を選択</option></select>
+          </label>
+          <label class="field-xs">施術日
+            <input type="date" id="journalDate">
+          </label>
+          <label class="field-xs">担当
+            <input type="text" id="journalStaff" placeholder="担当者名">
+          </label>
+          <label>タイトル
+            <input type="text" id="journalTitle" placeholder="施術のポイント">
+          </label>
+          <label>メモ
+            <textarea id="journalSummary" rows="2" placeholder="気づき・次回のポイントなど"></textarea>
+          </label>
+          <label>写真URL
+            <input type="url" id="journalPhoto" placeholder="https://example.com/note.jpg">
+          </label>
+          <label class="field-sm">タグ
+            <input type="text" id="journalTag" placeholder="例: 初回, 再診">
+          </label>
+        </div>
+        <div class="actions">
+          <button type="button" class="btn-primary" id="btnAddJournal">記録を追加</button>
+        </div>
+        <div id="journalMsg" class="msg"></div>
+      </div>
+      <div class="journal-list" id="journalList" aria-live="polite"></div>
+    </div>
+    <div class="card home-role-card">
+      <div class="role-toolbar">
+        <div class="section-title"><span class="emoji">🧭</span><span>役割別ショートカット</span></div>
+        <div class="role-tabs" role="tablist" aria-label="役割を選択">
+          <button type="button" class="active" data-role="front" aria-selected="true">受付</button>
+          <button type="button" data-role="stylist" aria-selected="false">施術スタッフ</button>
+          <button type="button" data-role="manager" aria-selected="false">マネージャー</button>
+        </div>
+      </div>
+      <div class="role-panel active" data-role="front">
+        <ul>
+          <li><button type="button" class="role-link" data-role-tab="ops"><span class="title">今日の予約と注意事項</span><span class="desc">オペレーションハブで到着前の確認と受付準備</span></button></li>
+          <li><button type="button" class="role-link" data-role-action="search"><span class="title">クイック検索</span><span class="desc">名前・電話・タグでカルテや請求を即検索</span></button></li>
+          <li><button type="button" class="role-link" data-role-tab="calendar"><span class="title">新規予約登録</span><span class="desc">空き枠の確認とリマインド設定</span></button></li>
+        </ul>
+      </div>
+      <div class="role-panel" data-role="stylist">
+        <ul>
+          <li><button type="button" class="role-link" data-role-tab="record" data-mode="pet"><span class="title">ご愛犬カルテ確認</span><span class="desc">最新の施術履歴や注意事項を検索</span></button></li>
+          <li><button type="button" class="role-link" data-role-tab="pet" data-pane="journal"><span class="title">記録ブック更新</span><span class="desc">施術後のメモと写真を共有</span></button></li>
+          <li><button type="button" class="role-link" data-role-tab="ops" data-role-action="notes"><span class="title">スタッフ連絡</span><span class="desc">ピン留めメモで当日の注意を確認</span></button></li>
+        </ul>
+      </div>
+      <div class="role-panel" data-role="manager">
+        <ul>
+          <li><button type="button" class="role-link" data-role-tab="billing"><span class="title">売上ダッシュボード</span><span class="desc">請求状況と日別売上をチェック</span></button></li>
+          <li><button type="button" class="role-link" data-role-tab="ops" data-role-action="board"><span class="title">申請・改善フォロー</span><span class="desc">未対応の申請や改善要望を追跡</span></button></li>
+          <li><button type="button" class="role-link" data-role-tab="settings"><span class="title">マスタ設定</span><span class="desc">店舗・施術・スタッフ・支払い方法を整理</span></button></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 設定 -->
+  <section id="tab-settings" class="tab-pane">
+    <div class="card">
+      <div class="section-toolbar">
+        <div class="section-title"><span class="emoji">⚙️</span><span>設定センター</span></div>
+        <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+      </div>
+      <p class="lead">店舗・施術・スタッフ・支払い方法など、日常的には触れない設定をまとめています。必要な項目を選択して開いてください。</p>
+      <div class="settings-shortcuts" id="settingsShortcuts">
+        <button type="button" data-pane="store">🏢 店舗</button>
+        <button type="button" data-pane="service">🧾 施術メニュー</button>
+        <button type="button" data-pane="staff">👥 スタッフ</button>
+        <button type="button" data-pane="payments">💳 支払い方法</button>
+      </div>
+    </div>
+    <article class="settings-pane" data-pane="store">
+    <div class="card">
+      <div class="section-toolbar">
+        <div class="section-title"><span class="emoji">🏢</span><span>店舗管理</span></div>
+        <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+      </div>
+      <p class="lead">ドッグケア（犬）とビューティーケア（人）をまとめて管理し、必要に応じて切り替えられます。ビューティーケア（人）ではご愛犬向けのタブが自動的に非表示になります。</p>
+      <input type="hidden" id="storeId">
+      <div class="grid">
+        <label>店舗名
+          <input type="text" id="storeName" placeholder="例：Pawfect One 表参道店">
+        </label>
+        <label class="field-sm">店舗種別
+          <select id="storeType">
+            <option value="PET">ドッグケア（犬）</option>
+            <option value="HUMAN">ビューティーケア（人）</option>
+          </select>
+        </label>
+        <label class="field-sm">テーマカラー
+          <input type="color" id="storeColor" value="#6ecad1">
+        </label>
+        <label>説明メモ
+          <textarea id="storeDescription" rows="3" placeholder="特徴や共有事項をメモ"></textarea>
+        </label>
+        <label class="field-sm">表示順
+          <input type="number" id="storeSort" min="0" value="0">
+        </label>
+        <label class="field-sm">利用状態
+          <select id="storeActive">
+            <option value="true" selected>利用中</option>
+            <option value="false">非表示</option>
+          </select>
+        </label>
+      </div>
+      <p class="store-form-note">ビューティーケア（人）を選ぶと、ご愛犬登録タブや検索項目は非表示となり、人向けカルテとして運用できます。</p>
+      <div class="actions">
+        <button type="button" id="btnSaveStore" class="btn-primary">店舗を保存</button>
+        <button type="button" id="btnResetStore" class="btn-ghost">クリア</button>
+      </div>
+      <div id="storeMsg" class="msg"></div>
+      <div class="divider"></div>
+      <h3>登録済み店舗</h3>
+      <div id="storeList" class="store-grid"></div>
+    </div>
+  
+    </article>
+    <article class="settings-pane" data-pane="service">
+    <div class="card">
+      <div class="section-toolbar">
+        <div class="section-title"><span class="emoji">🧾</span><span>施術メニュー登録</span></div>
+        <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+      </div>
+      <div class="grid">
+        <label>施術ID <input id="svcId" placeholder="例:svcID0000"></label>
+        <label>施術名 <input id="svcName" placeholder="例:お客様+ご愛犬総合ケア 約140分"></label>
+        <label class="field-sm">カテゴリ
+          <select id="svcCat"><option value="">選択してください</option></select>
+        </label>
+        <label class="field-sm">所要(分) <input type="number" id="svcDur" min="0"></label>
+        <label class="field-sm">価格(円) <input type="number" id="svcPrice" min="0"></label>
+        <label class="field-sm">税率 <input type="number" id="svcTax" step="0.01" placeholder="0.1"></label>
+        <label class="field-sm">適用開始 <input type="date" id="svcFrom"></label>
+        <label class="field-sm">適用終了 <input type="date" id="svcTo"></label>
+        <label class="field-sm">有効
+          <select id="svcActive">
+            <option value="true" selected>有効</option>
+            <option value="false">無効</option>
+          </select>
+        </label>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn-primary" id="btnCreateService">施術を登録</button>
+        <button type="button" class="btn-ghost" id="btnClearSvc">クリア</button>
+      </div>
+      <div id="svcMsg" class="msg"></div>
+    </div>
+  
+    </article>
+    <article class="settings-pane" data-pane="staff">
+    <div class="card">
+      <div class="section-toolbar">
+        <div class="section-title"><span class="emoji">👤</span><span>施術者・スタッフ登録</span></div>
+        <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+      </div>
+      <div id="staffForm">
+        <div class="grid">
+          <label>氏名 <input id="stName" placeholder="例: 佐藤 花子"></label>
+          <label class="field-sm">役割 <input id="stRole" placeholder="例: セラピスト"></label>
+          <label class="field-sm">電話 <input id="stPhone" placeholder="090-xxxx-xxxx"></label>
+          <label class="field-sm">メール <input id="stEmail" placeholder="example@mail.jp"></label>
+          <label class="field-sm">有効
+            <select id="stActive">
+              <option value="true" selected>有効</option>
+              <option value="false">無効</option>
+            </select>
+          </label>
+        </div>
+        <div class="actions">
+          <button type="button" id="btnCreateStaff" class="btn-primary">担当者を登録</button>
+        </div>
+        <div id="staffMsg" class="msg"></div>
+      </div>
+      <h3>担当者一覧</h3>
+      <div id="staffList" class="list"></div>
+    </div>
+  
+    </article>
+    <article class="settings-pane" data-pane="payments">
+    <div class="card">
+      <div class="section-toolbar">
+        <div class="section-title"><span class="emoji">💳</span><span>支払い方法管理</span></div>
+        <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+      </div>
+      <div id="paymentForm">
+        <div class="grid">
+          <label>コード <input id="pmCode" placeholder="例: CASH"></label>
+          <label>名称 <input id="pmName" placeholder="例: 現金"></label>
+          <label class="field-sm">表示順 <input type="number" id="pmSort" min="0" value="0"></label>
+          <label class="field-sm">有効
+            <select id="pmActive">
+              <option value="true" selected>有効</option>
+              <option value="false">無効</option>
+            </select>
+          </label>
+        </div>
+        <div class="actions">
+          <button type="button" id="btnCreatePayment" class="btn-primary">支払い方法を登録</button>
+        </div>
+        <div id="pmMsg" class="msg"></div>
+      </div>
+      <h3>支払い方法一覧</h3>
+      <div id="paymentList" class="list"></div>
+    </div>
+  
+    </article>
+  </section>
+
+  <!-- スタッフ連絡事項 -->
+  <section id="tab-notes" class="tab-pane">
+    <div class="card">
+      <div class="section-toolbar">
+        <div class="section-title"><span class="emoji">📌</span><span>スタッフ連絡事項</span></div>
+        <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+      </div>
+      <div id="noteForm">
+        <div class="grid">
+          <label class="field-sm">区分 <input id="ntCategory" placeholder="例: 店舗連絡/共有事項"></label>
+          <label>タイトル <input id="ntTitle" placeholder="例: 在庫棚卸について"></label>
+          <label class="field-sm">対象 <input id="ntAudience" placeholder="例: 全員/○○さん"></label>
+          <label class="field-sm">ピン留め
+            <select id="ntPinned">
+              <option value="false">しない</option>
+              <option value="true">する</option>
+            </select>
+          </label>
+        </div>
+        <label>内容 <textarea id="ntBody" rows="3" placeholder="連絡内容を記載"></textarea></label>
+        <div class="actions">
+          <button type="button" id="btnCreateNote" class="btn-primary">連絡事項を登録</button>
+        </div>
+        <div id="ntMsg" class="msg"></div>
+      </div>
+
+      <h3>最新の連絡</h3>
+      <div id="noteList" class="list"></div>
+    </div>
+    <div class="card home-role-card">
+      <div class="role-toolbar">
+        <div class="section-title"><span class="emoji">🧭</span><span>役割別ショートカット</span></div>
+        <div class="role-tabs" role="tablist" aria-label="役割を選択">
+          <button type="button" class="active" data-role="front" aria-selected="true">受付</button>
+          <button type="button" data-role="stylist" aria-selected="false">施術スタッフ</button>
+          <button type="button" data-role="manager" aria-selected="false">マネージャー</button>
+        </div>
+      </div>
+      <div class="role-panel active" data-role="front">
+        <ul>
+          <li><button type="button" class="role-link" data-role-tab="ops"><span class="title">今日の予約と注意事項</span><span class="desc">オペレーションハブで到着前の確認と受付準備</span></button></li>
+          <li><button type="button" class="role-link" data-role-action="search"><span class="title">クイック検索</span><span class="desc">名前・電話・タグでカルテや請求を即検索</span></button></li>
+          <li><button type="button" class="role-link" data-role-tab="calendar"><span class="title">新規予約登録</span><span class="desc">空き枠の確認とリマインド設定</span></button></li>
+        </ul>
+      </div>
+      <div class="role-panel" data-role="stylist">
+        <ul>
+          <li><button type="button" class="role-link" data-role-tab="record" data-mode="pet"><span class="title">ご愛犬カルテ確認</span><span class="desc">最新の施術履歴や注意事項を検索</span></button></li>
+          <li><button type="button" class="role-link" data-role-tab="pet" data-pane="journal"><span class="title">記録ブック更新</span><span class="desc">施術後のメモと写真を共有</span></button></li>
+          <li><button type="button" class="role-link" data-role-tab="ops" data-role-action="notes"><span class="title">スタッフ連絡</span><span class="desc">ピン留めメモで当日の注意を確認</span></button></li>
+        </ul>
+      </div>
+      <div class="role-panel" data-role="manager">
+        <ul>
+          <li><button type="button" class="role-link" data-role-tab="billing"><span class="title">売上ダッシュボード</span><span class="desc">請求状況と日別売上をチェック</span></button></li>
+          <li><button type="button" class="role-link" data-role-tab="ops" data-role-action="board"><span class="title">申請・改善フォロー</span><span class="desc">未対応の申請や改善要望を追跡</span></button></li>
+          <li><button type="button" class="role-link" data-role-tab="settings"><span class="title">マスタ設定</span><span class="desc">店舗・施術・スタッフ・支払い方法を整理</span></button></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 変更管理・申請 -->
+  <section id="tab-board" class="tab-pane">
+    <div class="card">
+      <div class="section-toolbar">
+        <div class="section-title"><span class="emoji">📝</span><span>変更管理・申請</span></div>
+        <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+      </div>
+      <div id="ticketForm">
+        <div class="grid">
+          <label class="field-sm">カテゴリ
+            <select id="ticketCategory">
+              <option value="担当者">担当者</option>
+              <option value="メニュー">メニュー</option>
+              <option value="サブスク会員/非会員">サブスク会員/非会員</option>
+              <option value="価格">価格</option>
+              <option value="来店ルート">来店ルート</option>
+              <option value="支払い方法">支払い方法</option>
+              <option value="顧客管理">顧客管理</option>
+              <option value="新規/継続">新規/継続</option>
+              <option value="バグ/不具合/その他">バグ/不具合/その他</option>
+            </select>
+          </label>
+          <label>タイトル <input type="text" id="ticketTitle"></label>
+          <label class="field-sm">関連ID <input type="text" id="ticketRelated" placeholder="例: SM-90"></label>
+          <label class="field-sm">担当者 <input type="text" id="ticketAssignee"></label>
+        </div>
+        <label>影響範囲 <textarea id="ticketImpact" rows="2"></textarea></label>
+        <label>内容 <textarea id="ticketDesc" rows="3"></textarea></label>
+        <div class="actions"><button type="button" id="btnCreateTicket" class="btn-primary">申請</button></div>
+        <div id="ticketMsg" class="msg"></div>
+      </div>
+
+      <h3>最近の申請</h3>
+      <div id="ticketList" class="list"></div>
+    </div>
+    <div class="card home-role-card">
+      <div class="role-toolbar">
+        <div class="section-title"><span class="emoji">🧭</span><span>役割別ショートカット</span></div>
+        <div class="role-tabs" role="tablist" aria-label="役割を選択">
+          <button type="button" class="active" data-role="front" aria-selected="true">受付</button>
+          <button type="button" data-role="stylist" aria-selected="false">施術スタッフ</button>
+          <button type="button" data-role="manager" aria-selected="false">マネージャー</button>
+        </div>
+      </div>
+      <div class="role-panel active" data-role="front">
+        <ul>
+          <li><button type="button" class="role-link" data-role-tab="ops"><span class="title">今日の予約と注意事項</span><span class="desc">オペレーションハブで到着前の確認と受付準備</span></button></li>
+          <li><button type="button" class="role-link" data-role-action="search"><span class="title">クイック検索</span><span class="desc">名前・電話・タグでカルテや請求を即検索</span></button></li>
+          <li><button type="button" class="role-link" data-role-tab="calendar"><span class="title">新規予約登録</span><span class="desc">空き枠の確認とリマインド設定</span></button></li>
+        </ul>
+      </div>
+      <div class="role-panel" data-role="stylist">
+        <ul>
+          <li><button type="button" class="role-link" data-role-tab="record" data-mode="pet"><span class="title">ご愛犬カルテ確認</span><span class="desc">最新の施術履歴や注意事項を検索</span></button></li>
+          <li><button type="button" class="role-link" data-role-tab="pet" data-pane="journal"><span class="title">記録ブック更新</span><span class="desc">施術後のメモと写真を共有</span></button></li>
+          <li><button type="button" class="role-link" data-role-tab="ops" data-role-action="notes"><span class="title">スタッフ連絡</span><span class="desc">ピン留めメモで当日の注意を確認</span></button></li>
+        </ul>
+      </div>
+      <div class="role-panel" data-role="manager">
+        <ul>
+          <li><button type="button" class="role-link" data-role-tab="billing"><span class="title">売上ダッシュボード</span><span class="desc">請求状況と日別売上をチェック</span></button></li>
+          <li><button type="button" class="role-link" data-role-tab="ops" data-role-action="board"><span class="title">申請・改善フォロー</span><span class="desc">未対応の申請や改善要望を追跡</span></button></li>
+          <li><button type="button" class="role-link" data-role-tab="settings"><span class="title">マスタ設定</span><span class="desc">店舗・施術・スタッフ・支払い方法を整理</span></button></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<button type="button" class="sales-fab" id="btnQuickSales" aria-controls="salesPanel" aria-expanded="false" title="売上サマリー">
+  <span class="fab-icon" aria-hidden="true">💹</span>
+  <span class="fab-text">
+    <span class="fab-label">売上</span>
+    <span class="fab-sub" id="quickSalesToday">今日 ¥0</span>
+  </span>
+</button>
+<div class="quick-panel quick-panel--sales" id="salesPanel" role="dialog" aria-modal="false" aria-labelledby="salesPanelTitle" hidden>
+  <div class="quick-panel-head">
+    <div class="quick-panel-title" id="salesPanelTitle">売上サマリー</div>
+    <button type="button" class="quick-panel-close" id="btnCloseSalesPanel" aria-label="閉じる">✕</button>
+  </div>
+  <div class="quick-panel-body">
+    <section class="quick-section">
+      <h3>日別売上集計</h3>
+      <div class="quick-stats" id="salesDailyStats">読み込み中です…</div>
+    </section>
+    <section class="quick-section">
+      <h3>月別売上集計</h3>
+      <div class="quick-stats" id="salesMonthlyStats">読み込み中です…</div>
+    </section>
+    <section class="quick-section">
+      <h3>スタッフ別集計</h3>
+      <div class="quick-list" id="salesByStaff">読み込み中です…</div>
+    </section>
+    <section class="quick-section">
+      <h3>メニュー別集計</h3>
+      <div class="quick-list" id="salesByMenu">読み込み中です…</div>
+    </section>
+  </div>
+</div>
+
+
+<div class="help-panel-backdrop" id="helpBackdrop" hidden></div>
+<div class="help-panel" id="helpPanel" role="dialog" aria-modal="true" aria-labelledby="helpPanelTitle" hidden>
+  <button type="button" class="help-panel-close" id="btnHelpClose">閉じる</button>
+  <h2 id="helpPanelTitle">使い方ガイド</h2>
+  <section>
+    <h3>ヘッダーメニューのアイコン一覧</h3>
+    <p>各アイコンにカーソルを合わせると名称が表示され、クリックすると対応するタブが開きます。</p>
+    <ul class="help-icon-list">
+      <li><span class="symbol">🏠</span><span class="name">ホーム</span><span class="desc">役割別ショートカットとダッシュボード</span></li>
+      <li><span class="symbol">🔎</span><span class="name">カルテ検索</span><span class="desc">お客様・ご愛犬カルテを横断検索</span></li>
+      <li><span class="symbol">📇</span><span class="name">顧客・会員</span><span class="desc">顧客一覧とSTORES会員をまとめて確認</span></li>
+      <li><span class="symbol">👥</span><span class="name">お客様登録</span><span class="desc">新規顧客の基本情報とタグ管理</span></li>
+      <li class="pet"><span class="symbol">🐾</span><span class="name">ご愛犬登録</span><span class="desc">ドッグケア店舗でのカルテ登録</span></li>
+      <li><span class="symbol">📅</span><span class="name">予約</span><span class="desc">予約枠の確認と登録・リマインド</span></li>
+      <li><span class="symbol">🛍️</span><span class="name">物販・在庫</span><span class="desc">商品一覧と在庫・発注状況を把握</span></li>
+      <li><span class="symbol">🎪</span><span class="name">イベント管理</span><span class="desc">イベントスケジュールと担当者を確認</span></li>
+      <li><span class="symbol">🧭</span><span class="name">オペレーションハブ</span><span class="desc">今日の予約・申請・メモの集約ビュー</span></li>
+      <li><span class="symbol">💰</span><span class="name">売上・請求</span><span class="desc">日別売上と請求ステータスの確認</span></li>
+      <li><span class="symbol">📌</span><span class="name">スタッフ連絡</span><span class="desc">共有メモと注意事項のピン留め</span></li>
+      <li><span class="symbol">📝</span><span class="name">申請・改善</span><span class="desc">変更申請と改善要望の進行管理</span></li>
+      <li><span class="symbol">⚙️</span><span class="name">設定</span><span class="desc">店舗・メニュー・スタッフ・支払い方法</span></li>
+    </ul>
+  </section>
+  <section>
+    <h3>どこに何があるか</h3>
+    <div class="help-map">
+      <article>
+        <h4>ホーム</h4>
+        <p>「ホーム」タブではショートカットから各タブへ移動でき、下部の役割別ショートカットで受付・施術・マネージャーが必要な機能にすぐアクセスできます。</p>
+      </article>
+      <article>
+        <h4>カルテと登録</h4>
+        <p>カルテ関連は🔎カルテ検索、👥お客様登録、🐾ご愛犬登録に分かれています。ビューティーケア（人）の店舗では顧客カルテ中心、ドッグケア（犬）の店舗ではご愛犬カルテと記録ブックが表示されます。</p>
+      </article>
+      <article>
+        <h4>日々の業務</h4>
+        <p>📅予約でスケジュール管理、🧭オペレーションハブで当日の予約・未処理タスク・共有メモをチェックできます。受付は予約カード、施術スタッフはメモ、マネージャーは申請状況を確認してください。</p>
+      </article>
+      <article>
+        <h4>売上と共有</h4>
+        <p>💰売上・請求で会計状況を確認し、📌スタッフ連絡で注意事項を共有、📝申請・改善で提出された申請を追跡します。⚙️設定では店舗情報や施術メニュー、スタッフ、支払い方法を整備できます。</p>
+      </article>
+    </div>
+  </section>
+  <section>
+    <h3>クイック検索と使い方ヒント</h3>
+    <p>ヘッダー右上の検索バーから顧客・ご愛犬・予約・請求をまとめて探せます。検索結果を選ぶと関連タブが開き、必要な画面に即移動します。役割別ショートカットやオペレーションハブを活用して、受付準備から会計までをシームレスに繋げましょう。</p>
+  </section>
+</div>
+
+<?!= include('client'); ?>
+
+</body> 
+</html>
