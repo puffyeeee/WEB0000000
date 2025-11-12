@@ -1,3 +1,4 @@
+alert('app.js loaded');
 (function(){
   // ====== グローバルUI参照入れ物 ======
   const ui = {};
