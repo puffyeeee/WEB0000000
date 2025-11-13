@@ -28,6 +28,241 @@ alert('app.js loaded');
     };
   })();
 
+  // Helper: animate tab/pane transitions with direction support
+  window.__animateTabTransition = function(newEl, oldEl, direction='up', opts={}){
+    try{
+      if (!newEl) return;
+      const root = document.documentElement;
+      const durCss = getComputedStyle(root).getPropertyValue('--page-transition-duration') || '320ms';
+      const parsed = parseInt(durCss.match(/\d+/)?.[0] || '320', 10);
+      const duration = opts.duration || (Number.isFinite(parsed) ? parsed : 320);
+      // map direction -> classes
+      const enterBase = (direction === 'left') ? 'pane-enter-left' : (direction === 'right') ? 'pane-enter-right' : 'pane-enter';
+      const exitBase = (direction === 'left') ? 'pane-exit-left' : (direction === 'right') ? 'pane-exit-right' : 'pane-exit';
+
+      // prepare elements
+      if (oldEl === newEl) return;
+      // ensure newEl is visible for measurement
+      newEl.classList.add(enterBase);
+      newEl.style.display = 'flex';
+      // force reflow
+      void newEl.offsetWidth;
+      newEl.classList.add('pane-enter-active');
+
+      if (oldEl){
+        oldEl.classList.add(exitBase);
+        // force reflow
+        void oldEl.offsetWidth;
+        oldEl.classList.add('pane-exit-active');
+      }
+
+      // cleanup after duration + small buffer
+      const buffer = 40;
+      setTimeout(()=>{
+        // remove transitional classes
+        newEl.classList.remove(enterBase, 'pane-enter-active');
+        newEl.classList.add('active');
+        newEl.style.display = '';
+        if (oldEl){
+          oldEl.classList.remove(exitBase, 'pane-exit-active', 'active');
+          oldEl.style.display = 'none';
+        }
+      }, duration + buffer);
+    }catch(e){ console.error('[animateTab]', e); }
+  };
+
+  // ===== Modal helpers: show/hide with overlay, aria handling, and animations =====
+  (function(){
+    const overlays = new WeakMap();
+
+    function createOverlay(){
+      const o = document.createElement('div');
+      o.className = 'modal-overlay';
+      o.tabIndex = -1;
+      return o;
+    }
+
+    window.showModal = function(el, opts){
+      if (!el) return;
+      opts = opts || {};
+      try{
+        // if already shown, no-op
+        if (!el.hasAttribute('hidden')) return;
+        // overlay if requested (default true for center dialogs)
+        const needOverlay = opts.overlay !== false;
+        let overlay = null;
+        if (needOverlay){
+          overlay = createOverlay();
+          document.body.appendChild(overlay);
+          // force reflow then show
+          void overlay.offsetWidth;
+          overlay.classList.add('show');
+          overlays.set(el, overlay);
+        }
+
+        // prepare dialog animation classes
+        el.removeAttribute('hidden');
+        el.classList.add('dialog-enter');
+        // ensure centered transform origin preserved if help-panel uses translate(-50%,-50%)
+        void el.offsetWidth;
+        el.classList.add('dialog-enter-active');
+
+        // focus management: focus first focusable or the element itself
+        const focusable = el.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        (focusable || el).focus?.();
+
+        // bind escape to close
+        const escHandler = (e)=>{ if (e.key === 'Escape') window.hideModal(el); };
+        el.__escHandler = escHandler;
+        document.addEventListener('keydown', escHandler);
+      }catch(e){ console.error('[showModal]', e); }
+    };
+
+    window.hideModal = function(el){
+      if (!el) return;
+      try{
+        // if already hidden, no-op
+        if (el.hasAttribute('hidden')) return;
+        // overlay handling
+        const overlay = overlays.get(el);
+        if (overlay){
+          overlay.classList.remove('show');
+          setTimeout(()=>{ try{ overlay.remove(); }catch(_){} }, 260);
+          overlays.delete(el);
+        }
+
+        // animate out
+        el.classList.remove('dialog-enter','dialog-enter-active');
+        el.classList.add('dialog-exit');
+        // force reflow
+        void el.offsetWidth;
+        el.classList.add('dialog-exit-active');
+        setTimeout(()=>{
+          try{ el.classList.remove('dialog-exit','dialog-exit-active'); }catch(_){}
+          try{ el.setAttribute('hidden',''); }catch(_){}
+        }, 280);
+
+        // remove escape handler
+        if (el.__escHandler){ document.removeEventListener('keydown', el.__escHandler); el.__escHandler = null; }
+      }catch(e){ console.error('[hideModal]', e); }
+    };
+
+    // wire quick close buttons globally: elements with .quick-panel-close or .help-panel-close
+    document.addEventListener('click', (e)=>{
+      const c = e.target.closest('.quick-panel-close, .help-panel-close');
+      if (!c) return;
+      const parent = c.closest('.quick-panel, .help-panel');
+      if (parent) window.hideModal(parent);
+    });
+  })();
+
+  // Button micro-interactions: press animation and toggle-check behavior
+  (function(){
+    document.addEventListener('click', (e)=>{
+      const btn = e.target.closest('button[data-toggle-check], button.btn-toggle-check');
+      if (!btn) return;
+      try{
+        // quick press animation
+        btn.classList.add('btn-press');
+        setTimeout(()=> btn.classList.remove('btn-press'), 160);
+
+        // toggle check state if requested
+        const wantsToggle = btn.hasAttribute('data-toggle-check') || btn.classList.contains('btn-toggle-check');
+        if (!wantsToggle) return;
+        const isChecked = btn.classList.toggle('checked');
+        btn.setAttribute('aria-pressed', isChecked ? 'true' : 'false');
+        // ensure a .checkmark element exists
+        let ck = btn.querySelector('.checkmark');
+        if (!ck){
+          ck = document.createElement('span');
+          ck.className = 'checkmark';
+          ck.setAttribute('aria-hidden','true');
+          // Inline minimal SVG check icon
+          ck.innerHTML = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M20 6 L9 17 L4 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+          btn.appendChild(ck);
+        }
+      }catch(err){ console.error('[btn-toggle]', err); }
+    }, true);
+  })();
+
+  // ===== Motion & micro-interaction utilities =====
+  (function(){
+    const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Ripple: attach to buttons and elements with .ripple-target
+    window.__attachRipple = function(root=document){
+      if (prefersReduced) return;
+      root.addEventListener('pointerdown', (ev)=>{
+        try{
+          const el = ev.target.closest('button, .btn, .ripple-target');
+          if (!el) return;
+          const style = getComputedStyle(el);
+          if (style.position === 'static') el.style.position = 'relative';
+          el.style.overflow = 'hidden';
+          const rect = el.getBoundingClientRect();
+          const size = Math.max(rect.width, rect.height) * 1.2;
+          const span = document.createElement('span');
+          span.className = 'ripple';
+          const x = ev.clientX - rect.left - size/2;
+          const y = ev.clientY - rect.top - size/2;
+          span.style.width = span.style.height = size + 'px';
+          span.style.left = x + 'px';
+          span.style.top = y + 'px';
+          el.appendChild(span);
+          span.addEventListener('animationend', ()=> { try{ span.remove(); }catch(_){} }, { once:true });
+        }catch(e){ console.error('[ripple]', e); }
+      }, true);
+    };
+
+    // Toast API: create/dismiss simple toasts
+    window.__toastContainer = null;
+    window.__showToast = function(text, opts){
+      opts = opts || {};
+      const timeout = typeof opts.timeout === 'number' ? opts.timeout : 3500;
+      try{
+        if (!window.__toastContainer){
+          const c = document.createElement('div');
+          c.className = 'app-toast-container';
+          document.body.appendChild(c);
+          window.__toastContainer = c;
+        }
+        const t = document.createElement('div');
+        t.className = 'app-toast';
+        if (opts.ariaLive) t.setAttribute('aria-live','polite');
+        t.textContent = String(text || '');
+        window.__toastContainer.appendChild(t);
+        // trigger show
+        requestAnimationFrame(()=> t.classList.add('show'));
+        const timer = setTimeout(()=>{ t.classList.remove('show'); setTimeout(()=> t.remove(), 260); }, timeout);
+        t.dismiss = ()=> { clearTimeout(timer); t.classList.remove('show'); setTimeout(()=> t.remove(), 200); };
+        return t;
+      }catch(e){ console.error('[toast]', e); }
+    };
+
+    // Reveal init: IntersectionObserver driven
+    window.__initReveal = function(root=document){
+      try{
+        if (prefersReduced){
+          root.querySelectorAll('.reveal').forEach(el=> el.classList.add('is-visible'));
+          return;
+        }
+        const obs = new IntersectionObserver((entries)=>{
+          entries.forEach(ent=>{
+            if (ent.isIntersecting) ent.target.classList.add('is-visible');
+          });
+        }, { threshold: 0.12 });
+        root.querySelectorAll('.reveal').forEach(el=> obs.observe(el));
+      }catch(e){ console.error('[reveal]', e); }
+    };
+
+    // Auto init on DOM ready
+    if (document.readyState === 'loading'){
+      document.addEventListener('DOMContentLoaded', ()=>{ window.__attachRipple(); window.__initReveal(); });
+    } else {
+      window.__attachRipple(); window.__initReveal();
+    }
+  })();
+
   // ====== ローカルフォールバック用 簡易DB（GAS以外での動作確認） ======
   const mock = (function(){
     const today = ()=> new Date().toISOString().slice(0,10);
@@ -661,6 +896,8 @@ alert('app.js loaded');
               }
             };
           }
+                // run emoji → feather replacer on initial render
+                __safeCall(window.__runEmojiToFeatherReplacer);
           case 'downloadMonthlySales': {
             const param = args[0];
             const ym = (param && typeof param === 'object') ? String(param.month||'') : String(param||'');
@@ -1702,6 +1939,85 @@ alert('app.js loaded');
     if (ui.visitDate) ui.visitDate.valueAsDate = new Date();
   }
 
+  // Emoji → Feather replacer utility
+  // Scans text nodes under a root node and replaces configured emoji with
+  // <i data-feather="..."></i> placeholders, then calls feather.replace().
+  function runEmojiToFeatherReplacer(root){
+    try{
+      if (!root) root = document.body;
+      const map = {
+        '📌': 'map-pin',
+        '🔄': 'rotate-cw',
+        '🔁': 'rotate-cw',
+        '📘': 'book',
+        '💹': 'trending-up',
+        '❔': 'help-circle',
+        '🔍': 'search',
+        '🐾': 'heart' // fallback for pet-related marker (Feather has no paw)
+      };
+
+      const emojis = Object.keys(map).map(e => e);
+      if (!emojis.length) return;
+
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false);
+      const nodes = [];
+      while(walker.nextNode()){
+        const n = walker.currentNode;
+        if (!n || !n.nodeValue) continue;
+        // quick check: contain any configured emoji
+        for (let i=0;i<emojis.length;i++){
+          if (n.nodeValue.indexOf(emojis[i]) !== -1){ nodes.push(n); break; }
+        }
+      }
+
+      nodes.forEach(textNode => {
+        if (!textNode.parentNode) return;
+        let txt = textNode.nodeValue;
+        const frag = document.createDocumentFragment();
+        // replace all occurrences in a single pass
+        const parts = [];
+        let cursor = 0;
+        while(cursor < txt.length){
+          let matchIdx = -1;
+          let matchEmoji = null;
+          for (const em of emojis){
+            const idx = txt.indexOf(em, cursor);
+            if (idx !== -1 && (matchIdx === -1 || idx < matchIdx)){
+              matchIdx = idx; matchEmoji = em;
+            }
+          }
+          if (matchIdx === -1){ parts.push({text: txt.slice(cursor)}); break; }
+          if (matchIdx > cursor) parts.push({text: txt.slice(cursor, matchIdx)});
+          parts.push({emoji: matchEmoji});
+          cursor = matchIdx + (matchEmoji ? matchEmoji.length : 1);
+        }
+
+        parts.forEach(p => {
+          if (p.text) frag.appendChild(document.createTextNode(p.text));
+          if (p.emoji){
+            const iconName = map[p.emoji] || 'circle';
+            const iel = document.createElement('i');
+            iel.setAttribute('data-feather', iconName);
+            iel.className = 'icon';
+            // keep a small accessible label
+            iel.setAttribute('aria-hidden', 'true');
+            frag.appendChild(iel);
+          }
+        });
+
+        textNode.parentNode.replaceChild(frag, textNode);
+      });
+
+      if (typeof feather !== 'undefined' && feather && typeof feather.replace === 'function'){
+        try{ feather.replace(); }catch(e){ console.debug('feather.replace failed', e); }
+      }
+
+    }catch(e){ console.error('emoji replacer error', e); }
+  }
+
+  // expose for on-demand calls and tests
+  window.__runEmojiToFeatherReplacer = runEmojiToFeatherReplacer;
+
   // Initialize role preset UI and handlers
   function initRolePresetsUI(){
     if (!ui.roleSelector) return;
@@ -2291,7 +2607,7 @@ alert('app.js loaded');
       groups.set(type, bucket);
     });
       const order = [
-        { type:'PET', label:'ドッグケア（犬）', icon:'🐾' },
+        { type:'PET', label:'ドッグケア（犬）', icon:'heart' },
         { type:'HUMAN', label:'ビューティーケア（人）', icon:'💆' }
       ];
     const html = order.map(group=>{
@@ -2602,12 +2918,52 @@ alert('app.js loaded');
   function wireTabs(){ (ui.navButtons||[]).forEach(btn => btn.addEventListener('click', () => selectTab(btn.dataset.tab))); }
   function selectTab(name){
     if (name === 'pet' && isHumanStore()) name = 'customer';
-    (ui.navButtons||[]).forEach(b=> b.classList.remove('active'));
-    ui.panes.forEach(p=> p.classList.remove('active'));
     const btn = document.querySelector(`.nav-icon[data-tab="${name}"]`);
-    const pane = byId('tab-' + name);
-    if (btn) btn.classList.add('active');
-    if (pane) pane.classList.add('active');
+    const newPane = byId('tab-' + name);
+    const currentPane = document.querySelector('.tab-pane.active');
+
+    // update nav buttons (immediate)
+    (ui.navButtons||[]).forEach(b=> b.classList.toggle('active', b === btn));
+
+    // If same pane, just trigger any lazily-loaded data and return
+    if (currentPane === newPane){
+      if (name==='calendar'){ __safeCall(populateCalendarDropdowns); __safeCall(listReservations); }
+      if (name==='directory'){ ensureDirectoryLoaded(); }
+      if (name==='merch'){ ensureMerchLoaded(); }
+      if (name==='events'){ ensureEventsLoaded(); }
+      if (name==='ops'){ loadOpsSnapshot(); }
+      if (name==='billing'){ __safeCall(ensureBillingLoaded); ensureAccountingBreakdown(); }
+      if (name==='notes'){ __safeCall(listStaffNotes); }
+      if (name==='board'){ __safeCall(reloadTickets); }
+      if (name==='settings'){ showSettingsPane('store'); }
+      return;
+    }
+
+    // animation timing (ms) - keep within 200-400ms
+    const dur = 340;
+
+    // determine direction from pane ordering (left/right) when possible
+    let direction = 'up';
+    try{
+      if (ui.panes && Array.isArray(ui.panes) && currentPane && newPane){
+        const ci = ui.panes.indexOf(currentPane);
+        const ni = ui.panes.indexOf(newPane);
+        if (ci >= 0 && ni >= 0){ direction = ni < ci ? 'left' : (ni > ci ? 'right' : 'up'); }
+      }
+    }catch(e){ /* ignore */ }
+
+    // clear any in-progress timers on panes
+    try{ if (newPane?.__animTimer){ clearTimeout(newPane.__animTimer); newPane.__animTimer = null; } }catch(e){}
+    try{ if (currentPane?.__animTimer){ clearTimeout(currentPane.__animTimer); currentPane.__animTimer = null; } }catch(e){}
+
+    // delegate to the shared animator (adds/removes classes and performs cleanup)
+    try{ __animateTabTransition(newPane, currentPane, direction, { duration: dur }); }catch(e){ console.error('[selectTab.animate]', e); }
+
+    // attach simple guard timers so rapid navigation clears previous transitions
+    const guard = setTimeout(()=>{ try{ if (newPane) newPane.__animTimer = null; if (currentPane) currentPane.__animTimer = null; }catch(_){ } }, dur + 60);
+    if (newPane) newPane.__animTimer = guard; else if (currentPane) currentPane.__animTimer = guard;
+
+    // trigger lazy loaders for the requested pane
     if (name==='calendar'){ __safeCall(populateCalendarDropdowns); __safeCall(listReservations); }
     if (name==='directory'){ ensureDirectoryLoaded(); }
     if (name==='merch'){ ensureMerchLoaded(); }
@@ -4668,7 +5024,8 @@ function renderAvailList(slots, ctx){
       const ul = el('div',{}); 
       bundle.pets.forEach(p=>{
         ul.appendChild(el('div',{},[
-          `🐾 ${p.Name}（${p.Breed||''}） `,
+          el('i',{class:'icon','data-feather':'heart','aria-hidden':'true'},[]),
+          ` ${p.Name}（${p.Breed||''}） `,
           el('span',{class:'idpill'},[`PID:${p.PetID||''}`])
         ]));
       });
