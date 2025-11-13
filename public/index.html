@@ -25,7 +25,7 @@
   <div class="header-actions">
     <div class="header-status" id="headerStatus">
       <button type="button" class="status-button has-tooltip" id="btnQuickReservations" data-tooltip="本日の予約サマリー" aria-controls="reservationPanel" aria-expanded="false">
-        <span class="status-icon" aria-hidden="true"><i data-feather="calendar" class="icon" aria-hidden="true"></i></span>
+        <span class="status-icon" aria-hidden="true">📅</span>
         <span class="status-text">
           <span class="status-title">今日の予約</span>
           <span class="status-value" id="todayReservationCount">0件</span>
@@ -33,7 +33,7 @@
         </span>
       </button>
       <button type="button" class="status-button has-tooltip" id="btnQuickNotes" data-tooltip="スタッフ連絡のサマリー" aria-controls="staffNotesPanel" aria-expanded="false">
-        <span class="status-icon" aria-hidden="true"><i data-feather="bookmark" class="icon" aria-hidden="true"></i></span>
+        <span class="status-icon" aria-hidden="true">🔖</span>
         <span class="status-text">
           <span class="status-title">スタッフ連絡事項</span>
           <span class="status-value" id="staffNotesSummaryCount">0件</span>
@@ -42,19 +42,19 @@
       </button>
     </div>
     <nav class="quick-nav" aria-label="メインメニュー">
-        <button type="button" class="nav-icon has-tooltip active" data-tab="home" aria-label="ホーム" title="ホーム" data-tooltip="ホーム"><i data-feather="home" class="icon" aria-hidden="true"></i></button>
-        <button type="button" class="nav-icon has-tooltip" data-tab="record" aria-label="カルテ検索" title="カルテ検索" data-tooltip="カルテ検索"><i data-feather="search" class="icon" aria-hidden="true"></i></button>
-        <button type="button" class="nav-icon has-tooltip" data-tab="directory" aria-label="顧客・会員" title="顧客・会員" data-tooltip="顧客・会員"><i data-feather="users" class="icon" aria-hidden="true"></i></button>
-        <button type="button" class="nav-icon has-tooltip" data-tab="customer" aria-label="お客様登録" title="お客様登録" data-tooltip="お客様登録"><i data-feather="user" class="icon" aria-hidden="true"></i></button>
-  <button type="button" class="nav-icon has-tooltip pet-only" data-tab="pet" aria-label="ご愛犬登録" title="ご愛犬登録" data-tooltip="ご愛犬登録"><i data-feather="heart" class="icon" aria-hidden="true"></i></button>
-        <button type="button" class="nav-icon has-tooltip" data-tab="calendar" aria-label="予約" title="予約" data-tooltip="予約"><i data-feather="calendar" class="icon" aria-hidden="true"></i></button>
-        <button type="button" class="nav-icon has-tooltip" data-tab="merch" aria-label="物販・在庫" title="物販・在庫" data-tooltip="物販・在庫"><i data-feather="shopping-bag" class="icon" aria-hidden="true"></i></button>
-        <button type="button" class="nav-icon has-tooltip" data-tab="events" aria-label="イベント管理" title="イベント管理" data-tooltip="イベント管理"><i data-feather="calendar" class="icon" aria-hidden="true"></i></button>
-        <button type="button" class="nav-icon has-tooltip" data-tab="ops" aria-label="オペレーションハブ" title="オペレーションハブ" data-tooltip="オペレーションハブ"><i data-feather="compass" class="icon" aria-hidden="true"></i></button>
-        <button type="button" class="nav-icon has-tooltip" data-tab="billing" aria-label="売上・請求" title="売上・請求" data-tooltip="売上・請求"><i data-feather="dollar-sign" class="icon" aria-hidden="true"></i></button>
-        <button type="button" class="nav-icon has-tooltip" data-tab="notes" aria-label="スタッフ連絡事項" title="スタッフ連絡事項" data-tooltip="スタッフ連絡"><i data-feather="bookmark" class="icon" aria-hidden="true"></i></button>
-        <button type="button" class="nav-icon has-tooltip" data-tab="board" aria-label="申請/変更" title="申請/変更" data-tooltip="申請・改善"><i data-feather="file-text" class="icon" aria-hidden="true"></i></button>
-        <button type="button" class="nav-icon has-tooltip" data-tab="settings" aria-label="設定" title="設定" data-tooltip="設定"><i data-feather="settings" class="icon" aria-hidden="true"></i></button>
+        <button type="button" class="nav-icon has-tooltip active" data-tab="home" aria-label="ホーム" title="ホーム" data-tooltip="ホーム">🏠</button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="record" aria-label="カルテ検索" title="カルテ検索" data-tooltip="カルテ検索">🔍</button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="directory" aria-label="顧客・会員" title="顧客・会員" data-tooltip="顧客・会員">👥</button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="customer" aria-label="お客様登録" title="お客様登録" data-tooltip="お客様登録">👤</button>
+  <button type="button" class="nav-icon has-tooltip pet-only" data-tab="pet" aria-label="ご愛犬登録" title="ご愛犬登録" data-tooltip="ご愛犬登録">🐾</button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="calendar" aria-label="予約" title="予約" data-tooltip="予約">📅</button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="merch" aria-label="物販・在庫" title="物販・在庫" data-tooltip="物販・在庫">🛍️</button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="events" aria-label="イベント管理" title="イベント管理" data-tooltip="イベント管理">🎪</button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="ops" aria-label="オペレーションハブ" title="オペレーションハブ" data-tooltip="オペレーションハブ">🧭</button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="billing" aria-label="売上・請求" title="売上・請求" data-tooltip="売上・請求">💰</button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="notes" aria-label="スタッフ連絡事項" title="スタッフ連絡事項" data-tooltip="スタッフ連絡">📋</button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="board" aria-label="申請/変更" title="申請/変更" data-tooltip="申請・改善">📝</button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="settings" aria-label="設定" title="設定" data-tooltip="設定">⚙️</button>
     </nav>
     <div class="header-utilities">
       <div class="global-search" id="globalSearch">
@@ -70,12 +70,12 @@
       </div>
       <div class="sync-control">
         <button type="button" class="sync-button has-tooltip" id="btnSyncNow" aria-label="スプレッドシートから最新データを読み込み" data-tooltip="スプレッドシートから最新データを読み込み">
-          <i data-feather="rotate-cw" class="icon" aria-hidden="true"></i>
+          🔄
           <span class="label">最新に更新</span>
         </button>
         <span class="sync-status" id="syncStatus" role="status" aria-live="polite"></span>
       </div>
-  <button type="button" class="help-icon has-tooltip" id="btnHelp" aria-haspopup="dialog" aria-controls="helpPanel" aria-label="使い方ガイド" title="使い方ガイド" data-tooltip="使い方ガイド"><i data-feather="help-circle" class="icon" aria-hidden="true"></i></button>
+  <button type="button" class="help-icon has-tooltip" id="btnHelp" aria-haspopup="dialog" aria-controls="helpPanel" aria-label="使い方ガイド" title="使い方ガイド" data-tooltip="使い方ガイド">❓</button>
     </div>
   </div>
 </header>

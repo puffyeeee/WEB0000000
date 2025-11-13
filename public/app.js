@@ -312,7 +312,7 @@ alert('app.js loaded');
       }catch(e){ console.error('[saveComplete]', e); }
     };
 
-    // Auto init on DOM ready
+    // Auto init on DOM ready - native emoji, no replacement needed
     if (document.readyState === 'loading'){
       document.addEventListener('DOMContentLoaded', ()=>{ 
         window.__attachRipple(); 
@@ -960,7 +960,7 @@ alert('app.js loaded');
             };
           }
                 // run emoji → feather replacer on initial render
-                __safeCall(window.__runEmojiToFeatherReplacer);
+                // Native emoji used directly - no replacement needed
     __safeCall(window.__initCardEntrance); // trigger card entrance for any dynamically loaded content
           case 'downloadMonthlySales': {
             const param = args[0];
@@ -2079,8 +2079,8 @@ alert('app.js loaded');
     }catch(e){ console.error('emoji replacer error', e); }
   }
 
-  // expose for on-demand calls and tests
-  window.__runEmojiToFeatherReplacer = runEmojiToFeatherReplacer;
+  // Native OS emoji support - no custom replacement needed
+  window.__runEmojiToFeatherReplacer = function(){ /* disabled for native emoji */ };
 
   // Initialize role preset UI and handlers
   function initRolePresetsUI(){
@@ -2677,7 +2677,7 @@ alert('app.js loaded');
       groups.set(type, bucket);
     });
       const order = [
-        { type:'PET', label:'ドッグケア（犬）', icon:'heart' },
+        { type:'PET', label:'ドッグケア（犬）', icon:'🐾' },
         { type:'HUMAN', label:'ビューティーケア（人）', icon:'💆' }
       ];
     const html = order.map(group=>{

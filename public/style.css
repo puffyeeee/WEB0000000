@@ -373,7 +373,7 @@
     /* Icon sizing and alignment: encourage SVG icons over emoji */
   .icon, .emoji, .nav-icon > .icon{ display:inline-flex; align-items:center; justify-content:center; font-size:1.05rem; line-height:1; color:var(--brand-ink); }
   /* Ensure Feather SVGs render as thin-stroke icons and inherit color */
-  .icon svg{ width:1.2em; height:1.2em; display:block; stroke:currentColor; stroke-width:1.6; fill:none; }
+  /* Native emoji styling - no SVG icon overrides needed */\n  .emoji{ font-family:\"Apple Color Emoji\",\"Segoe UI Emoji\",\"Noto Color Emoji\",sans-serif; font-style:normal; }
   .card{position:relative; background:linear-gradient(155deg, rgba(255,255,255,.95), rgba(255,255,255,.76)); border:1px solid var(--glass-border); border-radius:var(--radius); box-shadow:var(--shadow); padding:calc(var(--pad) + 6px); margin:0; backdrop-filter:blur(12px); overflow:hidden; }
     .section-toolbar{display:flex; align-items:center; justify-content:space-between; gap:18px; flex-wrap:wrap; margin-bottom:18px; }
     .section-title{display:flex; align-items:center; gap:12px; font-weight:800; font-size:20px; color:var(--brand-ink); letter-spacing:.35px; text-transform:uppercase; }
