@@ -15,8 +15,8 @@
 <header>
   <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
     <h1>Unite</h1>
-    <div class="store-switcher" id="storeSwitcher">
-      <span class="caption">店舗</span>
+    <div class="store-switcher" id="storeSwitcher" style="display:none;">
+      <span class="caption" style="display:none;">店舗</span>
       <div class="store-groups" id="storeGroups"></div>
       <select id="storeSelect" aria-label="店舗を選択" class="sr-only" tabindex="-1"></select>
       <div class="store-meta" id="storeMeta"></div>
@@ -1357,7 +1357,7 @@
       <input type="hidden" id="storeId">
       <div class="grid">
         <label>店舗名
-          <input type="text" id="storeName" placeholder="例：Pawfect One 表参道店">
+          <input type="text" id="storeName" placeholder="例：表参道店">
         </label>
         <label class="field-sm">店舗種別
           <select id="storeType">

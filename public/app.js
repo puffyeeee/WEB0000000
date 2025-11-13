@@ -2654,7 +2654,13 @@ alert('app.js loaded');
 
   function renderStoreGroups(){
     if (!ui.storeGroups) return;
-    const selectableStores = getSelectableStores();
+    // Store groups hidden for unified brand display
+    // Internal store management still functions for data filtering
+    ui.storeGroups.innerHTML = '';
+    return;
+    
+    // Original functionality preserved below for reference
+    // const selectableStores = getSelectableStores();
     if (!stores.length){
       ui.storeGroups.innerHTML = '<div class="muted-text">店舗がまだ登録されていません。</div>';
       return;
@@ -2691,6 +2697,16 @@ alert('app.js loaded');
 
   function populateStoreSelect(options={}){
     if (!ui.storeSelect) return;
+    
+    // Store switching restricted to admin users only
+    const currentUserRole = getCurrentUserRole(); // To be implemented
+    const isAdmin = currentUserRole === 'admin' || currentUserRole === 'manager';
+    if (!isAdmin) {
+      // Hide store selection for non-admin users
+      ui.storeSelect.style.display = 'none';
+      return;
+    }
+    
     const selectableStores = getSelectableStores();
     const prev = options.keepSelection ? (currentStore?.StoreID || ui.storeSelect.value) : (currentStore?.StoreID || '');
     if (!selectableStores.length){
@@ -2977,6 +2993,22 @@ alert('app.js loaded');
       });
     }
   }
+
+  // User role management - to be integrated with authentication system
+  function getCurrentUserRole(){
+    // TODO: Integrate with actual authentication/role system
+    // For now, return 'staff' to restrict store switching
+    // Admin users should have 'admin' or 'manager' role
+    return localStorage.getItem('userRole') || 'staff';
+  }
+  
+  function setUserRole(role){
+    localStorage.setItem('userRole', role);
+  }
+  
+  // Expose for debugging/testing
+  window.setUserRole = setUserRole;
+  window.getCurrentUserRole = getCurrentUserRole;
 
   // ====== タブ ======
   function wireTabs(){ (ui.navButtons||[]).forEach(btn => btn.addEventListener('click', () => selectTab(btn.dataset.tab))); }

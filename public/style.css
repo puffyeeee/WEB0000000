@@ -82,7 +82,7 @@
       -webkit-backdrop-filter:blur(10px) saturate(120%);
       box-shadow:var(--shadow-soft);
     }
-    .store-switcher{ display:flex; flex-direction:column; gap:12px; background:var(--surface-strong); border:1px solid var(--glass-border); border-radius:26px; padding:18px 20px; box-shadow:var(--shadow-soft); min-width:280px; position:relative; overflow:hidden; }
+    .store-switcher{ display:none !important; /* Hidden - unified brand display */ }
     .store-switcher::after{ content:""; position:absolute; inset:-60px auto auto -40px; width:180px; height:180px; background:radial-gradient(circle at center, rgba(99,102,241,.18), transparent 72%); z-index:0; }
     .store-switcher>*{ position:relative; z-index:1; }
     .store-switcher .caption{ font-weight:800; font-size:13px; color:var(--brand-ink); letter-spacing:.3px; text-transform:uppercase; }
