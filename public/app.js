@@ -255,11 +255,74 @@ alert('app.js loaded');
       }catch(e){ console.error('[reveal]', e); }
     };
 
+    // Enhanced notification system
+    window.__notificationContainer = null;
+    window.__showNotification = function(text, type='info', opts={}){
+      opts = opts || {};
+      const timeout = typeof opts.timeout === 'number' ? opts.timeout : 4000;
+      try{
+        if (!window.__notificationContainer){
+          const c = document.createElement('div');
+          c.className = 'notification-container';
+          document.body.appendChild(c);
+          window.__notificationContainer = c;
+        }
+        const n = document.createElement('div');
+        n.className = `notification ${type}`;
+        if (opts.ariaLive) n.setAttribute('aria-live','polite');
+        n.textContent = String(text || '');
+        window.__notificationContainer.appendChild(n);
+        // trigger show
+        requestAnimationFrame(()=> n.classList.add('show'));
+        const timer = setTimeout(()=>{ 
+          n.classList.remove('show'); 
+          setTimeout(()=> { try{ n.remove(); }catch(_){} }, 280); 
+        }, timeout);
+        n.dismiss = ()=> { clearTimeout(timer); n.classList.remove('show'); setTimeout(()=> { try{ n.remove(); }catch(_){} }, 280); };
+        return n;
+      }catch(e){ console.error('[notification]', e); }
+    };
+
+    // Card entrance animation
+    window.__initCardEntrance = function(root=document){
+      try{
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+          root.querySelectorAll('.card-entrance').forEach(el=> el.classList.add('is-visible'));
+          return;
+        }
+        const obs = new IntersectionObserver((entries)=>{
+          entries.forEach(ent=>{
+            if (ent.isIntersecting) ent.target.classList.add('is-visible');
+          });
+        }, { threshold: 0.1 });
+        root.querySelectorAll('.card-entrance').forEach(el=> obs.observe(el));
+      }catch(e){ console.error('[cardEntrance]', e); }
+    };
+
+    // Save completion animation
+    window.__triggerSaveComplete = function(button, opts={}){
+      if (!button) return;
+      try{
+        button.classList.add('save-complete','show-check');
+        const duration = opts.duration || 400;
+        setTimeout(()=>{
+          button.classList.remove('show-check');
+          setTimeout(()=> button.classList.remove('save-complete'), 100);
+        }, duration);
+      }catch(e){ console.error('[saveComplete]', e); }
+    };
+
     // Auto init on DOM ready
     if (document.readyState === 'loading'){
-      document.addEventListener('DOMContentLoaded', ()=>{ window.__attachRipple(); window.__initReveal(); });
+      document.addEventListener('DOMContentLoaded', ()=>{ 
+        window.__attachRipple(); 
+        window.__initReveal(); 
+        window.__initCardEntrance();
+      });
     } else {
-      window.__attachRipple(); window.__initReveal();
+      window.__attachRipple(); 
+      window.__initReveal();
+      window.__initCardEntrance();
     }
   })();
 
@@ -898,6 +961,7 @@ alert('app.js loaded');
           }
                 // run emoji → feather replacer on initial render
                 __safeCall(window.__runEmojiToFeatherReplacer);
+    __safeCall(window.__initCardEntrance); // trigger card entrance for any dynamically loaded content
           case 'downloadMonthlySales': {
             const param = args[0];
             const ym = (param && typeof param === 'object') ? String(param.month||'') : String(param||'');
@@ -4841,7 +4905,7 @@ function renderAvailList(slots, ctx){
     function draw(arr){
       box.innerHTML = '';
       arr.forEach(c=>{
-        const card = el('div',{class:'result-card', tabindex:'0'});
+        const card = el('div',{class:'result-card card-entrance', tabindex:'0'});
         const titleHtml = `${highlight(c.Name||'(名前なし)', q)} <span class="idpill">CID:${c.CustomerID||''}</span>`;
         const head = el('div',{class:'head'});
         head.appendChild(el('div',{},[ elFrag(`<div class="title">${titleHtml}</div>`), el('div',{class:'sub'},[c.Phone||c.Email||'']) ]));
@@ -4914,7 +4978,7 @@ function renderAvailList(slots, ctx){
     function draw(arr){
       box.innerHTML='';
       arr.forEach(p=>{
-        const card = el('div',{class:'result-card', tabindex:'0'});
+        const card = el('div',{class:'result-card card-entrance', tabindex:'0'});
         const titleHtml = `${highlight(p.PetName||p.Name||'(名前なし)', q)} <span class="idpill">PID:${p.PetID||''}</span>`;
         const head = el('div',{class:'head'});
         const sub1 = p.OwnerName ? `お客様: ${p.OwnerName}` : '';
@@ -5271,11 +5335,15 @@ function renderAvailList(slots, ctx){
       toggleBtn(ui.btnSaveVisit,true); msg(ui.visitMsg,'','保存中…');
       await callServer('createVisit', payload);
       msg(ui.visitMsg,'ok','記録を保存しました');
+      // Trigger save completion animation and notification
+      __safeCall(window.__triggerSaveComplete, ui.btnSaveVisit);
+      __safeCall(window.__showNotification, '来店記録を保存しました', 'success');
       // ★ 自動クリア（来店日だけは本日に再セット）
       clearVisitForm();
       await refreshVisits(currentCustomer.id);
     }catch(e){
       console.error(e); msg(ui.visitMsg,'err','保存に失敗しました: '+(e?.message||e));
+      __safeCall(window.__showNotification, '保存に失敗しました', 'error');
     }finally{ toggleBtn(ui.btnSaveVisit,false); }
   }
   async function ensureQuickReservations(options={}){

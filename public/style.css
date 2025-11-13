@@ -434,9 +434,12 @@
 
     /* Page transition tokens and classes: soft fade + slight slide for a calm feel */
     :root{
-      --page-transition-duration: 320ms; /* within 0.2 - 0.4s */
+      --page-transition-duration: 300ms; /* 0.3s as specified */
       --page-transition-ease: cubic-bezier(.2,.9,.2,1);
       --page-transition-distance: 8px;
+      --card-entrance-duration: 250ms; /* 0.25s for card float-up */
+      --button-press-duration: 150ms; /* 0.15s for button ripple+sink */
+      --save-complete-duration: 400ms; /* 0.4s for checkmark rotation */
     }
 
     /* Entering pane (start hidden below & transparent) */
@@ -461,9 +464,10 @@
     .tab-pane.pane-exit-right{ opacity:1; transform:none; display:flex !important; }
     .tab-pane.pane-exit-right.pane-exit-active{ opacity:0; transform:translateX(calc(var(--page-transition-distance) * -1)); transition: opacity var(--page-transition-duration) var(--page-transition-ease), transform var(--page-transition-duration) var(--page-transition-ease); pointer-events:none; }
 
-    /* Ripple effect for buttons (JS will inject .ripple elements) */
-    button, .btn { position:relative; overflow:hidden; }
-    .ripple{ position:absolute; border-radius:50%; background:rgba(255,255,255,.7); transform:scale(0); pointer-events:none; will-change:transform,opacity; animation: ripple-effect 520ms var(--page-transition-ease); }
+    /* Enhanced ripple effect for buttons with sink */
+    button, .btn { position:relative; overflow:hidden; transition: transform var(--button-press-duration) ease-out; }
+    button:active, .btn:active{ transform:scale(.96) translateY(1px); }
+    .ripple{ position:absolute; border-radius:50%; background:rgba(255,255,255,.7); transform:scale(0); pointer-events:none; will-change:transform,opacity; animation: ripple-effect var(--button-press-duration) ease-out; }
     @keyframes ripple-effect{ to{ transform:scale(4); opacity:0; } }
 
     /* Toast container and toast */
@@ -475,6 +479,30 @@
     .reveal{ opacity:0; transform:translateY(12px); transition: opacity 420ms var(--page-transition-ease), transform 420ms var(--page-transition-ease); will-change:opacity,transform; }
     .reveal.is-visible{ opacity:1; transform:none; }
 
+    /* Card entrance animation: float up from bottom */
+    .card-entrance{ opacity:0; transform:translateY(24px); transition: opacity var(--card-entrance-duration) var(--page-transition-ease), transform var(--card-entrance-duration) var(--page-transition-ease); will-change:opacity,transform; }
+    .card-entrance.is-visible{ opacity:1; transform:none; }
+
+    /* Enhanced button press animation */
+    .btn-press{ transform:scale(.96) translateY(1px); transition: transform var(--button-press-duration) ease-out; }
+    
+    /* Save completion checkmark rotation */
+    .save-complete{ position:relative; overflow:visible; }
+    .save-complete::after{ content:'✓'; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) rotate(0deg) scale(0); opacity:0; color:#16a34a; font-weight:bold; font-size:1.2em; transition: transform var(--save-complete-duration) cubic-bezier(.34,1.56,.64,1), opacity var(--save-complete-duration) ease; pointer-events:none; }
+    .save-complete.show-check::after{ transform:translate(-50%,-50%) rotate(360deg) scale(1); opacity:1; }
+
+    /* Moving background light animation */
+    body::before{ content:''; position:fixed; left:-50%; top:-50%; width:200%; height:200%; background:radial-gradient(circle at center, rgba(207,195,255,.08) 0%, transparent 60%); animation: gentle-light 20s ease-in-out infinite; pointer-events:none; z-index:-1; }
+    @keyframes gentle-light{ 0%,100%{ transform:translate(0,0) scale(1); } 25%{ transform:translate(10px,-15px) scale(1.05); } 50%{ transform:translate(-8px,12px) scale(.95); } 75%{ transform:translate(15px,8px) scale(1.02); } }
+
+    /* Enhanced notification system */
+    .notification-container{ position:fixed; bottom:80px; right:20px; display:flex; flex-direction:column; gap:12px; z-index:1300; pointer-events:none; }
+    .notification{ background:var(--glass-strong); border:1px solid var(--glass-border); padding:12px 16px; border-radius:12px; box-shadow:0 20px 50px -20px rgba(15,23,42,.25); color:var(--brand-ink); opacity:0; transform:translateY(20px) scale(.94); transition: opacity 280ms var(--page-transition-ease), transform 280ms var(--page-transition-ease); pointer-events:auto; max-width:320px; }
+    .notification.show{ opacity:1; transform:none; }
+    .notification.success{ border-left:4px solid #16a34a; }
+    .notification.error{ border-left:4px solid #dc2626; }
+    .notification.info{ border-left:4px solid #2563eb; }
+
     /* Accessibility: respect prefers-reduced-motion */
     @media (prefers-reduced-motion: reduce){
       .tab-pane.pane-enter.pane-enter-active,
@@ -484,8 +512,12 @@
       .tab-pane.pane-enter-right.pane-enter-active,
       .tab-pane.pane-exit-right.pane-exit-active,
       .app-toast,
-      .reveal{ transition: none !important; animation: none !important; }
-      .ripple{ display:none !important; }
+      .reveal,
+      .card-entrance,
+      .notification{ transition: none !important; animation: none !important; }
+      .ripple,
+      body::before{ display:none !important; }
+      .save-complete::after{ transition: opacity .1s ease !important; transform:translate(-50%,-50%) !important; }
     }
 
     /* Button press micro-animation and checkmark toggle */
