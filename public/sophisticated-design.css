@@ -90,17 +90,19 @@
     rgba(248,250,252,0.95) 100%) !important;
   border: 1px solid rgba(226,232,240,0.6) !important;
   border-radius: 24px !important;
-  padding: 24px 20px !important;
+  padding: 32px 24px !important;
   position: relative !important;
-  overflow: hidden !important;
+  overflow: visible !important;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
   box-shadow: 
     0 20px 40px -16px rgba(71,85,105,0.1),
     0 0 0 1px rgba(255,255,255,0.8) inset !important;
-  aspect-ratio: 1 / 0.8 !important;
+  aspect-ratio: 1 / 0.6 !important;
   display: flex !important;
   flex-direction: column !important;
-  justify-content: space-between !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 16px !important;
 }
 
 .home-tile:hover {
@@ -113,16 +115,16 @@
 
 /* === Sophisticated Icon Design === */
 .home-tile .icon {
-  width: 56px !important;
-  height: 56px !important;
-  border-radius: 18px !important;
+  width: 72px !important;
+  height: 72px !important;
+  border-radius: 24px !important;
   background: linear-gradient(135deg, 
     rgba(99,102,241,0.1) 0%, 
     rgba(139,92,246,0.15) 100%) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  font-size: 28px !important;
+  font-size: 36px !important;
   color: #4338ca !important;
   box-shadow: 
     0 12px 24px -8px rgba(99,102,241,0.2),
@@ -163,21 +165,19 @@
 
 /* === Premium Typography === */
 .home-tile .label {
-  font-size: 16px !important;
+  font-size: 18px !important;
   font-weight: 800 !important;
   color: #0f172a !important;
   letter-spacing: 0.01em !important;
   line-height: 1.3 !important;
   margin: 0 !important;
+  text-align: center !important;
 }
 
-.home-tile .desc {
-  font-size: 13px !important;
-  color: #64748b !important;
-  line-height: 1.4 !important;
-  margin: 6px 0 0 !important;
-  font-weight: 500 !important;
-  flex: 1 !important;
+/* 説明文とバッジを非表示（ポップアップで表示） */
+.home-tile .desc,
+.home-tile .badge-note {
+  display: none !important;
 }
 
 .home-tile .badge-note {
@@ -198,9 +198,83 @@
   flex-shrink: 0 !important;
 }
 
-.home-tile .badge-note::before {
-  content: '✨';
+/* === Beautiful Tooltip System === */
+.home-tile-tooltip {
+  position: absolute;
+  bottom: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, 
+    rgba(15,23,42,0.95) 0%, 
+    rgba(30,41,59,0.95) 100%);
+  color: white;
+  padding: 16px 20px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  box-shadow: 
+    0 20px 40px -8px rgba(15,23,42,0.4),
+    0 0 0 1px rgba(148,163,184,0.2) inset;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000;
+  backdrop-filter: blur(12px);
+  min-width: 280px;
+  max-width: 320px;
+  text-align: left;
+  pointer-events: none;
+}
+
+.home-tile-tooltip::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid rgba(15,23,42,0.95);
+}
+
+.home-tile:hover .home-tile-tooltip {
+  opacity: 1;
+  visibility: visible;
+  bottom: -12px;
+}
+
+.tooltip-title {
+  font-weight: 700;
+  font-size: 15px;
+  color: #e2e8f0;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.tooltip-desc {
+  color: #cbd5e1;
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.tooltip-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(34,197,94,0.2);
+  border: 1px solid rgba(34,197,94,0.3);
+  border-radius: 12px;
   font-size: 12px;
+  font-weight: 600;
+  color: #6ee7b7;
+}
+
+.tooltip-badge::before {
+  content: '✨';
+  font-size: 11px;
 }
 
 /* === Gradient Effects for Priority Icons === */
