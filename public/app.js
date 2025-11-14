@@ -3629,6 +3629,10 @@ console.log('app.js loading...');
   }
 
   function listStaff(){
+    if (!ui.staffList) {
+      console.log('staffList element not found');
+      return;
+    }
     const arr = (lookups.staff||[]);
     ui.staffList.innerHTML = arr.length? arr.map(s=>`
       <div class="result-card">
@@ -4389,23 +4393,31 @@ function renderAvailList(slots, ctx){
 
   async function reloadTickets(){
     try{
+      if (!ui.ticketList) {
+        console.log('ticketList element not found');
+        return;
+      }
       const list = await callServer('listTickets');
-      ui.ticketList.innerHTML = (list && list.length)? list.map(t=>`
-        <div class="result-card">
-          <div class="head"><div class="title">[${escapeHtml(t.Category||'')}] ${escapeHtml(t.Title||'')}</div></div>
-          <div class="meta">
-            <div>関連ID: ${escapeHtml(t.Related || t.RelatedID || '-')}</div>
-            <div>担当: ${escapeHtml(t.Assignee||'-')}</div>
-            <div>作成: ${escapeHtml(t.CreatedAt||t.Datetime||'')}</div>
-            <div></div>
+      if (ui.ticketList) {
+        ui.ticketList.innerHTML = (list && list.length)? list.map(t=>`
+          <div class="result-card">
+            <div class="head"><div class="title">[${escapeHtml(t.Category||'')}] ${escapeHtml(t.Title||'')}</div></div>
+            <div class="meta">
+              <div>関連ID: ${escapeHtml(t.Related || t.RelatedID || '-')}</div>
+              <div>担当: ${escapeHtml(t.Assignee||'-')}</div>
+              <div>作成: ${escapeHtml(t.CreatedAt||t.Datetime||'')}</div>
+              <div></div>
+            </div>
+            <div style="margin-top:6px"><b>影響範囲:</b> ${escapeHtml(t.Impact||'-')}</div>
+            <div style="margin-top:6px"><b>内容:</b> ${escapeHtml(t.Desc || t.Description || '-')}</div>
           </div>
-          <div style="margin-top:6px"><b>影響範囲:</b> ${escapeHtml(t.Impact||'-')}</div>
-          <div style="margin-top:6px"><b>内容:</b> ${escapeHtml(t.Desc || t.Description || '-')}</div>
-        </div>
-      `).join('') : '申請はありません';
+        `).join('') : '申請はありません';
+      }
     }catch(e){
       console.error(e);
-      ui.ticketList.textContent = '申請一覧の取得に失敗しました';
+      if (ui.ticketList) {
+        ui.ticketList.textContent = '申請一覧の取得に失敗しました';
+      }
     }
   }
 
