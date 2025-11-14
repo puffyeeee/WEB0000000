@@ -6463,6 +6463,30 @@ function renderAvailList(slots, ctx){
 // 通知表示
  function showNotification(message, type = "info") {
   console.log(`${type.toUpperCase()}: ${message}`);
+  
+  // 簡易通知表示（既存システムに追加）
+  const notification = document.createElement('div');
+  notification.textContent = message;
+  notification.style.cssText = `
+    position: fixed; 
+    top: 20px; 
+    right: 20px; 
+    padding: 12px 20px; 
+    border-radius: 8px; 
+    color: white; 
+    font-weight: 500; 
+    z-index: 10000; 
+    font-family: var(--font-primary, sans-serif);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    background: ${type === 'error' ? '#ef4444' : type === 'success' ? '#22c55e' : '#3b82f6'};
+  `;
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    if (notification.parentNode) {
+      notification.parentNode.removeChild(notification);
+    }
+  }, 3000);
 }
 
   
