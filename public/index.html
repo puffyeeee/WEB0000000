@@ -59,17 +59,7 @@
                         </button>
                     </form>
                     
-                    <div style="text-align: center; margin-top: var(--unite-space-lg); padding-top: var(--unite-space-lg); border-top: 1px solid var(--unite-pearl);">
-                        <div style="margin-bottom: var(--unite-space-md); font-size: var(--unite-text-sm); color: var(--unite-graphite); line-height: 1.4;">
-                            <strong>🎆 デモアカウント</strong><br>
-                            メール: <code style="background: rgba(168, 241, 229, 0.1); padding: 2px 4px; border-radius: 3px; font-size: 0.85em;">demo@unite.gallery</code><br>
-                            パスワード: <code style="background: rgba(168, 241, 229, 0.1); padding: 2px 4px; border-radius: 3px; font-size: 0.85em;">unite2025</code>
-                        </div>
-                        <button type="button" id="demoLoginBtn" class="unite-btn unite-btn-outline" style="width: 100%;">
-                            <i data-feather="zap"></i>
-                            ワンクリックデモログイン
-                        </button>
-                    </div>
+
                 </div>
                 
                 <div class="unite-auth-content" id="googleAuth" style="display: none;">
@@ -469,22 +459,24 @@
                 
                 // Firebase認証監視は有効なFirebase設定がある場合のみ
                 if (typeof firebase !== 'undefined' && firebase.auth && firebaseApp && firebaseConfig !== null) {
-                    console.log('🔥 Firebase認証監視を開始');
+                    console.log('Firebase authentication monitoring started');
                     firebase.auth().onAuthStateChanged((user) => {
                         if (user) {
                             // User is signed in
-                            console.log('✓ Firebaseユーザーログイン検出:', user.email);
+                            console.log('Firebase user login detected:', user.email);
                             currentUser = user;
+                            window.currentUser = user;
                             showMainContent(user);
                         } else {
                             // User is signed out
-                            console.log('📝 Firebaseユーザーログアウト');
+                            console.log('Firebase user logout');
                             currentUser = null;
+                            window.currentUser = null;
                             showLoginScreen();
                         }
                     });
                 } else {
-                    console.log('📝 デモモード: Firebase認証の監視はスキップし、ログイン画面を表示');
+                    console.log('Demo mode: Firebase auth monitoring skipped, showing login screen');
                 }
                 
                 setupEventListeners();
@@ -509,13 +501,21 @@
         }
 
         function showMainContent(user) {
+            console.log('Showing main content for user:', user?.email);
+            
             const loginScreen = document.getElementById('loginScreen');
             const mainContent = document.getElementById('mainContent');
             const userDisplay = document.getElementById('userDisplayName');
             
             if (loginScreen && mainContent) {
+                // Force hide login screen
                 loginScreen.style.display = 'none';
+                loginScreen.style.visibility = 'hidden';
+                
+                // Force show main content
                 mainContent.style.display = 'block';
+                mainContent.style.visibility = 'visible';
+                mainContent.style.opacity = '1';
                 
                 // Update user display
                 if (userDisplay) {
@@ -526,8 +526,14 @@
                 // Add loaded animation
                 setTimeout(() => {
                     mainContent.classList.add('loaded');
+                    console.log('Main content animation completed');
                 }, 100);
+                
+                console.log('Screen switch completed successfully');
+            } else {
+                console.error('Required elements not found:', { loginScreen: !!loginScreen, mainContent: !!mainContent });
             }
+        }
         }
 
         function setupEventListeners() {
@@ -535,17 +541,17 @@
                 // Auth tab switching
                 const authTabs = document.querySelectorAll('.unite-auth-tab');
                 authTabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const targetTab = this.getAttribute('data-tab');
-                    document.querySelectorAll('.unite-auth-tab').forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    document.querySelectorAll('.unite-auth-content').forEach(content => {
-                        content.style.display = 'none';
+                    tab.addEventListener('click', function() {
+                        const targetTab = this.getAttribute('data-tab');
+                        document.querySelectorAll('.unite-auth-tab').forEach(t => t.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        document.querySelectorAll('.unite-auth-content').forEach(content => {
+                            content.style.display = 'none';
+                        });
+                        document.getElementById(targetTab + 'Auth').style.display = 'block';
                     });
-                    document.getElementById(targetTab + 'Auth').style.display = 'block';
                 });
-            });
 
                 // Email login form
                 const emailForm = document.getElementById('emailLoginForm');
@@ -564,13 +570,7 @@
                     });
                 }
 
-                // Demo login button
-                const demoBtn = document.getElementById('demoLoginBtn');
-                if (demoBtn) {
-                    demoBtn.addEventListener('click', function() {
-                        handleDemoLogin();
-                    });
-                }
+
 
                 // Logout button
                 const logoutBtn = document.getElementById('logoutBtn');
@@ -612,8 +612,8 @@
 
             // デモアカウントの場合は直接デモログインを実行
             if (email === 'demo@unite.gallery' && password === 'unite2025') {
-                console.log('🎆 デモアカウントでのログインを検出');
-                handleDemoLogin();
+                console.log('Demo account login detected');
+                showLoginError('Demo login has been disabled. Please use regular email authentication.');
                 return;
             }
 
@@ -627,7 +627,7 @@
                 firebaseConfig.apiKey.length > 30; // 有効なAPIキーは通常30文字以上
             
             if (isValidFirebaseConfig) {
-                console.log('🔥 有効なFirebase設定で認証を試みます');
+                console.log('Valid Firebase configuration found, attempting authentication');
                 firebase.auth().signInWithEmailAndPassword(email, password)
                     .then((userCredential) => {
                         // Success - onAuthStateChanged will handle UI update
@@ -636,37 +636,14 @@
                     })
                     .catch((error) => {
                         console.error('Firebase authentication error:', error);
-                        console.log('📝 Firebase認証エラー、デモモードにフォールバック');
+                        console.log('Firebase authentication error, falling back to demo mode');
                         
-                        // デモ関連情報の場合、デモログインを実行
-                        if (email === 'demo@unite.gallery' || email.includes('demo') || 
-                            email.includes('unite') || password === 'unite2025') {
-                            console.log('🎆 デモ関連情報でデモログインを実行');
-                            handleDemoLogin();
-                        } else {
-                            showAuthError('認証に失敗しました。\n\nデモアカウントを使用してください：\nメール: demo@unite.gallery\nパスワード: unite2025');
-                        }
+                        showAuthError('Authentication failed. Please check your email and password.');
                     });
             } else {
-                console.log('📝 Firebase設定が無効またはデモ環境 - デモモードで処理');
-                // デモモード - Firebaseリクエストを送信せずにシミュレーション
-                if (email && password) {
-                    console.log('🎆 デモモードでログインシミュレーション開始');
-                    setTimeout(() => {
-                        const mockUser = {
-                            email: email,
-                            displayName: email.includes('@') ? email.split('@')[0] : 'Demo User',
-                            uid: 'demo-user-' + Date.now()
-                        };
-                        currentUser = mockUser;
-                        window.currentUser = mockUser;
-                        showMainContent(mockUser);
-                        hideAuthError();
-                        console.log('✨ デモモードログイン成功:', mockUser.email);
-                    }, 800);
-                } else {
-                    showAuthError('メールアドレスとパスワードを入力してください');
-                }
+                console.log('Firebase configuration invalid or demo environment - demo mode processing');
+                // Authentication service not available
+                showAuthError('Authentication service is currently not available. Please contact support.');
             }
         }
 
@@ -686,32 +663,7 @@
             }
         }
 
-        function handleDemoLogin() {
-            console.log('🚀 デモログイン開始');
-            
-            // Demo mode - instant login
-            const mockUser = {
-                email: 'demo@unite.gallery',
-                displayName: 'Unite Gallery Demo User',
-                photoURL: null,
-                uid: 'demo-user-unite-gallery'
-            };
-            
-            // Set global authentication state
-            currentUser = mockUser;
-            window.currentUser = mockUser;
-            window.isAuthenticated = true;
-            
-            // Update app.js variables if available
-            if (typeof window.updateAuthState === 'function') {
-                window.updateAuthState(mockUser, true);
-            }
-            
-            hideAuthError();
-            showMainContent(mockUser);
-            
-            console.log('✨ Unite Pet Salon Galleryにデモユーザーでログイン成功');
-        }
+
 
         function handleLogout() {
             if (typeof firebase !== 'undefined' && firebase.auth && firebaseApp) {
