@@ -1,5 +1,23 @@
 console.log('app.js loading...');
 (function(){
+  // ====== モバイル表示モード自動設定 ======
+  function initMobileMode() {
+    const setDisplayMode = () => {
+      const isMobile = window.innerWidth <= 767;
+      document.documentElement.setAttribute('data-display-mode', isMobile ? 'mobile' : 'desktop');
+    };
+    
+    // 初期設定
+    setDisplayMode();
+    
+    // リサイズ時の更新
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(setDisplayMode, 100);
+    });
+  }
+  
   // ====== グローバルUI参照入れ物 ======
   const ui = {};
   const CORE_STORE_PRESET = [
@@ -7,6 +25,9 @@ console.log('app.js loading...');
     {StoreID:'TBL', Name:'TBL', Type:'HUMAN', Active:true, Sort:2, Color:'#fbbf24', Description:'ビューティーケア（人）'},
     {StoreID:'TBL-ACU', Name:'TBL(鍼灸)', Type:'HUMAN', Active:true, Sort:3, Color:'#f97316', Description:'ビューティーケア（人）/鍼灸'}
   ];
+  
+  // モバイルモード初期化
+  initMobileMode();
   (function(){
     // 未定義でも落ちないように no-op を注入
     const maybeFns = [
