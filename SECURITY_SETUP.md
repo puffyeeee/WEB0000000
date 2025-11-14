@@ -1,6 +1,7 @@
 # Firebase Authentication セキュリティ実装手順
 
 ## 🔐 概要
+
 この実装により、UIは誰でも閲覧可能ですが、すべての操作（データ読み書き、機能実行）は認証済みユーザー（あなたのみ）に制限されます。
 
 ## 🚀 実装手順
@@ -8,6 +9,7 @@
 ### 1. Firebase Console での設定
 
 #### 1.1 Authentication有効化
+
 1. [Firebase Console](https://console.firebase.google.com/) にアクセス
 2. プロジェクト「Unite」を選択
 3. **Authentication** → **Sign-in method** に移動
@@ -16,6 +18,7 @@
    - **Google**: 有効にして認証ドメインを設定
 
 #### 1.2 認証ユーザーの作成（あなた専用）
+
 1. **Authentication** → **Users** タブ
 2. **Add user** をクリック
 3. あなたのメールアドレスとパスワードを設定
@@ -24,6 +27,7 @@
 ### 2. Firestore・Database設定
 
 #### 2.1 セキュリティルール適用
+
 ```bash
 # プロジェクトディレクトリで実行
 firebase deploy --only firestore:rules
@@ -31,12 +35,14 @@ firebase deploy --only database
 ```
 
 #### 2.2 ルール確認
+
 - Firestore Rules: 認証ユーザーのみ読み書き可能
 - Realtime Database Rules: 認証ユーザーのみアクセス可能
 
 ### 3. Cloud Functions設定
 
 #### 3.1 Functions デプロイ
+
 ```bash
 cd functions
 npm install
@@ -45,6 +51,7 @@ firebase deploy --only functions
 ```
 
 #### 3.2 環境変数設定（機密情報保護）
+
 ```bash
 # フィードバック送信先メール設定
 firebase functions:config:set feedback.email="duffy.chocolate.aya@gmail.com"
@@ -57,6 +64,7 @@ firebase functions:config:set smtp.pass="your-smtp-pass"
 ### 4. フロントエンド設定
 
 #### 4.1 Firebase設定更新
+
 `public/app.js` の firebaseConfig を実際の値に更新：
 
 ```javascript
@@ -73,6 +81,7 @@ const firebaseConfig = {
 **注意**: これらは公開情報で機密情報ではありません。
 
 #### 4.2 デプロイ
+
 ```bash
 firebase deploy --only hosting
 ```
@@ -93,6 +102,7 @@ firebase deploy --only hosting
    - データの読み書きが可能
 
 3. **Cloud Functions テスト**:
+
    ```javascript
    // 未認証での関数呼び出し → エラー
    // 認証後の関数呼び出し → 成功
@@ -101,11 +111,13 @@ firebase deploy --only hosting
 ## 🔧 運用設定
 
 ### Google認証設定（推奨）
+
 1. **Google Cloud Console** で OAuth 2.0 設定
 2. 認証ドメインに `unite-e8567.firebaseapp.com` を追加
 3. あなたのGoogleアカウントでのログインを許可
 
 ### メール設定
+
 1. フィードバック機能用のメール設定
 2. SendGrid または Gmail API の設定（推奨）
 

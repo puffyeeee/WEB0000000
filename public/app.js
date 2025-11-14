@@ -5959,7 +5959,7 @@ function renderAvailList(slots, ctx){
 
 // Firebase configuration (環境変数で設定 - 機密情報なし)
  const firebaseConfig = {
-  apiKey: "AIzaSyBlS4UBKJkixm-C-6VEzEZh0uW6COpCgP8",
+  apiKey: "AIzaSyBdJG_kw5H7Hpu7sW9WDE6tFtGrvEs4ARY",
   authDomain: "unite-e8567.firebaseapp.com",
   projectId: "unite-e8567",
   storageBucket: "unite-e8567.firebasestorage.app",

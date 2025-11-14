@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Puffy App (Enhanced Results + New Tabs)</title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="mobile-overrides.css" />
-    <link rel="stylesheet" href="home-enhancements.css" />
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="mobile-overrides.css">
+    <link rel="stylesheet" href="home-enhancements.css">
+    <link rel="stylesheet" href="sophisticated-design.css">
       <!-- Feather icons for sophisticated line icon system -->
       <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js" defer></script>
       
@@ -20,12 +21,12 @@
       <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage-compat.js"></script>
       <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-functions-compat.js"></script>
 </head>
-<body style="visibility: hidden;">
+<body class="loading">
 <header>
-  <div class="brand-container" style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+  <div class="brand-container brand-layout">
     <h1>Unite</h1>
-    <div class="store-switcher" id="storeSwitcher" style="display:none;">
-      <span class="caption" style="display:none;">店舗</span>
+    <div class="store-switcher hidden" id="storeSwitcher">
+      <span class="caption hidden">店舗</span>
       <div class="store-groups" id="storeGroups"></div>
       <select id="storeSelect" aria-label="店舗を選択" class="sr-only" tabindex="-1"></select>
       <div class="store-meta" id="storeMeta"></div>
@@ -239,24 +240,24 @@
         <div class="home-shortcut-list">
           <button type="button" class="home-shortcut-btn" data-home-shortcut="1" data-action="open-reservations">
             <i data-feather="calendar" class="shortcut-icon icon" aria-hidden="true"></i>
-            <div class="shortcut-text">
+            <span class="shortcut-text">
               <span class="shortcut-title">今日の予約を確認</span>
               <span class="shortcut-desc">タイムラインを開いて状況を把握</span>
-            </div>
+            </span>
           </button>
           <button type="button" class="home-shortcut-btn" data-home-shortcut="1" data-tab="calendar">
             <i data-feather="plus" class="shortcut-icon icon" aria-hidden="true"></i>
-            <div class="shortcut-text">
+            <span class="shortcut-text">
               <span class="shortcut-title">新規予約を登録</span>
               <span class="shortcut-desc">空き枠チェックとリマインド送信</span>
-            </div>
+            </span>
           </button>
           <button type="button" class="home-shortcut-btn" data-home-shortcut="1" data-action="open-search">
             <i data-feather="search" class="shortcut-icon icon" aria-hidden="true"></i>
-            <div class="shortcut-text">
+            <span class="shortcut-text">
               <span class="shortcut-title">顧客・予約を検索</span>
               <span class="shortcut-desc">名前・電話・タグで横断検索</span>
-            </div>
+            </span>
           </button>
         </div>
       </div>
@@ -265,24 +266,24 @@
         <div class="home-shortcut-list">
           <button type="button" class="home-shortcut-btn" data-home-shortcut="1" data-tab="record" data-mode="owner">
             <i data-feather="users" class="shortcut-icon icon" aria-hidden="true"></i>
-            <div class="shortcut-text">
+            <span class="shortcut-text">
               <span class="shortcut-title">お客様カルテを開く</span>
               <span class="shortcut-desc">タグ・メモ・来店履歴を確認</span>
-            </div>
+            </span>
           </button>
           <button type="button" class="home-shortcut-btn pet-only" data-tab="record" data-mode="pet">
             <i data-feather="heart" class="shortcut-icon icon" aria-hidden="true"></i>
-            <div class="shortcut-text">
+            <span class="shortcut-text">
               <span class="shortcut-title">ご愛犬カルテを探す</span>
               <span class="shortcut-desc">写真付きの施術履歴をチェック</span>
-            </div>
+            </span>
           </button>
           <button type="button" class="home-shortcut-btn pet-only" data-tab="pet" data-pane="journal">
             <i data-feather="book" class="shortcut-icon icon" aria-hidden="true"></i>
-            <div class="shortcut-text">
+            <span class="shortcut-text">
               <span class="shortcut-title">記録ブックを更新</span>
               <span class="shortcut-desc">施術後のメモと写真を共有</span>
-            </div>
+            </span>
           </button>
         </div>
       </div>
@@ -291,24 +292,24 @@
         <div class="home-shortcut-list">
           <button type="button" class="home-shortcut-btn" data-home-shortcut="1" data-tab="ops">
             <i data-feather="compass" class="shortcut-icon icon" aria-hidden="true"></i>
-            <div class="shortcut-text">
+            <span class="shortcut-text">
               <span class="shortcut-title">オペレーションハブ</span>
               <span class="shortcut-desc">到着前の確認と受付準備</span>
-            </div>
+            </span>
           </button>
           <button type="button" class="home-shortcut-btn" data-home-shortcut="1" data-tab="notes">
             <i data-feather="bookmark" class="shortcut-icon icon" aria-hidden="true"></i>
-            <div class="shortcut-text">
+            <span class="shortcut-text">
               <span class="shortcut-title">スタッフ連絡を整理</span>
               <span class="shortcut-desc">ピン留めメモを一括で確認</span>
-            </div>
+            </span>
           </button>
           <button type="button" class="home-shortcut-btn" data-home-shortcut="1" data-tab="billing">
             <i data-feather="dollar-sign" class="shortcut-icon icon" aria-hidden="true"></i>
-            <div class="shortcut-text">
+            <span class="shortcut-text">
               <span class="shortcut-title">売上ダッシュボード</span>
               <span class="shortcut-desc">日別・月別の売上を把握</span>
-            </div>
+            </span>
           </button>
           <button type="button" class="home-shortcut-btn" data-home-shortcut="1" data-tab="merch">
             <i data-feather="shopping-bag" class="shortcut-icon icon" aria-hidden="true"></i>
@@ -891,13 +892,13 @@
           <select id="filterService"><option value="">すべて</option></select>
         </label>
         <label class="pet-only">既往歴
-          <input id="filterHealth" placeholder="例：ヘルニア">
+          <input type="text" id="filterHealth" placeholder="例：ヘルニア">
         </label>
         <label class="pet-only">アレルギー
-          <input id="filterAllergy" placeholder="例：小麦">
+          <input type="text" id="filterAllergy" placeholder="例：小麦">
         </label>
         <label class="pet-only">タグ
-          <input id="filterTag" placeholder="例：VIP・アレルギー持ち">
+          <input type="text" id="filterTag" placeholder="例：VIP・アレルギー持ち">
         </label>
         <label>メモに含む
           <input type="text" id="filterNotes" placeholder="キーワード">
@@ -934,7 +935,7 @@
       <div id="resultDetail" class="detail" style="display:none"></div>
 
       <div id="recordForm" class="form" style="display:none">
-        <h3 id="selectedCustomerName"></h3>
+        <h3 id="selectedCustomerName">お客様を選択してください</h3>
         <div class="grid">
           <label class="pet-only field-sm">ご愛犬名 <select id="petSelect"></select></label>
           <label>施術 <select id="serviceSelect"></select></label>
@@ -1334,8 +1335,8 @@
         <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
       </div>
       <div class="grid">
-        <label>施術ID <input id="svcId" placeholder="例:svcID0000"></label>
-        <label>施術名 <input id="svcName" placeholder="例:お客様+ご愛犬総合ケア 約140分"></label>
+        <label>施術ID <input type="text" id="svcId" placeholder="例:svcID0000"></label>
+        <label>施術名 <input type="text" id="svcName" placeholder="例:お客様+ご愛犬総合ケア 約140分"></label>
         <label class="field-sm">カテゴリ
           <select id="svcCat"><option value="">選択してください</option></select>
         </label>
@@ -1367,10 +1368,10 @@
       </div>
       <div id="staffForm">
         <div class="grid">
-          <label>氏名 <input id="stName" placeholder="例: 佐藤 花子"></label>
-          <label class="field-sm">役割 <input id="stRole" placeholder="例: セラピスト"></label>
-          <label class="field-sm">電話 <input id="stPhone" placeholder="090-xxxx-xxxx"></label>
-          <label class="field-sm">メール <input id="stEmail" placeholder="example@mail.jp"></label>
+          <label>氏名 <input type="text" id="stName" placeholder="例: 佐藤 花子"></label>
+          <label class="field-sm">役割 <input type="text" id="stRole" placeholder="例: セラピスト"></label>
+          <label class="field-sm">電話 <input type="tel" id="stPhone" placeholder="090-xxxx-xxxx"></label>
+          <label class="field-sm">メール <input type="email" id="stEmail" placeholder="example@mail.jp"></label>
           <label class="field-sm">有効
             <select id="stActive">
               <option value="true" selected>有効</option>
@@ -1396,8 +1397,8 @@
       </div>
       <div id="paymentForm">
         <div class="grid">
-          <label>コード <input id="pmCode" placeholder="例: CASH"></label>
-          <label>名称 <input id="pmName" placeholder="例: 現金"></label>
+          <label>コード <input type="text" id="pmCode" placeholder="例: CASH"></label>
+          <label>名称 <input type="text" id="pmName" placeholder="例: 現金"></label>
           <label class="field-sm">表示順 <input type="number" id="pmSort" min="0" value="0"></label>
           <label class="field-sm">有効
             <select id="pmActive">
@@ -1427,9 +1428,9 @@
       </div>
       <div id="noteForm">
         <div class="grid">
-          <label class="field-sm">区分 <input id="ntCategory" placeholder="例: 店舗連絡/共有事項"></label>
+          <label class="field-sm">区分 <input type="text" id="ntCategory" placeholder="例: 店舗連絡/共有事項"></label>
           <label>タイトル <input id="ntTitle" placeholder="例: 在庫棚卸について"></label>
-          <label class="field-sm">対象 <input id="ntAudience" placeholder="例: 全員/○○さん"></label>
+          <label class="field-sm">対象 <input type="text" id="ntAudience" placeholder="例: 全員/○○さん"></label>
           <label class="field-sm">ピン留め
             <select id="ntPinned">
               <option value="false">しない</option>
