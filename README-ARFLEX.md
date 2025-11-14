@@ -6,12 +6,14 @@ Arflex 2025-26 Collection の世界観にインスパイアされた高級ペッ
 ## ✨ デザインコンセプト
 
 ### 🏛️ Arflex Gallery Aesthetic
+
 - **静けさ (Tranquility)**: 落ち着いた色調と十分な余白
 - **品 (Elegance)**: 洗練されたタイポグラフィと控えめな装飾
 - **余白 (White Space)**: ミニマルで美術館のようなレイアウト
 - **Exhibition Feel**: ギャラリー展示のような体験
 
 ### 🎨 Color Philosophy
+
 既存のブルーグラデーションを基調とした10段階カラーシステム：
 
 ```css
@@ -30,6 +32,7 @@ Arflex 2025-26 Collection の世界観にインスパイアされた高級ペッ
 ## 🏗️ Architecture
 
 ### Design System Files
+
 ```
 /public/
 ├── arflex-design.css        # メインデザインシステム
@@ -39,12 +42,14 @@ Arflex 2025-26 Collection の世界観にインスパイアされた高級ペッ
 ```
 
 ### 🎭 Typography System
+
 - **Primary**: Noto Sans JP (日本語)
 - **Secondary**: Inter (英数字・ラテン文字)
 - **Display**: Noto Serif JP (見出し用)
 - **English**: Inter (英語表記用)
 
 ### 📐 Spacing & Layout
+
 ```css
 --arflex-space-xs: 0.25rem     /* 4px */
 --arflex-space-sm: 0.5rem      /* 8px */
@@ -60,6 +65,7 @@ Arflex 2025-26 Collection の世界観にインスパイアされた高級ペッ
 ## 🚀 Usage
 
 ### Local Development
+
 ```bash
 # Arflex Gallery版で起動 (推奨)
 npm run arflex
@@ -72,6 +78,7 @@ npm run dev
 ```
 
 ### 🌐 Available Endpoints
+
 - `/` - Arflex Gallery (デフォルト)
 - `/arflex-gallery.html` - フルArflexデザイン
 - `/ultra-luxury.html` - 前バージョン (比較用)
@@ -83,6 +90,7 @@ npm run dev
 ### 🏛️ Gallery Components
 
 #### Timeline Exhibition
+
 ```html
 <div class="arflex-timeline">
   <div class="arflex-timeline-item">
@@ -94,6 +102,7 @@ npm run dev
 ```
 
 #### Attention Gallery
+
 ```html
 <div class="arflex-attention-card">
   <div class="arflex-attention-header">...</div>
@@ -103,6 +112,7 @@ npm run dev
 ```
 
 #### Analytics Exhibition
+
 ```html
 <div class="arflex-analytics">
   <div class="arflex-analytics-header">...</div>
@@ -111,6 +121,7 @@ npm run dev
 ```
 
 ### 🎯 Button System
+
 ```html
 <!-- Primary Action -->
 <button class="arflex-btn arflex-btn-primary">
@@ -132,11 +143,13 @@ npm run dev
 ## 📱 Responsive Design
 
 ### Breakpoints
+
 - **Mobile**: < 768px
 - **Tablet**: 768px - 1024px
 - **Desktop**: > 1024px
 
 ### Mobile Optimizations
+
 - スタック型レイアウトに自動変換
 - タッチフレンドリーなボタンサイズ
 - 読みやすいフォントサイズ調整
@@ -144,6 +157,7 @@ npm run dev
 ## 🎨 Design Philosophy
 
 ### Arflex Inspiration
+
 1. **Editorial Layouts** - 雑誌のような美しいレイアウト
 2. **Gallery Experience** - 美術館のような上品な体験
 3. **Minimalist Approach** - 無駄を削ぎ落としたミニマルデザイン
@@ -151,6 +165,7 @@ npm run dev
 5. **Thoughtful Typography** - 読みやすく美しい文字組み
 
 ### Pet Salon Context
+
 - **Guest-Centric** - ペットを「ゲスト」として扱う
 - **Service Exhibition** - サービスを展示作品のように提示
 - **Calm Environment** - 落ち着いた環境でのケア
@@ -159,6 +174,7 @@ npm run dev
 ## 🛠️ Customization
 
 ### Color Variations
+
 デザインシステムのCSS変数を調整することで、簡単に色調を変更可能：
 
 ```css
@@ -169,6 +185,7 @@ npm run dev
 ```
 
 ### Typography Adjustments
+
 ```css
 :root {
   --arflex-text-scale: 1.125;  /* タイポグラフィスケール調整 */
@@ -177,6 +194,7 @@ npm run dev
 ```
 
 ### Spacing Modifications
+
 ```css
 :root {
   --arflex-space-unit: 0.25rem;  /* ベーススペーシング調整 */
@@ -186,12 +204,14 @@ npm run dev
 ## 📊 Performance
 
 ### Optimization Features
+
 - **CSS Variables** - 効率的なテーマ管理
 - **Minimal JavaScript** - 軽量なインタラクション
 - **Semantic HTML** - アクセシブルな構造
 - **Progressive Enhancement** - 段階的機能向上
 
 ### Loading Strategy
+
 1. Critical CSS inlined
 2. Non-critical CSS lazy-loaded
 3. Icons loaded on-demand
@@ -210,12 +230,14 @@ npm run dev
 ## 🔮 Future Enhancements
 
 ### Phase 2 Features
+
 - [ ] 顧客ポートフォリオページ
 - [ ] サービスギャラリー
 - [ ] スタッフ紹介展示
 - [ ] ビフォー/アフターギャラリー
 
 ### Phase 3 Expansions
+
 - [ ] アニメーション強化
 - [ ] インタラクティブチャート
 - [ ] カスタムフォトギャラリー
@@ -224,6 +246,7 @@ npm run dev
 ## 📞 Support
 
 デザインシステムに関する質問や改善提案：
+
 - デザインコンセプトの詳細説明
 - コンポーネントの使用方法
 - カスタマイゼーションサポート

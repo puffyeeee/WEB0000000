@@ -20,9 +20,11 @@ npm run arflex   # Arflexモード
 ## 🎨 デザインシステム
 
 ### カラーパレット
+
 10段階のブルーグラデーション配色：
+
 - `--arflex-blue-whisper` (最も淡い)
-- `--arflex-blue-silk` 
+- `--arflex-blue-silk`
 - `--arflex-blue-mist`
 - `--arflex-blue-pearl`
 - `--arflex-blue-silver`
@@ -33,6 +35,7 @@ npm run arflex   # Arflexモード
 - `--arflex-blue-midnight` (最も濃い)
 
 ### ファイル構成
+
 ```
 /public/
 ├── index.html               # メインページ (Arflex Gallery)
@@ -55,12 +58,14 @@ npm run arflex   # Arflexモード
 ## 🎭 デザインコンセプト
 
 ### Arflex Gallery Aesthetic
+
 - **静けさ (Tranquility)**: 落ち着いた色調と十分な余白
 - **品 (Elegance)**: 洗練されたタイポグラフィと控えめな装飾
 - **余白 (White Space)**: ミニマルで美術館のようなレイアウト
 - **Exhibition Feel**: ギャラリー展示のような上品な体験
 
 ### Typography
+
 - **Primary**: Noto Sans JP (日本語)
 - **Secondary**: Inter (英数字)
 - **Display**: Noto Serif JP (見出し用)
@@ -74,29 +79,35 @@ npm run arflex   # Arflexモード
 ## 🔧 開発情報
 
 ### 削除されたファイル
+
 不要なデザインファイルを整理済み:
+
 - `luxury-salon-design.css`
-- `ultra-luxury-design.css` 
+- `ultra-luxury-design.css`
 - `ultra-luxury-components.css`
 - `dashboard-components.css`
 - その他旧デザイン関連ファイル
 
 ### バックアップ
+
 - `index-original-backup.html`: 元の機能フル版のバックアップ
 
 ## 🌐 デプロイ
 
 ### Firebase Hosting
+
 ```bash
 firebase deploy --only hosting
 ```
 
 ### GitHub Actions
+
 main ブランチへの push で自動デプロイ
 
 ## 📊 機能一覧
 
 ### コアシステム
+
 - [x] Firebase認証 (Email/Google)
 - [x] 顧客データベース管理
 - [x] ペット情報管理
@@ -105,6 +116,7 @@ main ブランチへの push で自動デプロイ
 - [x] スタッフ間コミュニケーション
 
 ### UI/UX
+
 - [x] Arflex Gallery風デザイン
 - [x] タイムライン型予約表示
 - [x] アテンションギャラリー
@@ -113,6 +125,7 @@ main ブランチへの push で自動デプロイ
 - [x] レスポンシブ対応
 
 ### アーキテクチャ
+
 - [x] CSS Variables ベースのテーマシステム
 - [x] コンポーネント化されたUI
 - [x] モジュラーJavaScript
