@@ -186,6 +186,9 @@ console.log('app.js loading...');
       const btn = e.target.closest('button[data-toggle-check], button.btn-toggle-check');
       if (!btn) return;
       try{
+        // Prevent multiple simultaneous animations
+        if (btn.classList.contains('btn-press')) return;
+        
         // quick press animation
         btn.classList.add('btn-press');
         setTimeout(()=> btn.classList.remove('btn-press'), 160);
@@ -220,9 +223,15 @@ console.log('app.js loading...');
         try{
           const el = ev.target.closest('button, .btn, .ripple-target');
           if (!el) return;
+          
+          // Store original styles to restore them later
+          const originalPosition = el.style.position;
+          const originalOverflow = el.style.overflow;
+          
           const style = getComputedStyle(el);
           if (style.position === 'static') el.style.position = 'relative';
           el.style.overflow = 'hidden';
+          
           const rect = el.getBoundingClientRect();
           const size = Math.max(rect.width, rect.height) * 1.2;
           const span = document.createElement('span');
@@ -233,7 +242,19 @@ console.log('app.js loading...');
           span.style.left = x + 'px';
           span.style.top = y + 'px';
           el.appendChild(span);
-          span.addEventListener('animationend', ()=> { try{ span.remove(); }catch(_){} }, { once:true });
+          
+          // Restore original styles when ripple animation ends
+          span.addEventListener('animationend', ()=> { 
+            try{ 
+              span.remove();
+              // Restore original styles to prevent permanent changes
+              if (originalPosition) el.style.position = originalPosition;
+              else el.style.removeProperty('position');
+              
+              if (originalOverflow) el.style.overflow = originalOverflow;
+              else el.style.removeProperty('overflow');
+            }catch(_){} 
+          }, { once:true });
         }catch(e){ console.error('[ripple]', e); }
       }, true);
     };
@@ -3667,6 +3688,10 @@ console.log('app.js loading...');
   }
 
   function listPayments(){
+    if (!ui.paymentList) {
+      console.warn('paymentList element not found');
+      return;
+    }
     const arr = (lookups.payments||[]).slice().sort((a,b)=>(a.Sort||0)-(b.Sort||0));
     ui.paymentList.innerHTML = arr.length? arr.map(p=>`
       <div class="result-card">
@@ -5983,16 +6008,40 @@ function renderAvailList(slots, ctx){
 // ★ あや本人のメールアドレス（ここが鍵）
  const OWNER_EMAIL = "duffy.chocolate.aya@gmail.com";
 
-// Firebase初期化
- let app, auth, db, storage, functions;
- try {
-  app = firebase.initializeApp(firebaseConfig);
-  auth = firebase.auth();
-  db = firebase.firestore();
-  storage = firebase.storage();
-  functions = firebase.functions();
+// Firebase初期化 (デモモード対応)
+let app, auth, db, storage, functions;
+let isFirebaseAvailable = false;
+
+try {
+  // Firebase設定の有効性をチェック
+  if (typeof firebaseConfig !== 'undefined' && 
+      firebaseConfig.apiKey && 
+      !firebaseConfig.apiKey.includes('your-') &&
+      !firebaseConfig.apiKey.includes('demo')) {
+    
+    // 既存のFirebaseアプリがある場合はそれを使用
+    if (firebase.apps.length > 0) {
+      app = firebase.app();
+      console.log('Using existing Firebase app');
+    } else {
+      app = firebase.initializeApp(firebaseConfig);
+      console.log('Firebase app initialized with valid config');
+    }
+    
+    auth = firebase.auth();
+    db = firebase.firestore();
+    storage = firebase.storage();
+    functions = firebase.functions();
+    isFirebaseAvailable = true;
+    console.log('Firebase services initialized successfully');
+  } else {
+    console.log('📝 Firebase config is demo/placeholder - running in demo mode');
+    isFirebaseAvailable = false;
+  }
 } catch (error) {
   console.warn("Firebase initialization failed:", error);
+  console.log('📝 Falling back to demo mode');
+  isFirebaseAvailable = false;
 }
 
 // 認証状態管理
@@ -6004,8 +6053,19 @@ function renderAvailList(slots, ctx){
    console.log('Auth state:', { currentUser, isAuthenticated });
  };
 
+ // 認証状態更新用グローバル関数（デモモード連携用）
+ window.updateAuthState = function(user, authenticated) {
+   currentUser = user;
+   isAuthenticated = authenticated;
+   console.log('🔄 認証状態更新:', { user: user?.email, authenticated });
+   
+   // UI更新
+   if (typeof updateAuthUI === 'function') updateAuthUI();
+   if (typeof updateFeatureAccess === 'function') updateFeatureAccess();
+ };
+
 // 認証状態の変更を監視
-if (auth) {
+if (auth && isFirebaseAvailable) {
   auth.onAuthStateChanged(async (user) => {
     console.log('認証状態が変更されました:', user ? user.email : 'ログアウト');
     
@@ -6045,7 +6105,16 @@ if (auth) {
     updateFeatureAccess();
   });
 } else {
-  console.error('Firebase Auth が初期化されていません');
+  console.log('📝 Firebase Auth が初期化されていません - デモモードで動作');
+  // デモモードでの初期設定
+  setTimeout(() => {
+    console.log('📝 デモモード初期化開始');
+    currentUser = null;
+    isAuthenticated = false;
+    updateAuthUI();
+    updateFeatureAccess();
+    console.log('📝 デモモード初期化完了 - ログイン画面を表示');
+  }, 1000);
 }
 
 // 認証UI更新
@@ -7038,21 +7107,26 @@ window.showAuthModal = showAuthModal;
     });
   }
 
-  // 認証必須ページガード
+  // 認証必須ページガード (Arflex Gallery では無効化)
   function enforceAuthRequired() {
-    console.log('🔒 ログイン必須ページ - 認証チェック中');
+    console.log('🔒 Arflex Gallery - 独自認証システム使用中');
     
+    // Arflex Galleryの独自認証システムを使用するため、
+    // app.jsの認証ガードは無効化
+    return;
+    
+    // 以下は無効化されたコード
     // ページ全体を非表示
-    document.body.style.visibility = 'hidden';
-    document.body.style.overflow = 'hidden';
+    // document.body.style.visibility = 'hidden';
+    // document.body.style.overflow = 'hidden';
     
     // ログインモーダルを強制表示
     const modal = document.getElementById('authModal');
     if (modal) {
-      modal.style.display = 'flex';
-      modal.style.opacity = '0';
-      modal.style.visibility = 'visible';
-      modal.style.zIndex = '99999';
+      // modal.style.display = 'flex';
+      // modal.style.opacity = '0';
+      // modal.style.visibility = 'visible';
+      // modal.style.zIndex = '99999';
       modal.style.position = 'fixed';
       modal.style.top = '0';
       modal.style.left = '0';

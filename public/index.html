@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arflex Salon Collection | 高級ペットサロン</title>
+    <title>Unite Pet Salon Gallery | 高級ペットサロン</title>
     
     <!-- Arflex Design System -->
     <link rel="stylesheet" href="arflex-design.css">
@@ -24,7 +24,7 @@
     <noscript>
         <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); display: flex; align-items: center; justify-content: center; z-index: 9999;">
             <div style="background: white; padding: 2rem; border-radius: 12px; text-align: center; max-width: 400px;">
-                <h1 style="color: #1e293b; margin-bottom: 1rem;">Arflex Collection</h1>
+                <h1 style="color: #1e293b; margin-bottom: 1rem;">Unite Gallery</h1>
                 <p style="color: #64748b;">JavaScript is required to access this gallery.</p>
             </div>
         </div>
@@ -33,7 +33,7 @@
     <div id="loginScreen" class="arflex-login-screen" style="display: flex;">
         <div class="arflex-login-container">
             <div class="arflex-login-header">
-                <h1 class="arflex-login-title">Arflex Collection</h1>
+                <h1 class="arflex-login-title">Unite Gallery</h1>
                 <p class="arflex-login-subtitle">Pet Salon Gallery Access</p>
             </div>
             
@@ -102,8 +102,8 @@
         <div class="arflex-hero-content">
             <div class="arflex-hero-text">
                 <h1 class="arflex-hero-title">
-                    Arflex Collection<br>
-                    <span class="arflex-hero-subtitle">Pet Salon Gallery</span>
+                    Unite Gallery<br>
+                    <span class="arflex-hero-subtitle">Pet Salon</span>
                 </h1>
                 <p class="arflex-hero-description">
                     静寂な空間で、愛するペットとの特別な時間を。<br>
@@ -375,7 +375,46 @@
 
     <!-- HIDDEN APPLICATION STRUCTURE (from original index.html) -->
     <div id="appStructure" style="display: none;">
-        <!-- この中に元のindex.htmlのタブ構造を追加 -->
+        <!-- 管理機能用DOM要素 -->
+        
+        <!-- スタッフ管理 -->
+        <div id="staffList" class="list-container"></div>
+        <form id="staffForm" class="form-container">
+            <input type="text" name="name" placeholder="スタッフ名" required>
+            <input type="email" name="email" placeholder="メールアドレス">
+            <button type="submit" id="btnCreateStaff">スタッフ登録</button>
+        </form>
+        <div id="staffMsg" class="message-area"></div>
+        
+        <!-- 支払方法管理 -->
+        <div id="paymentList" class="list-container"></div>
+        <form id="paymentForm" class="form-container">
+            <input type="text" name="name" placeholder="支払方法名" required>
+            <input type="text" name="code" placeholder="コード" required>
+            <input type="number" name="sort" placeholder="表示順" min="0">
+            <button type="submit" id="btnCreatePayment">支払方法登録</button>
+        </form>
+        <div id="pmMsg" class="message-area"></div>
+        
+        <!-- チケット管理 -->
+        <div id="ticketList" class="list-container"></div>
+        <form id="ticketForm" class="form-container">
+            <input type="text" name="title" placeholder="タイトル" required>
+            <select name="category">
+                <option value="問い合わせ">問い合わせ</option>
+                <option value="要望">要望</option>
+                <option value="バグ報告">バグ報告</option>
+            </select>
+            <textarea name="description" placeholder="詳細説明"></textarea>
+            <button type="submit" id="btnCreateTicket">チケット作成</button>
+        </form>
+        <div id="ticketMsg" class="message-area"></div>
+        
+        <!-- その他の管理要素 -->
+        <div id="customerList" class="list-container"></div>
+        <div id="petList" class="list-container"></div>
+        <div id="appointmentList" class="list-container"></div>
+        <div id="serviceList" class="list-container"></div>
     </div>
     </div>
     <!-- End of Main Content -->
@@ -383,15 +422,15 @@
 
 
     <script>
-        // Firebase Configuration
+        // Firebase Configuration - Demo Mode Compatible
+        // 実際の本番環境では、正しいFirebase設定を使用してください
         const firebaseConfig = {
-            // Add your Firebase config here
-            apiKey: "your-api-key",
-            authDomain: "your-auth-domain",
-            projectId: "your-project-id",
-            storageBucket: "your-storage-bucket",
-            messagingSenderId: "your-messaging-sender-id",
-            appId: "your-app-id"
+            apiKey: "AIzaSyDemo-UniteGallery-Key-ForDemoMode",
+            authDomain: "unite-gallery-demo.firebaseapp.com",
+            projectId: "unite-gallery-demo",
+            storageBucket: "unite-gallery-demo.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:demo-unite-gallery"
         };
 
         // Initialize Firebase - prevent duplicate initialization
@@ -601,14 +640,30 @@
         }
 
         function handleDemoLogin() {
+            console.log('🚀 デモログイン開始');
+            
             // Demo mode - instant login
             const mockUser = {
-                email: 'demo@arflex.gallery',
-                displayName: 'Arflex Gallery Demo User'
+                email: 'demo@unite.gallery',
+                displayName: 'Unite Gallery Demo User',
+                photoURL: null,
+                uid: 'demo-user-unite-gallery'
             };
+            
+            // Set global authentication state
             currentUser = mockUser;
+            window.currentUser = mockUser;
+            window.isAuthenticated = true;
+            
+            // Update app.js variables if available
+            if (typeof window.updateAuthState === 'function') {
+                window.updateAuthState(mockUser, true);
+            }
+            
             hideAuthError();
             showMainContent(mockUser);
+            
+            console.log('✨ Unite Pet Salon Galleryにデモユーザーでログイン成功');
         }
 
         function handleLogout() {

@@ -380,52 +380,7 @@
     </div>
     <!-- End of Main Content -->
 
-    <!-- Login Modal (Arflex Style) -->
-    <div id="loginModal" class="arflex-modal" style="display: none;">
-        <div class="arflex-modal-content">
-            <div class="arflex-modal-header">
-                <h3>Gallery Access</h3>
-                <button class="arflex-btn arflex-btn-ghost" id="closeLogin">×</button>
-            </div>
-            <div class="arflex-modal-body">
-                <div class="arflex-auth-tabs">
-                    <button class="arflex-auth-tab active" data-tab="email">Email</button>
-                    <button class="arflex-auth-tab" data-tab="google">Google</button>
-                </div>
-                
-                <div class="arflex-auth-content" id="emailAuth">
-                    <form id="emailLoginForm">
-                        <div class="arflex-form-group">
-                            <label>Email Address</label>
-                            <input type="email" id="loginEmail" required>
-                        </div>
-                        <div class="arflex-form-group">
-                            <label>Password</label>
-                            <input type="password" id="loginPassword" required>
-                        </div>
-                        <button type="submit" class="arflex-btn arflex-btn-primary">
-                            <i data-feather="log-in"></i>
-                            Login
-                        </button>
-                    </form>
-                </div>
-                
-                <div class="arflex-auth-content" id="googleAuth" style="display: none;">
-                    <button id="googleLoginButton" class="arflex-btn arflex-btn-outline">
-                        <svg width="20" height="20" viewBox="0 0 24 24">
-                            <path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                            <path fill="#34a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                            <path fill="#fbbc05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                            <path fill="#ea4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                        </svg>
-                        Sign in with Google
-                    </button>
-                </div>
-                
-                <div class="arflex-auth-error" id="authError" style="display: none;"></div>
-            </div>
-        </div>
-    </div>
+
 
     <script>
         // Firebase Configuration
@@ -439,9 +394,16 @@
             appId: "your-app-id"
         };
 
-        // Initialize Firebase
+        // Initialize Firebase - prevent duplicate initialization
+        let firebaseApp = null;
         if (typeof firebase !== 'undefined') {
-            firebase.initializeApp(firebaseConfig);
+            try {
+                // Check if Firebase is already initialized
+                firebaseApp = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
+            } catch (error) {
+                console.log('Firebase already initialized:', error.message);
+                firebaseApp = firebase.app();
+            }
         }
 
         // Authentication State Management
@@ -458,7 +420,7 @@
                 // Ensure login screen is visible initially
                 showLoginScreen();
                 
-                if (typeof firebase !== 'undefined' && firebase.auth) {
+                if (typeof firebase !== 'undefined' && firebase.auth && firebaseApp) {
                     firebase.auth().onAuthStateChanged((user) => {
                         if (user) {
                             // User is signed in
@@ -595,7 +557,7 @@
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
 
-            if (typeof firebase !== 'undefined' && firebase.auth) {
+            if (typeof firebase !== 'undefined' && firebase.auth && firebaseApp) {
                 firebase.auth().signInWithEmailAndPassword(email, password)
                     .then((userCredential) => {
                         // Success - onAuthStateChanged will handle UI update
@@ -614,6 +576,7 @@
                         };
                         currentUser = mockUser;
                         showMainContent(mockUser);
+                        hideAuthError();
                     }, 1000);
                 } else {
                     showAuthError('Please enter both email and password');
@@ -622,7 +585,7 @@
         }
 
         function handleGoogleLogin() {
-            if (typeof firebase !== 'undefined' && firebase.auth) {
+            if (typeof firebase !== 'undefined' && firebase.auth && firebaseApp) {
                 const provider = new firebase.auth.GoogleAuthProvider();
                 firebase.auth().signInWithPopup(provider)
                     .then((result) => {
@@ -649,7 +612,7 @@
         }
 
         function handleLogout() {
-            if (typeof firebase !== 'undefined' && firebase.auth) {
+            if (typeof firebase !== 'undefined' && firebase.auth && firebaseApp) {
                 firebase.auth().signOut().then(() => {
                     // Success - onAuthStateChanged will handle UI update
                 }).catch((error) => {
@@ -659,7 +622,10 @@
                 // Demo mode
                 currentUser = null;
                 showLoginScreen();
-                document.getElementById('mainContent').classList.remove('loaded');
+                const mainContent = document.getElementById('mainContent');
+                if (mainContent) {
+                    mainContent.classList.remove('loaded');
+                }
             }
         }
 

@@ -8,7 +8,9 @@
 
 .arflex-timeline {
   position: relative;
-  background: var(--arflex-white);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(168, 241, 229, 0.1);
   border-radius: var(--arflex-radius-lg);
   padding: var(--arflex-space-3xl);
   box-shadow: var(--arflex-shadow-soft);
@@ -52,9 +54,10 @@
   height: 64px;
   border-radius: var(--arflex-radius-md);
   object-fit: cover;
-  background: var(--arflex-gradient-gentle);
+  background: linear-gradient(135deg, #A8F1E5 0%, #B9F3ED 50%, #EFEFFF 100%);
+  border: 2px solid rgba(255, 255, 255, 0.8);
   flex-shrink: 0;
-  box-shadow: var(--arflex-shadow-subtle);
+  box-shadow: 0 4px 20px rgba(168, 241, 229, 0.15);
 }
 
 .arflex-guest-info h4 {
@@ -81,8 +84,10 @@
 
 .arflex-service-tag {
   font-size: var(--arflex-text-xs);
-  color: var(--arflex-graphite);
-  background: var(--arflex-blue-silk);
+  color: var(--arflex-blue-refined);
+  background: linear-gradient(90deg, rgba(168, 241, 229, 0.15) 0%, rgba(185, 243, 237, 0.15) 100%);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(168, 241, 229, 0.2);
   padding: var(--arflex-space-xs) var(--arflex-space-sm);
   border-radius: var(--arflex-radius-sm);
   font-weight: var(--arflex-font-normal);
@@ -370,6 +375,14 @@
    控えめ・上品なボタンデザイン
    ============================================ */
 
+/* Global button size protection */
+button, .btn, [role="button"] {
+  max-width: 300px !important;
+  max-height: 60px !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
 .arflex-btn {
   font-family: var(--arflex-font-primary);
   font-size: var(--arflex-text-sm);
@@ -384,43 +397,76 @@
   align-items: center;
   gap: var(--arflex-space-sm);
   letter-spacing: 0.01em;
+  /* Prevent infinite size growth */
+  max-width: 300px;
+  max-height: 60px;
+  box-sizing: border-box;
 }
 
 .arflex-btn-primary {
-  background: var(--arflex-blue-serene);
+  background: linear-gradient(135deg, var(--arflex-blue-serene) 0%, var(--arflex-blue-refined) 100%);
   color: var(--arflex-white);
-  border-color: var(--arflex-blue-serene);
+  border: 1px solid rgba(200, 168, 240, 0.3);
+  box-shadow: 0 4px 20px rgba(200, 168, 240, 0.2);
+  position: relative;
+  overflow: hidden;
 }
 
 .arflex-btn-primary:hover {
-  background: var(--arflex-blue-refined);
-  border-color: var(--arflex-blue-refined);
-  transform: translateY(-1px);
-  box-shadow: var(--arflex-shadow-medium);
+  background: linear-gradient(135deg, var(--arflex-blue-refined) 0%, var(--arflex-blue-serene) 100%);
+  border-color: rgba(184, 162, 232, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(200, 168, 240, 0.3);
 }
 
 .arflex-btn-outline {
-  background: transparent;
-  color: var(--arflex-steel);
-  border-color: var(--arflex-silver);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  color: var(--arflex-blue-refined);
+  border: 1px solid rgba(168, 241, 229, 0.3);
 }
 
 .arflex-btn-outline:hover {
-  background: var(--arflex-blue-silk);
-  border-color: var(--arflex-blue-serene);
-  color: var(--arflex-refined);
+  background: rgba(168, 241, 229, 0.1);
+  border-color: rgba(168, 241, 229, 0.5);
+  color: var(--arflex-blue-refined);
+  box-shadow: 0 4px 20px rgba(168, 241, 229, 0.15);
 }
 
 .arflex-btn-ghost {
   background: transparent;
-  color: var(--arflex-graphite);
+  color: var(--arflex-blue-refined);
   border: none;
   padding: var(--arflex-space-sm);
 }
 
 .arflex-btn-ghost:hover {
-  background: var(--arflex-mist);
-  color: var(--arflex-steel);
+  background: rgba(239, 239, 255, 0.3);
+  color: var(--arflex-blue-refined);
+  backdrop-filter: blur(5px);
+}
+
+/* Ripple animation - Milky Tiffany Effect */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(168, 241, 229, 0.4) 0%, rgba(239, 239, 255, 0.3) 50%, rgba(255, 255, 255, 0.2) 100%);
+  transform: scale(0);
+  animation: ripple-effect 0.6s ease-out;
+  pointer-events: none;
+}
+
+@keyframes ripple-effect {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Button press animation */
+.btn-press {
+  transform: scale(0.98) !important;
+  transition: transform 0.1s ease !important;
 }
 
 /* ============================================
@@ -499,23 +545,30 @@
   left: 0;
   width: 100%;
   height: 100vh;
-  background: linear-gradient(135deg, var(--arflex-blue-whisper) 0%, var(--arflex-blue-mist) 100%);
+  background: var(--arflex-gradient-whisper);
   display: flex !important;
   align-items: center;
   justify-content: center;
   z-index: 2000;
   visibility: visible;
   opacity: 1;
+  /* ミルキー質感の追加 */
+  backdrop-filter: blur(1px);
 }
 
 .arflex-login-container {
-  background: var(--arflex-white);
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(168, 241, 229, 0.15);
   border-radius: var(--arflex-radius-lg);
-  box-shadow: var(--arflex-shadow-medium);
+  box-shadow: 0 8px 40px rgba(168, 241, 229, 0.1), 0 4px 20px rgba(239, 239, 255, 0.1);
   padding: var(--arflex-space-3xl);
   min-width: 400px;
   max-width: 90vw;
   text-align: center;
+  /* ミルキーグロー */
+  position: relative;
+  overflow: hidden;
 }
 
 .arflex-login-header {
@@ -549,12 +602,15 @@
 }
 
 .arflex-user-header {
-  background: var(--arflex-white);
-  border-bottom: 1px solid var(--arflex-pearl);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(15px);
+  border-bottom: 1px solid rgba(168, 241, 229, 0.1);
   padding: var(--arflex-space-lg) var(--arflex-space-xl);
   position: sticky;
   top: 0;
   z-index: 100;
+  /* ミルキーグロー効果 */
+  box-shadow: 0 2px 20px rgba(168, 241, 229, 0.05);
 }
 
 .arflex-user-info {

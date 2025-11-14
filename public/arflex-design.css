@@ -8,17 +8,17 @@
    ============================================ */
 
 :root {
-  /* === Primary Blue System (既存色味をベース) === */
-  --arflex-blue-whisper: #f8fbff;      /* 最も薄い水色 - 背景 */
-  --arflex-blue-mist: #f0f7fe;         /* ミスト水色 - セクション背景 */
-  --arflex-blue-silk: #e7f3fd;         /* シルク水色 - カード背景 */
-  --arflex-blue-gentle: #d1e9fc;       /* 優しい水色 - ホバー */
-  --arflex-blue-soft: #b8ddf9;         /* ソフト水色 - アクティブ */
-  --arflex-blue-calm: #9dcef6;         /* 落ち着いた水色 - アクセント */
-  --arflex-blue-serene: #7ab8f0;       /* 穏やかな青 - メインアクセント */
-  --arflex-blue-depth: #5496e8;        /* 深い青 - 強調 */
-  --arflex-blue-elegant: #3b7dd8;      /* エレガント青 - ナビゲーション */
-  --arflex-blue-refined: #2968c7;      /* 洗練された青 - 見出し */
+  /* === Tiffany Milky Gradient System (ティファニー系ミルキーグラデーション) === */
+  --arflex-blue-whisper: #F7FDFF;      /* ほぼ白のミストブルー(中心) */
+  --arflex-blue-mist: #F4FBFF;         /* 白に近いアイスブルー(中心) */
+  --arflex-blue-silk: #DEF9F8;         /* 白に近いアイスブルー */
+  --arflex-blue-gentle: #B9F3ED;       /* ミルキーターコイズ2 */
+  --arflex-blue-soft: #A8F1E5;         /* 淡いティファニーブルー */
+  --arflex-blue-calm: #EFEFFF;         /* 淡いラベンダーブルー */
+  --arflex-blue-serene: #E7E7FF;       /* ジェントルラベンダー */
+  --arflex-blue-depth: #D3B6F6;        /* ミルキー薄紫 */
+  --arflex-blue-elegant: #C8A8F0;      /* 透明感のあるラベンダー */
+  --arflex-blue-refined: #B8A2E8;      /* 深いラベンダー(アクセント用) */
   
   /* === Neutral Palette (Arflex風グレー階調) === */
   --arflex-white: #ffffff;             /* 純白 */
@@ -90,11 +90,16 @@
   --arflex-shadow-medium: 0 4px 16px rgba(45, 62, 77, 0.06), 0 2px 6px rgba(45, 62, 77, 0.08);
   --arflex-shadow-large: 0 8px 32px rgba(45, 62, 77, 0.08), 0 4px 12px rgba(45, 62, 77, 0.10);
   
-  /* === Gradients (透明感のあるブルー) === */
-  --arflex-gradient-whisper: linear-gradient(135deg, var(--arflex-blue-whisper) 0%, var(--arflex-blue-mist) 100%);
-  --arflex-gradient-gentle: linear-gradient(135deg, var(--arflex-blue-silk) 0%, var(--arflex-blue-gentle) 100%);
-  --arflex-gradient-serene: linear-gradient(135deg, var(--arflex-blue-calm) 0%, var(--arflex-blue-serene) 100%);
-  --arflex-gradient-overlay: linear-gradient(135deg, rgba(248, 251, 255, 0.9) 0%, rgba(240, 247, 254, 0.8) 100%);
+  /* === Tiffany Milky Gradients (ティファニー系ミルキーグラデーション) === */
+  --arflex-gradient-whisper: linear-gradient(90deg, 
+    #A8F1E5 0%, #B2F2E8 5%, #B9F3ED 10%, #C5F5F1 15%, /* 左端ターコイズ 15% */
+    #D1F7F5 20%, #DEF9F8 25%, #E8FBFA 30%, #F0FCFB 35%, /* 白中心領域 55% */
+    #F4FBFF 40%, #F7FDFF 45%, #F9FEFF 50%, #FAFEFF 55%,
+    #FBFEFF 60%, #FCFEFF 65%, #FDFEFF 70%, #FEFEFF 75%, /* 白中心領域終了 */
+    #EFEFFF 80%, #E7E7FF 85%, #D3B6F6 95%, #C8A8F0 100%); /* ラベンダー領域 30% */
+  --arflex-gradient-gentle: linear-gradient(135deg, var(--arflex-blue-mist) 0%, var(--arflex-blue-whisper) 50%, var(--arflex-blue-calm) 100%);
+  --arflex-gradient-serene: linear-gradient(135deg, var(--arflex-blue-gentle) 0%, var(--arflex-blue-serene) 100%);
+  --arflex-gradient-overlay: linear-gradient(135deg, rgba(247, 253, 255, 0.95) 0%, rgba(244, 251, 255, 0.9) 50%, rgba(239, 239, 255, 0.85) 100%);
 }
 
 /* ============================================
@@ -124,6 +129,9 @@ body {
   background-attachment: fixed;
   min-height: 100vh;
   position: relative;
+  /* ミルキー質感の追加効果 */
+  backdrop-filter: blur(0.3px);
+  overflow-x: hidden;
 }
 
 /* Prevent flash of unstyled content */

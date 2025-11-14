@@ -1,11 +1,11 @@
 {
-  "name": "arflex-salon-gallery",
-  "version": "3.0.0",
+  "name": "unite-pet-salon-gallery",
+  "version": "2.0.0",
   "private": true,
-  "description": "Arflex 2025-26 Collection Inspired Pet Salon Gallery - Editorial Design System",
+  "description": "Unite Pet Salon Gallery - Editorial Design System",
   "scripts": {
     "start": "node server.js",
-    "arflex": "PORT=4000 node server.js",
+    "unite": "PORT=4000 node server.js",
     "gallery": "PORT=3000 node server.js",
     "luxury": "PORT=4000 node server.js",
     "dev": "PORT=3000 node server.js",
@@ -13,7 +13,7 @@
   },
   "type": "module",
   "keywords": [
-    "arflex-collection",
+    "unite-gallery",
     "gallery-design", 
     "editorial-ui",
     "luxury-salon",

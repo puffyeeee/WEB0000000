@@ -1,10 +1,10 @@
-# Arflex 2025-26 Collection | Pet Salon Gallery
+# Unite Pet Salon Gallery
 
-高級ペットサロン管理システム - Arflex Collection インスパイアードデザイン
+高級ペットサロン管理システム - Unite ギャラリーデザイン
 
 ## 特徴
 
-- **Arflex 2025-26 Collection風デザイン**: 静寂、品、余白を重視したギャラリーエディトリアルUI
+- **Uniteギャラリーデザイン**: 静寂、品、余白を重視したギャラリーエディトリアルUI
 - **完全な機能性**: Firebase認証、顧客管理、予約システム、売上管理を統合
 - **レスポンシブデザイン**: モバイル・タブレット・デスクトップ対応
 - **エディトリアルレイアウト**: 美術館のような上品な体験
@@ -14,7 +14,7 @@
 ```bash
 npm start        # ポート5173で起動
 npm run dev      # 開発モード
-npm run arflex   # Arflexモード
+npm run unite    # Uniteギャラリーモード
 ```
 
 ## デザインシステム
@@ -23,24 +23,24 @@ npm run arflex   # Arflexモード
 
 10段階のブルーグラデーション配色：
 
-- `--arflex-blue-whisper` (最も淡い)
-- `--arflex-blue-silk`
-- `--arflex-blue-mist`
-- `--arflex-blue-pearl`
-- `--arflex-blue-silver`
-- `--arflex-blue-steel`
-- `--arflex-blue-graphite`
-- `--arflex-blue-serene`
-- `--arflex-blue-refined`
-- `--arflex-blue-midnight` (最も濃い)
+- `--unite-blue-whisper` (最も淡い)
+- `--unite-blue-silk`
+- `--unite-blue-mist`
+- `--unite-blue-pearl`
+- `--unite-blue-silver`
+- `--unite-blue-steel`
+- `--unite-blue-graphite`
+- `--unite-blue-serene`
+- `--unite-blue-refined`
+- `--unite-blue-midnight` (最も濃い)
 
 ### ファイル構成
 
 ```
 /public/
-├── index.html               # メインページ (Arflex Gallery)
-├── arflex-design.css        # メインデザインシステム
-├── arflex-components.css    # コンポーネントライブラリ
+├── index.html               # メインページ (Unite Gallery)
+├── unite-design.css         # メインデザインシステム
+├── unite-components.css     # コンポーネントライブラリ
 ├── app.js                   # アプリケーションロジック
 └── index-original-backup.html # 元のバックアップ
 ```
@@ -49,7 +49,7 @@ npm run arflex   # Arflexモード
 
 ### セキュアアクセス
 
-- **Arflex風ログイン画面**: 統一されたデザインでの認証
+- **Uniteギャラリーログイン画面**: 統一されたデザインでの認証
 - **Firebase Authentication**: Email/Google認証
 - **デモモード**: Firebase未設定時の疑似認証
 
@@ -65,13 +65,13 @@ npm run arflex   # Arflexモード
 ### デモ認証情報
 
 ```text
-Email: demo@arflex.gallery
-Password: arflex2025
+Email: demo@unite.gallery
+Password: unite2025
 ```
 
 ## デザインコンセプト
 
-### Arflex Gallery Aesthetic
+### Unite Gallery Aesthetic
 
 - **静けさ (Tranquility)**: 落ち着いた色調と十分な余白
 - **品 (Elegance)**: 洗練されたタイポグラフィと控えめな装飾
@@ -122,7 +122,7 @@ main ブランチへの push で自動デプロイ
 
 ### コアシステム
 
-- [x] Arflex風認証システム (Email/Google/デモモード)
+- [x] Uniteギャラリー認証システム (Email/Google/デモモード)
 - [x] セキュアアクセス制御
 - [x] 顧客データベース管理
 - [x] ペット情報管理
@@ -132,7 +132,7 @@ main ブランチへの push で自動デプロイ
 
 ### UI/UX
 
-- [x] Arflex Gallery風デザイン
+- [x] Unite Galleryデザイン
 - [x] タイムライン型予約表示
 - [x] アテンションギャラリー
 - [x] 分析チャート区域
@@ -148,5 +148,5 @@ main ブランチへの push で自動デプロイ
 
 ---
 
-*Inspired by Arflex 2025-26 Collection*  
+*Unite Gallery Design System*  
 *Designed for Premium Pet Salon Experience*
