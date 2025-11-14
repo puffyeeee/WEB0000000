@@ -1,0 +1,12 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // あや本人（duffy.chocolate.aya@gmail.com）だけ読み書き可能
+    match /{document=**} {
+      allow read, write: if
+        request.auth != null &&
+        request.auth.token.email == "duffy.chocolate.aya@gmail.com";
+    }
+  }
+}

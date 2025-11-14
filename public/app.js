@@ -6277,6 +6277,195 @@ function renderAvailList(slots, ctx){
   window.refreshVisits = window.refreshVisits || function(){};
   window.onSaveVisit = window.onSaveVisit || function(){};
   
+  // === Firebase Authentication System ===
+
+// Firebase configuration (環境変数で設定 - 機密情報なし)
+ const firebaseConfig = {
+  apiKey: "AIzaSyBlS4UBKJkixm-C-6VEzEZh0uW6COpCgP8",
+  authDomain: "unite-e8567.firebaseapp.com",
+  projectId: "unite-e8567",
+  storageBucket: "unite-e8567.firebasestorage.app",
+  messagingSenderId: "1010079914673",
+  appId: "1:1010079914673:web:66048f89ee3da841ae6090",
+  measurementId: "G-12BZYF52XS"
+};
+
+// ★ あや本人のメールアドレス（ここが鍵）
+ const OWNER_EMAIL = "duffy.chocolate.aya@gmail.com";
+
+// Firebase初期化
+ let app, auth, db, functions;
+ try {
+  app = firebase.initializeApp(firebaseConfig);
+  auth = firebase.auth();
+  db = firebase.firestore();
+  functions = firebase.functions();
+} catch (error) {
+  console.warn("Firebase initialization failed:", error);
+}
+
+// 認証状態管理
+ let currentUser = null;
+ let isAuthenticated = false;
+
+// 認証状態の変更を監視
+ if (auth) {
+  auth.onAuthStateChanged(async (user) => {
+    // 一旦リセット
+    currentUser = null;
+    isAuthenticated = false;
+
+    if (user) {
+      if (user.email === OWNER_EMAIL) {
+        // ★ あや本人 → 使用OK
+        currentUser = user;
+        isAuthenticated = true;
+      } else {
+        // ★ 別のメールでログインしてきた → すぐ追い出す
+        showNotification("このアカウントではアクセスできません", "error");
+        try {
+          await auth.signOut();
+        } catch (e) {
+          console.error("Force sign out error:", e);
+        }
+      }
+    }
+
+    updateAuthUI();
+    updateFeatureAccess();
+  });
+}
+
+// 認証UI更新
+ function updateAuthUI() {
+  const loginButton = document.getElementById("loginButton");
+  const userInfo = document.getElementById("userInfo");
+  const userName = document.getElementById("userName");
+
+  if (isAuthenticated && currentUser) {
+    if (loginButton) loginButton.style.display = "none";
+    if (userInfo) userInfo.style.display = "flex";
+    if (userName)
+      userName.textContent = currentUser.displayName || currentUser.email;
+  } else {
+    if (loginButton) loginButton.style.display = "flex";
+    if (userInfo) userInfo.style.display = "none";
+  }
+}
+
+ // 機能アクセス制御
+ function updateFeatureAccess() {
+  const restrictedElements = document.querySelectorAll("[data-requires-auth]");
+  restrictedElements.forEach((element) => {
+    if (isAuthenticated) {
+      element.classList.remove("disabled");
+      element.removeAttribute("disabled");
+    } else {
+      element.classList.add("disabled");
+      element.setAttribute("disabled", "true");
+    }
+  });
+}
+
+ // ログイン機能
+ async function loginWithEmail(email, password) {
+  try {
+    const result = await auth.signInWithEmailAndPassword(email, password);
+    hideAuthModal();
+    showNotification("ログインしました", "success");
+    return result.user;
+  } catch (error) {
+    console.error("Email login error:", error);
+    showAuthError(getAuthErrorMessage(error.code));
+    throw error;
+  }
+}
+
+ async function loginWithGoogle() {
+  try {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    const result = await auth.signInWithPopup(provider);
+    hideAuthModal();
+    showNotification("ログインしました", "success");
+    return result.user;
+  } catch (error) {
+    console.error("Google login error:", error);
+    showAuthError(getAuthErrorMessage(error.code));
+    throw error;
+  }
+}
+
+// ログアウト機能
+ async function logout() {
+  try {
+    await auth.signOut();
+    showNotification("ログアウトしました", "info");
+  } catch (error) {
+    console.error("Logout error:", error);
+    showNotification("ログアウトエラー", "error");
+  }
+}
+
+// 認証が必要な操作のラッパー
+ function requireAuth(callback) {
+  return function (...args) {
+    if (!isAuthenticated) {
+      showAuthModal();
+      return Promise.reject(new Error("認証が必要です"));
+    }
+    return callback.apply(this, args);
+  };
+}
+
+// エラーメッセージ変換
+ function getAuthErrorMessage(errorCode) {
+  const errorMessages = {
+    "auth/user-not-found": "ユーザーが見つかりません",
+    "auth/wrong-password": "パスワードが正しくありません",
+    "auth/invalid-email": "メールアドレスの形式が正しくありません",
+    "auth/user-disabled": "このアカウントは無効になっています",
+    "auth/too-many-requests":
+      "試行回数が多すぎます。しばらく後でお試しください",
+    "auth/network-request-failed": "ネットワークエラーが発生しました",
+  };
+  return errorMessages[errorCode] || "ログインエラーが発生しました";
+}
+
+// モーダル表示/非表示
+ function showAuthModal() {
+  const modal = document.getElementById("authModal");
+  if (modal) {
+    modal.hidden = false;
+    document.body.style.overflow = "hidden";
+  }
+}
+
+ function hideAuthModal() {
+  const modal = document.getElementById("authModal");
+  if (modal) {
+    modal.hidden = true;
+    document.body.style.overflow = "";
+  }
+}
+
+// エラー表示
+ function showAuthError(message) {
+  const errorElement = document.getElementById("authError");
+  if (errorElement) {
+    errorElement.textContent = message;
+    errorElement.style.display = "block";
+    setTimeout(() => {
+      errorElement.style.display = "none";
+    }, 5000);
+  }
+}
+
+// 通知表示
+ function showNotification(message, type = "info") {
+  console.log(`${type.toUpperCase()}: ${message}`);
+}
+
+  
   // === Sophisticated Glass-morphism UI Initialization ===
   
   // Initialize Feather icons for unified line icon system
@@ -6322,9 +6511,152 @@ function renderAvailList(slots, ctx){
     });
   }
   
+  // 認証関連のイベントハンドラー設定
+  function setupAuthEventListeners() {
+    // ログインボタン
+    const loginButton = document.getElementById('loginButton');
+    if (loginButton) {
+      loginButton.addEventListener('click', showAuthModal);
+    }
+    
+    // ログアウトボタン
+    const logoutButton = document.getElementById('logoutButton');
+    if (logoutButton) {
+      logoutButton.addEventListener('click', logout);
+    }
+    
+    // モーダル閉じるボタン
+    const closeAuthModal = document.getElementById('closeAuthModal');
+    if (closeAuthModal) {
+      closeAuthModal.addEventListener('click', hideAuthModal);
+    }
+    
+    // モーダル外クリックで閉じる
+    const authModal = document.getElementById('authModal');
+    if (authModal) {
+      authModal.addEventListener('click', (e) => {
+        if (e.target === authModal) {
+          hideAuthModal();
+        }
+      });
+    }
+    
+    // 認証タブ切り替え
+    const authTabs = document.querySelectorAll('.auth-tab');
+    authTabs.forEach(tab => {
+      tab.addEventListener('click', (e) => {
+        const targetTab = e.target.dataset.tab;
+        switchAuthTab(targetTab);
+      });
+    });
+    
+    // メールログインフォーム
+    const emailForm = document.getElementById('emailLoginForm');
+    if (emailForm) {
+      emailForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        
+        try {
+          await loginWithEmail(email, password);
+        } catch (error) {
+          // エラーは loginWithEmail 内で処理
+        }
+      });
+    }
+    
+    // Googleログインボタン
+    const googleLoginButton = document.getElementById('googleLoginButton');
+    if (googleLoginButton) {
+      googleLoginButton.addEventListener('click', loginWithGoogle);
+    }
+    
+    // 制限された操作にガードを追加
+    addAuthGuards();
+  }
+  
+  // 認証タブ切り替え
+  function switchAuthTab(activeTab) {
+    // タブボタンの状態更新
+    document.querySelectorAll('.auth-tab').forEach(tab => {
+      tab.classList.toggle('active', tab.dataset.tab === activeTab);
+    });
+    
+    // コンテンツの表示/非表示
+    document.getElementById('emailAuth').style.display = activeTab === 'email' ? 'block' : 'none';
+    document.getElementById('googleAuth').style.display = activeTab === 'google' ? 'block' : 'none';
+  }
+  
+  // 認証ガードをボタンに追加
+  function addAuthGuards() {
+    // 機能ボタンに認証要求属性を追加
+    const restrictedSelectors = [
+      '[data-tab="record"]',
+      '[data-tab="directory"]', 
+      '[data-tab="customer"]',
+      '[data-tab="pet"]',
+      '[data-tab="calendar"]',
+      '[data-tab="merch"]',
+      '[data-tab="events"]',
+      '[data-tab="ops"]',
+      '[data-tab="billing"]',
+      '[data-tab="notes"]',
+      '[data-tab="board"]',
+      '[data-home-shortcut]',
+      '.status-button'
+    ];
+    
+    restrictedSelectors.forEach(selector => {
+      const elements = document.querySelectorAll(selector);
+      elements.forEach(element => {
+        element.setAttribute('data-requires-auth', 'true');
+        
+        // 既存のクリックイベントを認証ガードでラップ
+        const originalHandler = element.onclick;
+        element.onclick = function(e) {
+          if (!isAuthenticated) {
+            e.preventDefault();
+            e.stopPropagation();
+            showAuthModal();
+            return false;
+          }
+          
+          if (originalHandler) {
+            return originalHandler.call(this, e);
+          }
+        };
+        
+        // addEventListener で登録されたイベントもガード
+        const originalAddEventListener = element.addEventListener;
+        element.addEventListener = function(type, listener, options) {
+          if (type === 'click') {
+            const guardedListener = function(e) {
+              if (!isAuthenticated) {
+                e.preventDefault();
+                e.stopPropagation();
+                showAuthModal();
+                return;
+              }
+              listener.call(this, e);
+            };
+            return originalAddEventListener.call(this, type, guardedListener, options);
+          }
+          return originalAddEventListener.call(this, type, listener, options);
+        };
+      });
+    });
+  }
+
   // Initialize on DOM ready
   document.addEventListener('DOMContentLoaded', function() {
     applyCardPriority();
+    setupAuthEventListeners();
+    
+    // Featherアイコンを再初期化（認証UIのアイコン用）
+    if (typeof feather !== 'undefined') {
+      setTimeout(() => feather.replace(), 100);
+    }
   });
   
 })(); /* IIFE */
