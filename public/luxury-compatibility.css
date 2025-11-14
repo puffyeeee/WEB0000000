@@ -1,0 +1,180 @@
+/* 🏨 Legacy CSS Compatibility Layer */
+/* 既存のデザインシステムと高級サロンデザインの調和 */
+
+/* 高級デザインモードでは既存のヘッダーを非表示に */
+body.luxury-fade-in .legacy-nav,
+body.luxury-fade-in .auth-status,
+body.luxury-fade-in .header-utilities {
+  display: none !important;
+}
+
+/* 既存のタブパネルシステムとの互換性 */
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+/* 高級デザインが有効な場合のオーバーライド */
+.luxury-app .tab-pane#tab-home {
+  display: block !important;
+  background: transparent;
+  padding: 0;
+}
+
+/* 既存のクイックパネルとの調和 */
+.quick-panel {
+  z-index: 1050;
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  width: 400px;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  background: var(--luxury-white);
+  border: 1px solid var(--luxury-gray-200);
+  border-radius: var(--luxury-radius-lg);
+  box-shadow: var(--luxury-shadow-xl);
+  backdrop-filter: blur(20px);
+}
+
+.quick-panel-head {
+  padding: var(--luxury-spacing-lg);
+  border-bottom: 1px solid var(--luxury-gray-200);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--luxury-gray-50);
+  border-radius: var(--luxury-radius-lg) var(--luxury-radius-lg) 0 0;
+}
+
+.quick-panel-title {
+  font-size: var(--luxury-text-lg);
+  font-weight: var(--luxury-font-weight-semibold);
+  color: var(--luxury-gray-800);
+  margin: 0;
+}
+
+.quick-panel-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: var(--luxury-gray-500);
+  cursor: pointer;
+  border-radius: var(--luxury-radius);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quick-panel-close:hover {
+  background: var(--luxury-gray-200);
+  color: var(--luxury-gray-700);
+}
+
+.quick-panel-body {
+  padding: var(--luxury-spacing-lg);
+}
+
+/* Legacy Home Content 非表示化 */
+.legacy-home-content {
+  display: none !important;
+}
+
+/* モバイル対応 */
+@media (max-width: 1024px) {
+  /* サイドバーをモバイルで非表示 */
+  .luxury-sidebar {
+    display: none;
+  }
+  
+  /* アプリグリッドをモバイル用に調整 */
+  .luxury-app {
+    grid-template-areas: 
+      "header"
+      "main";
+    grid-template-columns: 1fr;
+  }
+  
+  /* メインコンテンツをモバイル用に調整 */
+  .luxury-main {
+    padding: var(--luxury-spacing-lg);
+  }
+  
+  /* ダッシュボードグリッドをモバイル用に */
+  .luxury-dashboard {
+    grid-template-columns: 1fr;
+  }
+  
+  /* クイックパネルをモバイル用に調整 */
+  .quick-panel {
+    top: 60px;
+    right: 10px;
+    left: 10px;
+    width: auto;
+  }
+}
+
+/* 高コントラストモード対応 */
+@media (prefers-contrast: high) {
+  .luxury-card,
+  .reservation-card,
+  .quick-panel {
+    border-width: 2px;
+  }
+  
+  .luxury-btn {
+    border-width: 2px;
+  }
+  
+  .status-badge {
+    border-width: 2px;
+    font-weight: var(--luxury-font-weight-bold);
+  }
+}
+
+/* 動きを減らす設定 */
+@media (prefers-reduced-motion: reduce) {
+  .luxury-card,
+  .reservation-card,
+  .attention-pet-item,
+  .update-item {
+    animation: none;
+  }
+  
+  .luxury-card:hover,
+  .reservation-card:hover {
+    transform: none;
+  }
+  
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* アクセシビリティ強化 */
+.luxury-focus-ring:focus-visible,
+.luxury-btn:focus-visible,
+.luxury-nav-link:focus-visible,
+.quick-panel-close:focus-visible {
+  outline: 2px solid var(--luxury-primary-400);
+  outline-offset: 2px;
+}
+
+/* スクリーンリーダー専用 */
+.luxury-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

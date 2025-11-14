@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>表参道サロン受付アプリ - 高級ペットサロン管理システム</title>
+  
+  <!-- Google Fonts - Noto Sans JP + Inter for Premium Typography -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- CSS Architecture -->
+  <link rel="stylesheet" href="luxury-salon-design.css">
+  <link rel="stylesheet" href="dashboard-components.css">
+  <link rel="stylesheet" href="detail-pages.css">
+  <link rel="stylesheet" href="typography-animations.css">
+  
+  <!-- Feather Icons for Premium Line Icon System -->
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js" defer></script>
+  
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-functions-compat.js"></script>
+</head>
+
+<body class="luxury-fade-in">
+
+<!-- 🏨 Luxury Pet Salon App Structure -->
+<div class="luxury-app">
+
+  <!-- ============================================
+       📱 PREMIUM HEADER
+       ============================================ -->
+  <header class="luxury-header">
+    <div class="luxury-header-brand">
+      <div class="luxury-brand-logo">🐾 表参道サロン</div>
+    </div>
+    
+    <!-- Global Search Bar -->
+    <div class="luxury-global-search">
+      <i data-feather="search" class="luxury-search-icon"></i>
+      <input 
+        type="search" 
+        class="luxury-search-input" 
+        placeholder="顧客名・犬名・予約を検索..."
+        aria-label="グローバル検索"
+        id="globalSearchInput"
+      >
+    </div>
+    
+    <!-- Header Actions -->
+    <div class="luxury-header-actions">
+      <button type="button" class="luxury-header-btn has-notification" id="notificationBtn" aria-label="通知" data-count="3">
+        <i data-feather="bell" aria-hidden="true"></i>
+      </button>
+      <button type="button" class="luxury-header-btn" id="userMenuBtn" aria-label="ユーザーメニュー">
+        <i data-feather="user" aria-hidden="true"></i>
+      </button>
+      <button type="button" class="luxury-header-btn" id="settingsBtn" aria-label="設定">
+        <i data-feather="settings" aria-hidden="true"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============================================
+       🧭 LUXURY SIDEBAR NAVIGATION
+       ============================================ -->
+  <aside class="luxury-sidebar">
+    
+    <!-- お客様セクション -->
+    <nav class="luxury-nav-section">
+      <div class="luxury-nav-title">お客様</div>
+      <ul class="luxury-nav-list">
+        <li class="luxury-nav-item">
+          <a href="#customer-search" class="luxury-nav-link active" data-nav="customer-search">
+            <i data-feather="search" class="luxury-nav-icon"></i>
+            カルテ検索
+          </a>
+        </li>
+        <li class="luxury-nav-item">
+          <a href="#customer-list" class="luxury-nav-link" data-nav="customer-list">
+            <i data-feather="users" class="luxury-nav-icon"></i>
+            顧客一覧
+          </a>
+        </li>
+        <li class="luxury-nav-item">
+          <a href="#pet-registration" class="luxury-nav-link" data-nav="pet-registration">
+            <i data-feather="heart" class="luxury-nav-icon"></i>
+            ご愛犬登録
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- 予約・来店セクション -->
+    <nav class="luxury-nav-section">
+      <div class="luxury-nav-title">予約・来店</div>
+      <ul class="luxury-nav-list">
+        <li class="luxury-nav-item">
+          <a href="#reservation-management" class="luxury-nav-link" data-nav="reservation-management">
+            <i data-feather="calendar" class="luxury-nav-icon"></i>
+            予約管理
+          </a>
+        </li>
+        <li class="luxury-nav-item">
+          <a href="#visit-list" class="luxury-nav-link" data-nav="visit-list">
+            <i data-feather="clock" class="luxury-nav-icon"></i>
+            来店一覧
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- 売上・物販セクション -->
+    <nav class="luxury-nav-section">
+      <div class="luxury-nav-title">売上・物販</div>
+      <ul class="luxury-nav-list">
+        <li class="luxury-nav-item">
+          <a href="#sales" class="luxury-nav-link" data-nav="sales">
+            <i data-feather="trending-up" class="luxury-nav-icon"></i>
+            売上
+          </a>
+        </li>
+        <li class="luxury-nav-item">
+          <a href="#inventory" class="luxury-nav-link" data-nav="inventory">
+            <i data-feather="package" class="luxury-nav-icon"></i>
+            物販・在庫
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- 運営・設定セクション -->
+    <nav class="luxury-nav-section">
+      <div class="luxury-nav-title">運営・設定</div>
+      <ul class="luxury-nav-list">
+        <li class="luxury-nav-item">
+          <a href="#staff" class="luxury-nav-link" data-nav="staff">
+            <i data-feather="user-check" class="luxury-nav-icon"></i>
+            スタッフ
+          </a>
+        </li>
+        <li class="luxury-nav-item">
+          <a href="#events" class="luxury-nav-link" data-nav="events">
+            <i data-feather="calendar" class="luxury-nav-icon"></i>
+            イベント
+          </a>
+        </li>
+        <li class="luxury-nav-item">
+          <a href="#salon-settings" class="luxury-nav-link" data-nav="salon-settings">
+            <i data-feather="settings" class="luxury-nav-icon"></i>
+            店舗/サロン設定
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+  </aside>
+
+  <!-- ============================================
+       🏠 MAIN DASHBOARD CONTENT
+       ============================================ -->
+  <main class="luxury-main">
+    
+    <!-- Dashboard Overview -->
+    <div class="luxury-dashboard luxury-fade-in">
+      
+      <!-- 今日の予約 (最重要エリア) -->
+      <div class="luxury-card">
+        <div class="luxury-card-header">
+          <h2 class="luxury-card-title">
+            <i data-feather="calendar" class="luxury-card-title-icon"></i>
+            今日の予約
+          </h2>
+          <button type="button" class="luxury-btn luxury-btn-secondary luxury-btn-sm" id="addReservationBtn">
+            <i data-feather="plus" aria-hidden="true"></i>
+            予約追加
+          </button>
+        </div>
+        
+        <!-- 予約タイムライン -->
+        <div class="reservation-timeline" id="reservationTimeline">
+          
+          <!-- 予約カード例 -->
+          <div class="reservation-card">
+            <div class="reservation-time">10:00</div>
+            <div class="reservation-details">
+              <div class="pet-info">
+                <div class="pet-avatar">🐕</div>
+                <div class="pet-details">
+                  <div class="pet-name">モコちゃん</div>
+                  <div class="pet-breed">トイプードル・3歳</div>
+                </div>
+              </div>
+              <div class="service-info">
+                <div class="service-name">トリミング + 爪切り</div>
+                <div class="staff-name">担当: 田中さん</div>
+              </div>
+              <div class="reservation-status">
+                <span class="status-badge status-confirmed">予約済み</span>
+              </div>
+            </div>
+            <button type="button" class="luxury-btn luxury-btn-primary luxury-btn-sm reservation-action">
+              詳細へ
+            </button>
+          </div>
+
+          <!-- 追加の予約カード -->
+          <div class="reservation-card">
+            <div class="reservation-time">14:30</div>
+            <div class="reservation-details">
+              <div class="pet-info">
+                <div class="pet-avatar">🐱</div>
+                <div class="pet-details">
+                  <div class="pet-name">まるちゃん</div>
+                  <div class="pet-breed">スコティッシュフォールド・2歳</div>
+                </div>
+              </div>
+              <div class="service-info">
+                <div class="service-name">シャンプー + 爪切り</div>
+                <div class="staff-name">担当: 鈴木さん</div>
+              </div>
+              <div class="reservation-status">
+                <span class="status-badge status-in-progress">施術中</span>
+              </div>
+            </div>
+            <button type="button" class="luxury-btn luxury-btn-primary luxury-btn-sm reservation-action">
+              詳細へ
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 注意が必要なご愛犬 -->
+      <div class="luxury-card">
+        <div class="luxury-card-header">
+          <h2 class="luxury-card-title">
+            <i data-feather="alert-triangle" class="luxury-card-title-icon" style="color: var(--luxury-warning-500);"></i>
+            注意が必要なご愛犬
+          </h2>
+        </div>
+        
+        <div class="attention-pets-list">
+          <div class="attention-pet-item">
+            <div class="pet-avatar">🐕</div>
+            <div class="pet-info">
+              <div class="pet-name">チャーリー</div>
+              <div class="attention-tags">
+                <span class="attention-tag tag-medicine">💊 薬あり</span>
+                <span class="attention-tag tag-allergy">🚫 アレルギー</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="attention-pet-item">
+            <div class="pet-avatar">🐱</div>
+            <div class="pet-info">
+              <div class="pet-name">ルナ</div>
+              <div class="attention-tags">
+                <span class="attention-tag tag-caution">⚠️ 噛みつき注意</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="attention-pet-item">
+            <div class="pet-avatar">🐕</div>
+            <div class="pet-info">
+              <div class="pet-name">ベル</div>
+              <div class="attention-tags">
+                <span class="attention-tag tag-illness">🏥 持病あり</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <button type="button" class="luxury-btn luxury-btn-ghost" style="width: 100%; margin-top: var(--luxury-spacing-lg);">
+          すべて見る
+        </button>
+      </div>
+
+      <!-- 売上サマリー -->
+      <div class="luxury-card">
+        <div class="luxury-card-header">
+          <h2 class="luxury-card-title">
+            <i data-feather="bar-chart-2" class="luxury-card-title-icon"></i>
+            売上サマリー
+          </h2>
+          <div class="sales-tabs">
+            <button type="button" class="sales-tab active" data-period="today">今日</button>
+            <button type="button" class="sales-tab" data-period="week">今週</button>
+            <button type="button" class="sales-tab" data-period="month">今月</button>
+          </div>
+        </div>
+        
+        <div class="sales-summary">
+          <div class="sales-metric">
+            <div class="metric-label">施術売上</div>
+            <div class="metric-value">¥45,000</div>
+            <div class="metric-change positive">+15% 先週比</div>
+          </div>
+          <div class="sales-metric">
+            <div class="metric-label">物販売上</div>
+            <div class="metric-value">¥12,000</div>
+            <div class="metric-change positive">+8% 先週比</div>
+          </div>
+        </div>
+        
+        <!-- シンプルな売上チャート（プレースホルダー） -->
+        <div class="sales-chart">
+          <div class="chart-placeholder">
+            📊 売上グラフエリア<br>
+            <small>実装時にChart.js等で可視化</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- 最近のカルテ更新 -->
+      <div class="luxury-card">
+        <div class="luxury-card-header">
+          <h2 class="luxury-card-title">
+            <i data-feather="file-text" class="luxury-card-title-icon"></i>
+            最近のカルテ更新
+          </h2>
+        </div>
+        
+        <div class="recent-updates-list">
+          <div class="update-item">
+            <div class="pet-thumbnail">🐕</div>
+            <div class="update-details">
+              <div class="pet-name">モコちゃん</div>
+              <div class="update-date">2時間前</div>
+              <div class="update-note">施術記録とアフターケア情報を追加</div>
+            </div>
+          </div>
+          
+          <div class="update-item">
+            <div class="pet-thumbnail">🐱</div>
+            <div class="update-details">
+              <div class="pet-name">まるちゃん</div>
+              <div class="update-date">5時間前</div>
+              <div class="update-note">健康チェック結果を記録</div>
+            </div>
+          </div>
+          
+          <div class="update-item">
+            <div class="pet-thumbnail">🐕</div>
+            <div class="update-details">
+              <div class="pet-name">チャーリー</div>
+              <div class="update-date">昨日</div>
+              <div class="update-note">薬の服用状況を更新</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div> <!-- /luxury-dashboard -->
+
+    <!-- クイックアクション -->
+    <div class="luxury-card">
+      <div class="luxury-card-header">
+        <h2 class="luxury-card-title">
+          <i data-feather="zap" class="luxury-card-title-icon"></i>
+          クイックアクション
+        </h2>
+      </div>
+      
+      <div class="quick-actions-grid">
+        <button type="button" class="luxury-btn luxury-btn-secondary">
+          <i data-feather="user-plus" aria-hidden="true"></i>
+          新規お客様登録
+        </button>
+        <button type="button" class="luxury-btn luxury-btn-secondary">
+          <i data-feather="calendar-plus" aria-hidden="true"></i>
+          新規予約追加
+        </button>
+        <button type="button" class="luxury-btn luxury-btn-secondary">
+          <i data-feather="search" aria-hidden="true"></i>
+          顧客・犬検索
+        </button>
+        <button type="button" class="luxury-btn luxury-btn-secondary">
+          <i data-feather="clipboard" aria-hidden="true"></i>
+          施術記録入力
+        </button>
+        <button type="button" class="luxury-btn luxury-btn-secondary">
+          <i data-feather="dollar-sign" aria-hidden="true"></i>
+          会計・請求
+        </button>
+        <button type="button" class="luxury-btn luxury-btn-secondary">
+          <i data-feather="package" aria-hidden="true"></i>
+          在庫確認
+        </button>
+      </div>
+    </div>
+
+  </main> <!-- /luxury-main -->
+
+</div> <!-- /luxury-app -->
+
+<!-- 🛠️ JavaScript -->
+<script>
+// Initialize Feather Icons
+document.addEventListener('DOMContentLoaded', function() {
+  feather.replace();
+  
+  // Navigation handling
+  document.querySelectorAll('.luxury-nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      // Remove active class from all links
+      document.querySelectorAll('.luxury-nav-link').forEach(l => l.classList.remove('active'));
+      
+      // Add active class to clicked link
+      this.classList.add('active');
+      
+      // Add slide-in animation to main content
+      const main = document.querySelector('.luxury-main');
+      main.classList.remove('luxury-slide-in');
+      setTimeout(() => {
+        main.classList.add('luxury-slide-in');
+      }, 10);
+    });
+  });
+  
+  // Sales tabs handling
+  document.querySelectorAll('.sales-tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.sales-tab').forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+  
+  // Global search functionality
+  const globalSearch = document.getElementById('globalSearchInput');
+  globalSearch.addEventListener('input', function() {
+    // Implement global search logic here
+    console.log('Searching for:', this.value);
+  });
+});
+</script>
+
+</body>
+</html>

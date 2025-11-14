@@ -1,0 +1,632 @@
+/* 🏨 Luxury Pet Salon UI/UX Design System */
+/* High-End Hotel Spa Inspired Design with Japanese Aesthetic */
+
+/* ============================================
+   🎨 COLOR PALETTE - Luxury Salon Theme
+   ============================================ */
+
+:root {
+  /* === Primary Palette - Sophisticated Blues (現在の色味ベース) === */
+  --luxury-primary-50: #f0f9ff;   /* 最も薄いブルー - カード背景 */
+  --luxury-primary-100: #e0f2fe;  /* アクセント背景 */
+  --luxury-primary-200: #bae6fd;  /* ホバー時の薄いブルー */
+  --luxury-primary-300: #7dd3fc;  /* アクティブ状態 */
+  --luxury-primary-400: #38bdf8;  /* メインアクセント */
+  --luxury-primary-500: #0ea5e9;  /* 主要ボタン */
+  --luxury-primary-600: #0284c7;  /* 濃いアクセント */
+  --luxury-primary-700: #0369a1;  /* 強調テキスト */
+  --luxury-primary-800: #075985;  /* ダークアクセント */
+  
+  /* === Secondary Palette - Refined Purples === */
+  --luxury-secondary-300: #c4b5fd; /* 薄いパープル */
+  --luxury-secondary-400: #a78bfa; /* パープルアクセント */
+  --luxury-secondary-500: #8b5cf6; /* メインパープル */
+  --luxury-secondary-600: #7c3aed; /* 濃いパープル */
+  
+  /* === Neutral Palette - Premium Grays === */
+  --luxury-white: #ffffff;
+  --luxury-gray-50: #f8fafc;      /* カード背景 */
+  --luxury-gray-100: #f1f5f9;     /* セクション背景 */
+  --luxury-gray-200: #e2e8f0;     /* ボーダー */
+  --luxury-gray-300: #cbd5e1;     /* 薄いボーダー */
+  --luxury-gray-400: #94a3b8;     /* 補助テキスト */
+  --luxury-gray-500: #64748b;     /* ラベルテキスト */
+  --luxury-gray-600: #475569;     /* 通常テキスト */
+  --luxury-gray-700: #334155;     /* 濃いテキスト */
+  --luxury-gray-800: #1e293b;     /* 見出し */
+  --luxury-gray-900: #0f172a;     /* 最も濃いテキスト */
+  
+  /* === Status Colors - Refined & Muted === */
+  --luxury-success-50: #ecfdf5;
+  --luxury-success-100: #d1fae5;
+  --luxury-success-500: #10b981;
+  --luxury-success-600: #059669;
+  
+  --luxury-warning-50: #fffbeb;
+  --luxury-warning-100: #fef3c7;
+  --luxury-warning-500: #f59e0b;
+  --luxury-warning-600: #d97706;
+  
+  --luxury-error-50: #fef2f2;
+  --luxury-error-100: #fee2e2;
+  --luxury-error-500: #ef4444;
+  --luxury-error-600: #dc2626;
+  
+  /* === Design System Variables === */
+  --luxury-radius-sm: 8px;
+  --luxury-radius: 12px;
+  --luxury-radius-lg: 16px;
+  --luxury-radius-xl: 20px;
+  --luxury-radius-2xl: 24px;
+  --luxury-radius-3xl: 28px;
+  
+  --luxury-shadow-sm: 0 1px 2px 0 rgba(71, 85, 105, 0.05);
+  --luxury-shadow: 0 4px 6px -1px rgba(71, 85, 105, 0.08), 0 2px 4px -2px rgba(71, 85, 105, 0.04);
+  --luxury-shadow-md: 0 10px 15px -3px rgba(71, 85, 105, 0.1), 0 4px 6px -4px rgba(71, 85, 105, 0.05);
+  --luxury-shadow-lg: 0 20px 25px -5px rgba(71, 85, 105, 0.1), 0 8px 10px -6px rgba(71, 85, 105, 0.04);
+  --luxury-shadow-xl: 0 25px 50px -12px rgba(71, 85, 105, 0.15);
+  
+  --luxury-spacing-xs: 4px;
+  --luxury-spacing-sm: 8px;
+  --luxury-spacing: 12px;
+  --luxury-spacing-md: 16px;
+  --luxury-spacing-lg: 20px;
+  --luxury-spacing-xl: 24px;
+  --luxury-spacing-2xl: 32px;
+  --luxury-spacing-3xl: 40px;
+  --luxury-spacing-4xl: 48px;
+  
+  --luxury-font-family: 'Noto Sans JP', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --luxury-font-weight-light: 300;
+  --luxury-font-weight-normal: 400;
+  --luxury-font-weight-medium: 500;
+  --luxury-font-weight-semibold: 600;
+  --luxury-font-weight-bold: 700;
+  --luxury-font-weight-extrabold: 800;
+}
+
+/* ============================================
+   📱 GLOBAL LAYOUT FOUNDATION
+   ============================================ */
+
+/* Complete reset and foundation */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--luxury-font-family);
+  font-weight: var(--luxury-font-weight-normal);
+  line-height: 1.6;
+  color: var(--luxury-gray-700);
+  background: linear-gradient(135deg, 
+    var(--luxury-gray-50) 0%, 
+    var(--luxury-primary-50) 100%);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ============================================
+   🏗️ LUXURY LAYOUT STRUCTURE
+   ============================================ */
+
+.luxury-app {
+  display: grid;
+  grid-template-areas: 
+    "header header"
+    "sidebar main";
+  grid-template-columns: 280px 1fr;
+  grid-template-rows: 80px 1fr;
+  min-height: 100vh;
+  background: linear-gradient(135deg, 
+    rgba(248, 250, 252, 0.8) 0%, 
+    rgba(240, 249, 255, 0.9) 100%);
+}
+
+/* === Luxury Header === */
+.luxury-header {
+  grid-area: header;
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.95) 0%, 
+    rgba(248, 250, 252, 0.9) 100%);
+  border-bottom: 1px solid var(--luxury-gray-200);
+  padding: 0 var(--luxury-spacing-2xl);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  backdrop-filter: blur(20px);
+  box-shadow: var(--luxury-shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.luxury-header-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--luxury-spacing-md);
+}
+
+.luxury-brand-logo {
+  font-size: 24px;
+  font-weight: var(--luxury-font-weight-extrabold);
+  color: var(--luxury-primary-600);
+  letter-spacing: -0.02em;
+}
+
+.luxury-global-search {
+  flex: 1;
+  max-width: 480px;
+  margin: 0 var(--luxury-spacing-2xl);
+  position: relative;
+}
+
+.luxury-search-input {
+  width: 100%;
+  padding: var(--luxury-spacing) var(--luxury-spacing-3xl) var(--luxury-spacing) var(--luxury-spacing-xl);
+  border: 1px solid var(--luxury-gray-300);
+  border-radius: var(--luxury-radius-xl);
+  background: var(--luxury-white);
+  font-size: 14px;
+  color: var(--luxury-gray-700);
+  transition: all 0.3s ease;
+  box-shadow: var(--luxury-shadow-sm);
+}
+
+.luxury-search-input:focus {
+  outline: none;
+  border-color: var(--luxury-primary-400);
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1), var(--luxury-shadow);
+}
+
+.luxury-search-icon {
+  position: absolute;
+  left: var(--luxury-spacing);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--luxury-gray-400);
+  width: 18px;
+  height: 18px;
+}
+
+.luxury-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--luxury-spacing);
+}
+
+.luxury-header-btn {
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: var(--luxury-radius);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--luxury-gray-500);
+  position: relative;
+}
+
+.luxury-header-btn:hover {
+  background: var(--luxury-primary-100);
+  color: var(--luxury-primary-600);
+  transform: translateY(-1px);
+}
+
+.luxury-header-btn.has-notification::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  background: var(--luxury-error-500);
+  border-radius: 50%;
+  border: 2px solid var(--luxury-white);
+}
+
+/* === Luxury Sidebar === */
+.luxury-sidebar {
+  grid-area: sidebar;
+  background: linear-gradient(135deg, 
+    var(--luxury-white) 0%, 
+    var(--luxury-gray-50) 100%);
+  border-right: 1px solid var(--luxury-gray-200);
+  padding: var(--luxury-spacing-xl);
+  overflow-y: auto;
+  box-shadow: var(--luxury-shadow-sm);
+}
+
+.luxury-nav-section {
+  margin-bottom: var(--luxury-spacing-2xl);
+}
+
+.luxury-nav-title {
+  font-size: 12px;
+  font-weight: var(--luxury-font-weight-semibold);
+  color: var(--luxury-gray-400);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--luxury-spacing);
+  padding-left: var(--luxury-spacing);
+}
+
+.luxury-nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.luxury-nav-item {
+  margin-bottom: var(--luxury-spacing-xs);
+}
+
+.luxury-nav-link {
+  display: flex;
+  align-items: center;
+  gap: var(--luxury-spacing);
+  padding: var(--luxury-spacing) var(--luxury-spacing);
+  color: var(--luxury-gray-600);
+  text-decoration: none;
+  border-radius: var(--luxury-radius);
+  transition: all 0.2s ease;
+  font-weight: var(--luxury-font-weight-medium);
+  font-size: 14px;
+}
+
+.luxury-nav-link:hover,
+.luxury-nav-link.active {
+  background: linear-gradient(135deg, 
+    var(--luxury-primary-50) 0%, 
+    var(--luxury-primary-100) 100%);
+  color: var(--luxury-primary-700);
+  transform: translateX(4px);
+}
+
+.luxury-nav-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* === Main Content Area === */
+.luxury-main {
+  grid-area: main;
+  padding: var(--luxury-spacing-2xl);
+  overflow-y: auto;
+  background: linear-gradient(135deg, 
+    rgba(248, 250, 252, 0.3) 0%, 
+    rgba(240, 249, 255, 0.5) 100%);
+}
+
+/* ============================================
+   🎴 CARD COMPONENTS
+   ============================================ */
+
+.luxury-card {
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.95) 0%, 
+    rgba(248, 250, 252, 0.9) 100%);
+  border: 1px solid var(--luxury-gray-200);
+  border-radius: var(--luxury-radius-lg);
+  padding: var(--luxury-spacing-xl);
+  box-shadow: var(--luxury-shadow-md);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  margin-bottom: var(--luxury-spacing-xl);
+}
+
+.luxury-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--luxury-shadow-lg);
+  border-color: var(--luxury-primary-300);
+}
+
+.luxury-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: between;
+  margin-bottom: var(--luxury-spacing-lg);
+  padding-bottom: var(--luxury-spacing-lg);
+  border-bottom: 1px solid var(--luxury-gray-200);
+}
+
+.luxury-card-title {
+  font-size: 20px;
+  font-weight: var(--luxury-font-weight-bold);
+  color: var(--luxury-gray-800);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--luxury-spacing);
+}
+
+.luxury-card-title-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--luxury-primary-500);
+}
+
+.luxury-card-subtitle {
+  font-size: 14px;
+  color: var(--luxury-gray-500);
+  margin-top: var(--luxury-spacing-xs);
+  margin-bottom: 0;
+}
+
+/* ============================================
+   🔘 BUTTON COMPONENTS
+   ============================================ */
+
+.luxury-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--luxury-spacing-sm);
+  padding: var(--luxury-spacing) var(--luxury-spacing-lg);
+  border: 1px solid transparent;
+  border-radius: var(--luxury-radius);
+  font-family: var(--luxury-font-family);
+  font-size: 14px;
+  font-weight: var(--luxury-font-weight-medium);
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  min-height: 44px;
+  position: relative;
+  overflow: hidden;
+}
+
+.luxury-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.2), 
+    transparent);
+  transition: left 0.5s ease;
+}
+
+.luxury-btn:hover::before {
+  left: 100%;
+}
+
+/* Primary Button */
+.luxury-btn-primary {
+  background: linear-gradient(135deg, 
+    var(--luxury-primary-500) 0%, 
+    var(--luxury-primary-600) 100%);
+  color: var(--luxury-white);
+  box-shadow: var(--luxury-shadow);
+}
+
+.luxury-btn-primary:hover {
+  background: linear-gradient(135deg, 
+    var(--luxury-primary-600) 0%, 
+    var(--luxury-primary-700) 100%);
+  box-shadow: var(--luxury-shadow-lg);
+  transform: translateY(-1px);
+}
+
+/* Secondary Button */
+.luxury-btn-secondary {
+  background: var(--luxury-white);
+  color: var(--luxury-gray-700);
+  border-color: var(--luxury-gray-300);
+  box-shadow: var(--luxury-shadow-sm);
+}
+
+.luxury-btn-secondary:hover {
+  background: var(--luxury-gray-50);
+  border-color: var(--luxury-gray-400);
+  transform: translateY(-1px);
+}
+
+/* Ghost Button */
+.luxury-btn-ghost {
+  background: transparent;
+  color: var(--luxury-gray-600);
+}
+
+.luxury-btn-ghost:hover {
+  background: var(--luxury-gray-100);
+  color: var(--luxury-gray-800);
+}
+
+/* Button Sizes */
+.luxury-btn-sm {
+  padding: var(--luxury-spacing-sm) var(--luxury-spacing);
+  font-size: 13px;
+  min-height: 36px;
+}
+
+.luxury-btn-lg {
+  padding: var(--luxury-spacing-lg) var(--luxury-spacing-xl);
+  font-size: 16px;
+  min-height: 52px;
+}
+
+/* ============================================
+   📝 FORM COMPONENTS
+   ============================================ */
+
+.luxury-form-group {
+  margin-bottom: var(--luxury-spacing-lg);
+}
+
+.luxury-label {
+  display: block;
+  font-size: 14px;
+  font-weight: var(--luxury-font-weight-medium);
+  color: var(--luxury-gray-700);
+  margin-bottom: var(--luxury-spacing-xs);
+}
+
+.luxury-input {
+  width: 100%;
+  padding: var(--luxury-spacing) var(--luxury-spacing-md);
+  border: 1px solid var(--luxury-gray-300);
+  border-radius: var(--luxury-radius);
+  font-size: 14px;
+  color: var(--luxury-gray-700);
+  background: var(--luxury-white);
+  transition: all 0.2s ease;
+  min-height: 44px;
+}
+
+.luxury-input:focus {
+  outline: none;
+  border-color: var(--luxury-primary-400);
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+}
+
+.luxury-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* ============================================
+   📊 DASHBOARD GRID
+   ============================================ */
+
+.luxury-dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--luxury-spacing-xl);
+  margin-bottom: var(--luxury-spacing-2xl);
+}
+
+@media (min-width: 1024px) {
+  .luxury-dashboard {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1400px) {
+  .luxury-dashboard {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ============================================
+   📱 RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 1024px) {
+  .luxury-app {
+    grid-template-areas: 
+      "header"
+      "main";
+    grid-template-columns: 1fr;
+    grid-template-rows: 80px 1fr;
+  }
+  
+  .luxury-sidebar {
+    display: none; /* モバイルメニューで代替 */
+  }
+  
+  .luxury-header {
+    padding: 0 var(--luxury-spacing-lg);
+  }
+  
+  .luxury-global-search {
+    max-width: 240px;
+    margin: 0 var(--luxury-spacing-lg);
+  }
+  
+  .luxury-main {
+    padding: var(--luxury-spacing-lg);
+  }
+  
+  .luxury-dashboard {
+    grid-template-columns: 1fr;
+    gap: var(--luxury-spacing-lg);
+  }
+}
+
+@media (max-width: 768px) {
+  .luxury-header {
+    padding: 0 var(--luxury-spacing);
+  }
+  
+  .luxury-global-search {
+    display: none; /* モバイルでは別途検索ボタン */
+  }
+  
+  .luxury-main {
+    padding: var(--luxury-spacing);
+  }
+  
+  .luxury-card {
+    padding: var(--luxury-spacing-lg);
+    margin-bottom: var(--luxury-spacing-lg);
+  }
+}
+
+/* ============================================
+   ✨ ANIMATIONS & MICRO-INTERACTIONS
+   ============================================ */
+
+@keyframes luxuryFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes luxurySlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.luxury-fade-in {
+  animation: luxuryFadeIn 0.6s ease-out forwards;
+}
+
+.luxury-slide-in {
+  animation: luxurySlideIn 0.4s ease-out forwards;
+}
+
+/* Focus visible for accessibility */
+.luxury-btn:focus-visible,
+.luxury-input:focus-visible,
+.luxury-nav-link:focus-visible {
+  outline: 2px solid var(--luxury-primary-400);
+  outline-offset: 2px;
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
