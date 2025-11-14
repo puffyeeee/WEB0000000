@@ -23,7 +23,7 @@
     <!-- Compatibility Layer (最後に読み込み) -->
     <link rel="stylesheet" href="luxury-compatibility.css">
       <!-- Feather icons for sophisticated line icon system -->
-      <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
       
       <!-- Firebase SDK -->
       <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
@@ -452,7 +452,7 @@
         新規お客様登録
       </button>
       <button type="button" class="luxury-btn luxury-btn-secondary" data-tab="calendar">
-        <i data-feather="calendar-plus" aria-hidden="true"></i>
+        <i data-feather="calendar" aria-hidden="true"></i>
         新規予約追加
       </button>
       <button type="button" class="luxury-btn luxury-btn-secondary" data-tab="record">
@@ -2142,6 +2142,26 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
   <script type="module" src="/app.js"></script>
+
+  <!-- Feather Icons 初期化 -->
+  <script>
+    // Featherアイコンが読み込まれたら初期化
+    document.addEventListener('DOMContentLoaded', function() {
+      if (window.feather) {
+        feather.replace();
+      } else {
+        // 少し遅延してから再試行
+        setTimeout(() => {
+          if (window.feather) {
+            feather.replace();
+          }
+        }, 500);
+      }
+    });
+  </script>
+
+  <!-- ログイン互換性修正 -->
+  <script src="login-fix.js"></script>
 
 </body> 
 </html>

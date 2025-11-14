@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>表参道サロン - 動作確認版</title>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .header {
+      background: white;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #1976d2;
+    }
+    
+    .main-container {
+      display: flex;
+      flex: 1;
+    }
+    
+    .sidebar {
+      width: 280px;
+      background: white;
+      padding: 1.5rem;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+    }
+    
+    .nav-section {
+      margin-bottom: 2rem;
+    }
+    
+    .nav-title {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .nav-list {
+      list-style: none;
+    }
+    
+    .nav-item {
+      margin-bottom: 0.5rem;
+    }
+    
+    .nav-link {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem;
+      text-decoration: none;
+      color: #666;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+    
+    .nav-link:hover,
+    .nav-link.active {
+      background: #e3f2fd;
+      color: #1976d2;
+    }
+    
+    .nav-icon {
+      width: 20px;
+      height: 20px;
+      margin-right: 12px;
+      opacity: 0.7;
+    }
+    
+    .main-content {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+    
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 1.5rem;
+      max-width: 1200px;
+    }
+    
+    .dashboard-card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      border: 1px solid #f0f0f0;
+    }
+    
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #f5f5f5;
+    }
+    
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .card-icon {
+      width: 24px;
+      height: 24px;
+      color: #1976d2;
+    }
+    
+    .reservation-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #f8f9fa;
+    }
+    
+    .reservation-item:last-child {
+      border-bottom: none;
+    }
+    
+    .reservation-time {
+      font-weight: 500;
+      color: #1976d2;
+      min-width: 60px;
+    }
+    
+    .customer-info {
+      flex: 1;
+      margin: 0 1rem;
+    }
+    
+    .customer-name {
+      font-weight: 500;
+      color: #333;
+    }
+    
+    .pet-name {
+      font-size: 0.9rem;
+      color: #666;
+      margin-left: 0.5rem;
+    }
+    
+    .status {
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    
+    .status-confirmed { background: #e8f5e8; color: #2e7d32; }
+    .status-pending { background: #fff3e0; color: #f57c00; }
+    .status-new { background: #e3f2fd; color: #1976d2; }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+    
+    .stat-item {
+      text-align: center;
+      padding: 1rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+    
+    .stat-number {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #1976d2;
+    }
+    
+    .stat-label {
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">🐾 表参道サロン</div>
+  <div>高級ペットサロン管理システム</div>
+</header>
+
+<div class="main-container">
+  <aside class="sidebar">
+    <nav class="nav-section">
+      <div class="nav-title">お客様</div>
+      <ul class="nav-list">
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <span class="nav-icon">🔍</span>
+            カルテ検索
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <span class="nav-icon">👥</span>
+            顧客一覧
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <span class="nav-icon">🐕</span>
+            ご愛犬登録
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <nav class="nav-section">
+      <div class="nav-title">予約・来店</div>
+      <ul class="nav-list">
+        <li class="nav-item">
+          <a href="#" class="nav-link active">
+            <span class="nav-icon">📅</span>
+            ダッシュボード
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <span class="nav-icon">📋</span>
+            予約管理
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <nav class="nav-section">
+      <div class="nav-title">売上・物販</div>
+      <ul class="nav-list">
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <span class="nav-icon">💰</span>
+            売上
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <span class="nav-icon">📦</span>
+            物販・在庫
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <div class="dashboard">
+      <!-- 今日の予約 -->
+      <div class="dashboard-card">
+        <div class="card-header">
+          <h2 class="card-title">📅 今日の予約</h2>
+          <span class="card-icon">📊</span>
+        </div>
+        <div class="card-body">
+          <div class="reservation-item">
+            <div class="reservation-time">10:00</div>
+            <div class="customer-info">
+              <span class="customer-name">田中様</span>
+              <span class="pet-name">(ポチ)</span>
+            </div>
+            <div class="status status-confirmed">確定</div>
+          </div>
+          <div class="reservation-item">
+            <div class="reservation-time">14:00</div>
+            <div class="customer-info">
+              <span class="customer-name">佐藤様</span>
+              <span class="pet-name">(チロ)</span>
+            </div>
+            <div class="status status-pending">要確認</div>
+          </div>
+          <div class="reservation-item">
+            <div class="reservation-time">16:00</div>
+            <div class="customer-info">
+              <span class="customer-name">山田様</span>
+              <span class="pet-name">(ハナ)</span>
+            </div>
+            <div class="status status-new">新規</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 注意が必要なご愛犬 -->
+      <div class="dashboard-card">
+        <div class="card-header">
+          <h2 class="card-title">⚠️ 注意が必要なご愛犬</h2>
+        </div>
+        <div class="card-body">
+          <div class="reservation-item">
+            <div class="customer-info">
+              <span class="customer-name">ポチ</span>
+              <span class="pet-name">アレルギー注意</span>
+            </div>
+            <div class="status status-pending">薬物</div>
+          </div>
+          <div class="reservation-item">
+            <div class="customer-info">
+              <span class="customer-name">ミケ</span>
+              <span class="pet-name">噛み癖あり</span>
+            </div>
+            <div class="status status-pending">行動</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 売上サマリー -->
+      <div class="dashboard-card">
+        <div class="card-header">
+          <h2 class="card-title">💰 売上サマリー</h2>
+        </div>
+        <div class="card-body">
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-number">¥45,000</div>
+              <div class="stat-label">今日</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">¥890,000</div>
+              <div class="stat-label">今月</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">112%</div>
+              <div class="stat-label">目標達成率</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">24</div>
+              <div class="stat-label">今月の予約</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 最近の更新 -->
+      <div class="dashboard-card">
+        <div class="card-header">
+          <h2 class="card-title">📝 最近の更新</h2>
+        </div>
+        <div class="card-body">
+          <div class="reservation-item">
+            <div class="customer-info">
+              <span class="customer-name">ポチのカルテ更新</span>
+              <span class="pet-name">2時間前</span>
+            </div>
+          </div>
+          <div class="reservation-item">
+            <div class="customer-info">
+              <span class="customer-name">新規顧客登録</span>
+              <span class="pet-name">3時間前</span>
+            </div>
+          </div>
+          <div class="reservation-item">
+            <div class="customer-info">
+              <span class="customer-name">在庫更新</span>
+              <span class="pet-name">5時間前</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+console.log('✅ 表参道サロン - 動作確認版 読み込み完了');
+
+// シンプルなナビゲーション
+document.querySelectorAll('.nav-link').forEach(link => {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    
+    // アクティブ状態を切り替え
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    this.classList.add('active');
+    
+    console.log('ナビゲーション:', this.textContent.trim());
+  });
+});
+</script>
+
+</body>
+</html>

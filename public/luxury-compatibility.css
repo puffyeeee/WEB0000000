@@ -178,3 +178,155 @@ body.luxury-fade-in .header-utilities {
   white-space: nowrap;
   border: 0;
 }
+
+/* 認証モーダル表示強制 */
+#authModal {
+  display: none !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: rgba(0, 0, 0, 0.7) !important;
+  z-index: 10000 !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+#authModal[style*="flex"], 
+#authModal.show {
+  display: flex !important;
+}
+
+.auth-modal {
+  background: white !important;
+  border-radius: var(--luxury-radius-lg, 16px) !important;
+  padding: 2rem !important;
+  max-width: 400px !important;
+  width: 90% !important;
+  max-height: 80vh !important;
+  overflow-y: auto !important;
+  box-shadow: var(--luxury-shadow-xl, 0 20px 40px rgba(0,0,0,0.15)) !important;
+  position: relative !important;
+}
+
+.modal-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: rgba(0, 0, 0, 0.7) !important;
+  z-index: 10000 !important;
+  display: none !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.modal-overlay[style*="flex"],
+.modal-overlay.show {
+  display: flex !important;
+}
+
+/* モーダル内部スタイル */
+.auth-modal .modal-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 1.5rem !important;
+  padding-bottom: 1rem !important;
+  border-bottom: 1px solid var(--luxury-gray-200, #e5e7eb) !important;
+}
+
+.auth-modal .modal-header h2 {
+  font-size: var(--luxury-text-xl, 1.25rem) !important;
+  font-weight: var(--luxury-font-weight-semibold, 600) !important;
+  color: var(--luxury-gray-800, #1f2937) !important;
+  margin: 0 !important;
+}
+
+.auth-modal .modal-close {
+  width: 32px !important;
+  height: 32px !important;
+  border: none !important;
+  background: transparent !important;
+  color: var(--luxury-gray-500, #6b7280) !important;
+  cursor: pointer !important;
+  border-radius: var(--luxury-radius, 8px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+}
+
+.auth-modal .modal-close:hover {
+  background: var(--luxury-gray-100, #f3f4f6) !important;
+  color: var(--luxury-gray-700, #374151) !important;
+}
+
+.auth-modal .form-group {
+  margin-bottom: 1rem !important;
+}
+
+.auth-modal .form-group label {
+  display: block !important;
+  font-weight: var(--luxury-font-weight-medium, 500) !important;
+  color: var(--luxury-gray-700, #374151) !important;
+  margin-bottom: 0.5rem !important;
+  font-size: var(--luxury-text-sm, 0.875rem) !important;
+}
+
+.auth-modal .form-group input {
+  width: 100% !important;
+  padding: 0.75rem !important;
+  border: 1px solid var(--luxury-gray-300, #d1d5db) !important;
+  border-radius: var(--luxury-radius, 8px) !important;
+  font-size: var(--luxury-text-base, 1rem) !important;
+  transition: border-color 0.2s ease !important;
+}
+
+.auth-modal .form-group input:focus {
+  outline: none !important;
+  border-color: var(--luxury-primary-500, #3b82f6) !important;
+  box-shadow: 0 0 0 3px var(--luxury-primary-100, rgba(59, 130, 246, 0.1)) !important;
+}
+
+.auth-modal .auth-tabs {
+  display: flex !important;
+  margin-bottom: 1.5rem !important;
+  border-bottom: 1px solid var(--luxury-gray-200, #e5e7eb) !important;
+}
+
+.auth-modal .auth-tab {
+  flex: 1 !important;
+  padding: 0.75rem 1rem !important;
+  border: none !important;
+  background: transparent !important;
+  cursor: pointer !important;
+  font-weight: var(--luxury-font-weight-medium, 500) !important;
+  color: var(--luxury-gray-500, #6b7280) !important;
+  border-bottom: 2px solid transparent !important;
+  transition: all 0.2s ease !important;
+}
+
+.auth-modal .auth-tab.active {
+  color: var(--luxury-primary-600, #2563eb) !important;
+  border-bottom-color: var(--luxury-primary-600, #2563eb) !important;
+}
+
+.auth-modal .btn-primary {
+  width: 100% !important;
+  padding: 0.75rem !important;
+  background: var(--luxury-primary-600, #2563eb) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: var(--luxury-radius, 8px) !important;
+  font-weight: var(--luxury-font-weight-medium, 500) !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  margin-top: 1rem !important;
+}
+
+.auth-modal .btn-primary:hover {
+  background: var(--luxury-primary-700, #1d4ed8) !important;
+}
