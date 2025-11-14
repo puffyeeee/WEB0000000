@@ -6307,10 +6307,17 @@ function renderAvailList(slots, ctx){
 // 認証状態管理
  let currentUser = null;
  let isAuthenticated = false;
+ 
+ // デバッグ用：認証状態を確認
+ window.checkAuth = function() {
+   console.log('Auth state:', { currentUser, isAuthenticated });
+ };
 
 // 認証状態の変更を監視
  if (auth) {
   auth.onAuthStateChanged(async (user) => {
+    console.log('Auth state changed:', user ? user.email : 'No user');
+    
     // 一旦リセット
     currentUser = null;
     isAuthenticated = false;
@@ -6320,8 +6327,10 @@ function renderAvailList(slots, ctx){
         // ★ あや本人 → 使用OK
         currentUser = user;
         isAuthenticated = true;
+        console.log('✓ Authenticated as owner');
       } else {
         // ★ 別のメールでログインしてきた → すぐ追い出す
+        console.log('✗ Unauthorized email:', user.email);
         showNotification("このアカウントではアクセスできません", "error");
         try {
           await auth.signOut();
@@ -6329,10 +6338,17 @@ function renderAvailList(slots, ctx){
           console.error("Force sign out error:", e);
         }
       }
+    } else {
+      console.log('ℹ No user logged in');
     }
 
     updateAuthUI();
     updateFeatureAccess();
+    
+    // 認証状態が変更されたらガードを再適用
+    setTimeout(() => {
+      addAuthGuards();
+    }, 100);
   });
 }
 
@@ -6596,8 +6612,7 @@ function renderAvailList(slots, ctx){
       googleLoginButton.addEventListener('click', loginWithGoogle);
     }
     
-    // 制限された操作にガードを追加
-    addAuthGuards();
+    // 認証ガードは認証状態確定後に適用（最初はしない）
   }
   
   // 認証タブ切り替え
@@ -6634,40 +6649,22 @@ function renderAvailList(slots, ctx){
     restrictedSelectors.forEach(selector => {
       const elements = document.querySelectorAll(selector);
       elements.forEach(element => {
-        element.setAttribute('data-requires-auth', 'true');
-        
-        // 既存のクリックイベントを認証ガードでラップ
-        const originalHandler = element.onclick;
-        element.onclick = function(e) {
-          if (!isAuthenticated) {
-            e.preventDefault();
-            e.stopPropagation();
-            showAuthModal();
-            return false;
-          }
+        if (!element.hasAttribute('data-auth-guard-added')) {
+          element.setAttribute('data-requires-auth', 'true');
+          element.setAttribute('data-auth-guard-added', 'true');
           
-          if (originalHandler) {
-            return originalHandler.call(this, e);
-          }
-        };
-        
-        // addEventListener で登録されたイベントもガード
-        const originalAddEventListener = element.addEventListener;
-        element.addEventListener = function(type, listener, options) {
-          if (type === 'click') {
-            const guardedListener = function(e) {
-              if (!isAuthenticated) {
-                e.preventDefault();
-                e.stopPropagation();
-                showAuthModal();
-                return;
-              }
-              listener.call(this, e);
-            };
-            return originalAddEventListener.call(this, type, guardedListener, options);
-          }
-          return originalAddEventListener.call(this, type, listener, options);
-        };
+          // キャプチャフェーズで認証チェック（既存イベントを上書きしない）
+          element.addEventListener('click', function(e) {
+            console.log('Auth guard check:', { isAuthenticated, element: e.target });
+            if (!isAuthenticated) {
+              e.preventDefault();
+              e.stopPropagation();
+              showAuthModal();
+              return false;
+            }
+            // 認証済みの場合はイベントを通す
+          }, true); // キャプチャフェーズ
+        }
       });
     });
   }
