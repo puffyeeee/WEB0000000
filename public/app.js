@@ -7107,7 +7107,7 @@ window.showAuthModal = showAuthModal;
     });
   }
 
-  // 認証必須ページガード (Arflex Gallery では無効化)
+  // 認証必須ページガード (Unite Gallery では無効化)
   function enforceAuthRequired() {
     console.log('🔒 Arflex Gallery - 独自認証システム使用中');
     

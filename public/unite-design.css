@@ -1,0 +1,510 @@
+/* Arflex-Inspired Luxury Salon Design System */
+/* 参考: https://www.arflex.co.jp/2025-26collection/ */
+/* エディトリアル × 高級ペットサロン × 既存ブルー色味 */
+
+/* ============================================
+   🏛️ ARFLEX-INSPIRED COLOR PALETTE
+   既存のブルー系グラデーションを高級化
+   ============================================ */
+
+:root {
+  /* === Unite Tiffany Milky Gradient System (ティファニー系ミルキーグラデーション) === */
+  --unite-blue-whisper: #F7FDFF;       /* ほぼ白のミストブルー(中心) */
+  --unite-blue-mist: #F4FBFF;          /* 白に近いアイスブルー(中心) */
+  --unite-blue-silk: #DEF9F8;          /* 白に近いアイスブルー */
+  --unite-blue-pearl: #B9F3ED;         /* ミルキーターコイズ2 */
+  --unite-blue-silver: #A8F1E5;        /* 淡いティファニーブルー */
+  --unite-blue-steel: #EFEFFF;         /* 淡いラベンダーブルー */
+  --unite-blue-graphite: #E7E7FF;      /* ジェントルラベンダー */
+  --unite-blue-serene: #D3B6F6;        /* ミルキー薄紫 */
+  --unite-blue-refined: #C8A8F0;       /* 透明感のあるラベンダー */
+  --unite-blue-midnight: #B8A2E8;      /* 深いラベンダー(アクセント用) */
+  
+  /* === Neutral Palette (Arflex風グレー階調) === */
+  --unite-white: #ffffff;             /* 純白 */
+  --unite-snow: #fefefe;              /* スノーホワイト */
+  --unite-whisper: #fafcfe;           /* ささやき */
+  --unite-cloud: #f6f8fb;             /* 雲 */
+  --unite-mist: #f1f4f8;              /* 霧 */
+  --unite-pearl: #ecf0f5;             /* パール */
+  --unite-silver: #e2e7ed;            /* シルバー */
+  --unite-ash: #d5dce4;               /* アッシュ */
+  --unite-stone: #c4ced8;             /* ストーン */
+  --unite-slate: #a8b7c5;             /* スレート */
+  --unite-charcoal: #8d9fb2;          /* チャコール */
+  --unite-graphite: #6b7d91;          /* グラファイト */
+  --unite-steel: #4a5c6f;             /* スチール */
+  --unite-midnight: #2d3e4d;          /* ミッドナイト */
+  --unite-shadow: #1a252f;            /* シャドウ */
+  
+  /* === Accent Purple (既存の薄いパープルを少量使用) === */
+  --unite-purple-hint: #f8f7fc;       /* ほのかなパープル */
+  --unite-purple-whisper: #f3f1f8;    /* パープルの囁き */
+  --unite-purple-mist: #e9e5f1;       /* パープルミスト */
+  --unite-purple-gentle: #d8d1e3;     /* 優しいパープル */
+  
+  /* === Typography (Arflex準拠) === */
+  --unite-font-primary: 'Noto Sans JP', -apple-system, sans-serif;
+  --unite-font-english: 'Inter', -apple-system, sans-serif;
+  --unite-font-display: 'Inter', -apple-system, sans-serif;  /* セリフを避けてクリーンに */
+  
+  /* === Typography Scale (エディトリアル基準) === */
+  --unite-text-xs: 0.75rem;     /* 12px - キャプション */
+  --unite-text-sm: 0.875rem;    /* 14px - サブテキスト */
+  --unite-text-base: 1rem;      /* 16px - 本文 */
+  --unite-text-lg: 1.125rem;    /* 18px - 小見出し */
+  --unite-text-xl: 1.375rem;    /* 22px - 見出し */
+  --unite-text-2xl: 1.75rem;    /* 28px - 大見出し */
+  --unite-text-3xl: 2.25rem;    /* 36px - タイトル */
+  --unite-text-4xl: 3rem;       /* 48px - ヒーロー */
+  
+  /* === Font Weights (細め基調) === */
+  --unite-font-thin: 200;
+  --unite-font-light: 300;
+  --unite-font-normal: 400;
+  --unite-font-medium: 500;
+  --unite-font-semibold: 600;
+  
+  /* === Spacing (余白重視・Arflex準拠) === */
+  --unite-space-xs: 0.5rem;     /* 8px */
+  --unite-space-sm: 0.75rem;    /* 12px */
+  --unite-space-md: 1rem;       /* 16px */
+  --unite-space-lg: 1.5rem;     /* 24px */
+  --unite-space-xl: 2rem;       /* 32px */
+  --unite-space-2xl: 3rem;      /* 48px */
+  --unite-space-3xl: 4rem;      /* 64px */
+  --unite-space-4xl: 6rem;      /* 96px */
+  --unite-space-5xl: 8rem;      /* 128px */
+  --unite-space-6xl: 12rem;     /* 192px */
+  
+  /* === Border Radius (控えめ・上品) === */
+  --unite-radius-none: 0;
+  --unite-radius-sm: 2px;
+  --unite-radius-md: 4px;
+  --unite-radius-lg: 6px;
+  --unite-radius-xl: 8px;
+  
+  /* === Shadows (透明感・Arflex準拠) === */
+  --unite-shadow-subtle: 0 1px 3px rgba(45, 62, 77, 0.03), 0 1px 2px rgba(45, 62, 77, 0.04);
+  --unite-shadow-soft: 0 2px 8px rgba(45, 62, 77, 0.04), 0 1px 3px rgba(45, 62, 77, 0.06);
+  --unite-shadow-medium: 0 4px 16px rgba(45, 62, 77, 0.06), 0 2px 6px rgba(45, 62, 77, 0.08);
+  --unite-shadow-large: 0 8px 32px rgba(45, 62, 77, 0.08), 0 4px 12px rgba(45, 62, 77, 0.10);
+  
+  /* === Tiffany Milky Gradients (ティファニー系ミルキーグラデーション) === */
+  --unite-gradient-whisper: linear-gradient(90deg, 
+    #A8F1E5 0%, #B2F2E8 5%, #B9F3ED 10%, #C5F5F1 15%, /* 左端ターコイズ 15% */
+    #D1F7F5 20%, #DEF9F8 25%, #E8FBFA 30%, #F0FCFB 35%, /* 白中心領域 55% */
+    #F4FBFF 40%, #F7FDFF 45%, #F9FEFF 50%, #FAFEFF 55%,
+    #FBFEFF 60%, #FCFEFF 65%, #FDFEFF 70%, #FEFEFF 75%, /* 白中心領域終了 */
+    #EFEFFF 80%, #E7E7FF 85%, #D3B6F6 95%, #C8A8F0 100%); /* ラベンダー領域 30% */
+  --unite-gradient-gentle: linear-gradient(135deg, var(--unite-blue-mist) 0%, var(--unite-blue-whisper) 50%, var(--unite-blue-calm) 100%);
+  --unite-gradient-serene: linear-gradient(135deg, var(--unite-blue-gentle) 0%, var(--unite-blue-serene) 100%);
+  --unite-gradient-overlay: linear-gradient(135deg, rgba(247, 253, 255, 0.95) 0%, rgba(244, 251, 255, 0.9) 50%, rgba(239, 239, 255, 0.85) 100%);
+}
+
+/* ============================================
+   🎯 ARFLEX BASE STYLES
+   ============================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--unite-font-primary);
+  font-weight: var(--unite-font-light);
+  line-height: 1.6;
+  color: var(--unite-steel);
+  background: var(--unite-gradient-whisper);
+  background-attachment: fixed;
+  min-height: 100vh;
+  position: relative;
+  /* ミルキー質感の追加効果 */
+  backdrop-filter: blur(0.3px);
+  overflow-x: hidden;
+}
+
+/* Prevent flash of unstyled content */
+body:not(.loaded) .unite-main-content {
+  display: none !important;
+}
+
+/* ============================================
+   🏛️ ARFLEX LAYOUT SYSTEM
+   エディトリアル・展示会風レイアウト
+   ============================================ */
+
+.unite-app {
+  min-height: 100vh;
+  background: var(--unite-gradient-whisper);
+  position: relative;
+}
+
+.unite-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--unite-space-4xl);
+}
+
+.unite-section {
+  margin-bottom: var(--unite-space-6xl);
+  position: relative;
+}
+
+.unite-section:last-child {
+  margin-bottom: var(--unite-space-4xl);
+}
+
+/* ============================================
+   👑 ARFLEX HEADER (シンプル・エレガント)
+   ============================================ */
+
+.unite-header {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--unite-pearl);
+  padding: var(--unite-space-xl) 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+
+.unite-header-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--unite-space-4xl);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.unite-brand {
+  display: flex;
+  align-items: baseline;
+  gap: var(--unite-space-md);
+}
+
+.unite-brand-name {
+  font-family: var(--unite-font-display);
+  font-size: var(--unite-text-lg);
+  font-weight: var(--unite-font-normal);
+  color: var(--unite-refined);
+  letter-spacing: 0.05em;
+}
+
+.unite-brand-tagline {
+  font-size: var(--unite-text-xs);
+  color: var(--unite-graphite);
+  font-weight: var(--unite-font-light);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.unite-nav {
+  display: flex;
+  gap: var(--unite-space-2xl);
+}
+
+.unite-nav-link {
+  font-size: var(--unite-text-sm);
+  color: var(--unite-steel);
+  text-decoration: none;
+  font-weight: var(--unite-font-normal);
+  letter-spacing: 0.03em;
+  transition: color 0.3s ease;
+  position: relative;
+}
+
+.unite-nav-link:hover,
+.unite-nav-link.active {
+  color: var(--unite-refined);
+}
+
+.unite-nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--unite-blue-serene);
+}
+
+/* ============================================
+   🖼️ ARFLEX HERO SECTION
+   大きな写真 + 短いコピー（Arflex準拠）
+   ============================================ */
+
+.unite-hero {
+  padding-top: var(--unite-space-6xl);
+  margin-bottom: var(--unite-space-6xl);
+  text-align: center;
+}
+
+.unite-hero-image {
+  width: 100%;
+  max-width: 800px;
+  height: 500px;
+  object-fit: cover;
+  border-radius: var(--unite-radius-lg);
+  margin: 0 auto var(--unite-space-3xl) auto;
+  display: block;
+  box-shadow: var(--unite-shadow-large);
+}
+
+.unite-hero-title {
+  font-family: var(--unite-font-display);
+  font-size: var(--unite-text-3xl);
+  font-weight: var(--unite-font-light);
+  color: var(--unite-midnight);
+  letter-spacing: -0.02em;
+  margin-bottom: var(--unite-space-lg);
+  line-height: 1.2;
+}
+
+.unite-hero-subtitle {
+  font-size: var(--unite-text-base);
+  color: var(--unite-graphite);
+  font-weight: var(--unite-font-light);
+  letter-spacing: 0.02em;
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ============================================
+   📊 ARFLEX METRICS (控えめ・右下配置)
+   ============================================ */
+
+.unite-metrics {
+  position: absolute;
+  bottom: var(--unite-space-2xl);
+  right: var(--unite-space-4xl);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  padding: var(--unite-space-xl);
+  border-radius: var(--unite-radius-lg);
+  box-shadow: var(--unite-shadow-soft);
+  max-width: 300px;
+}
+
+.unite-metrics-title {
+  font-size: var(--unite-text-xs);
+  color: var(--unite-graphite);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--unite-space-md);
+  font-weight: var(--unite-font-medium);
+}
+
+.unite-metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--unite-space-lg);
+}
+
+.unite-metric {
+  text-align: left;
+}
+
+.unite-metric-value {
+  font-family: var(--unite-font-english);
+  font-size: var(--unite-text-xl);
+  font-weight: var(--unite-font-light);
+  color: var(--unite-refined);
+  line-height: 1;
+  margin-bottom: var(--unite-space-xs);
+}
+
+.unite-metric-label {
+  font-size: var(--unite-text-xs);
+  color: var(--unite-steel);
+  font-weight: var(--unite-font-normal);
+}
+
+/* ============================================
+   🎨 ARFLEX CONTENT BLOCKS
+   エディトリアル風ブロック配置
+   ============================================ */
+
+.unite-content-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--unite-space-6xl);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.unite-block {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  border-radius: var(--unite-radius-lg);
+  padding: var(--unite-space-3xl);
+  box-shadow: var(--unite-shadow-soft);
+  position: relative;
+}
+
+.unite-block-header {
+  margin-bottom: var(--unite-space-2xl);
+  text-align: left;
+}
+
+.unite-block-title {
+  font-family: var(--unite-font-display);
+  font-size: var(--unite-text-xl);
+  font-weight: var(--unite-font-normal);
+  color: var(--unite-midnight);
+  letter-spacing: 0.02em;
+  margin-bottom: var(--unite-space-sm);
+  line-height: 1.3;
+}
+
+.unite-block-subtitle {
+  font-size: var(--unite-text-sm);
+  color: var(--unite-graphite);
+  font-weight: var(--unite-font-light);
+  letter-spacing: 0.01em;
+}
+
+/* ============================================
+   🐕 ARFLEX PET CARDS
+   作品展示風の配置
+   ============================================ */
+
+.unite-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--unite-space-3xl);
+}
+
+.unite-card {
+  background: var(--unite-white);
+  border-radius: var(--unite-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--unite-shadow-medium);
+  transition: all 0.4s ease;
+  position: relative;
+}
+
+.unite-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--unite-shadow-large);
+}
+
+.unite-card-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+.unite-card-content {
+  padding: var(--unite-space-xl);
+}
+
+.unite-card-title {
+  font-size: var(--unite-text-base);
+  font-weight: var(--unite-font-medium);
+  color: var(--unite-midnight);
+  margin-bottom: var(--unite-space-xs);
+  letter-spacing: 0.01em;
+}
+
+.unite-card-subtitle {
+  font-size: var(--unite-text-sm);
+  color: var(--unite-steel);
+  font-weight: var(--unite-font-light);
+  margin-bottom: var(--unite-space-md);
+}
+
+.unite-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--unite-text-xs);
+  color: var(--unite-graphite);
+}
+
+/* ============================================
+   📱 RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 768px) {
+  .unite-container {
+    padding: 0 var(--unite-space-xl);
+  }
+  
+  .unite-header-content {
+    padding: 0 var(--unite-space-xl);
+    flex-direction: column;
+    gap: var(--unite-space-lg);
+  }
+  
+  .unite-nav {
+    gap: var(--unite-space-lg);
+  }
+  
+  .unite-hero {
+    padding-top: var(--unite-space-4xl);
+  }
+  
+  .unite-hero-title {
+    font-size: var(--unite-text-2xl);
+  }
+  
+  .unite-metrics {
+    position: static;
+    margin-top: var(--unite-space-3xl);
+    max-width: none;
+  }
+  
+  .unite-block {
+    padding: var(--unite-space-xl);
+  }
+  
+  .unite-cards-grid {
+    grid-template-columns: 1fr;
+    gap: var(--unite-space-xl);
+  }
+}
+
+/* ============================================
+   ✨ ARFLEX ANIMATIONS
+   控えめ・上品なアニメーション
+   ============================================ */
+
+@keyframes arflex-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.unite-fade-in {
+  animation: arflex-fade-in 0.8s ease-out;
+}
+
+/* アクセシビリティ */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

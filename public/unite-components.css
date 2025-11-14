@@ -1,0 +1,771 @@
+/* Arflex-Inspired Components */
+/* エディトリアル × 高級ペットサロン専用コンポーネント */
+
+/* ============================================
+   ARFLEX RESERVATION TIMELINE
+   展示会風レイアウト
+   ============================================ */
+
+.unite-timeline {
+  position: relative;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(168, 241, 229, 0.1);
+  border-radius: var(--unite-radius-lg);
+  padding: var(--unite-space-3xl);
+  box-shadow: var(--unite-shadow-soft);
+}
+
+.unite-timeline-item {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: var(--unite-space-xl);
+  padding: var(--unite-space-xl) 0;
+  border-bottom: 1px solid var(--unite-pearl);
+  position: relative;
+}
+
+.unite-timeline-item:last-child {
+  border-bottom: none;
+}
+
+.unite-timeline-time {
+  font-family: var(--unite-font-english);
+  font-size: var(--unite-text-lg);
+  font-weight: var(--unite-font-light);
+  color: var(--unite-refined);
+  text-align: right;
+  line-height: 1.2;
+}
+
+.unite-timeline-content {
+  min-width: 0;
+}
+
+.unite-guest-profile {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--unite-space-lg);
+  margin-bottom: var(--unite-space-md);
+}
+
+.unite-pet-photo {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--unite-radius-md);
+  object-fit: cover;
+  background: linear-gradient(135deg, #A8F1E5 0%, #B9F3ED 50%, #EFEFFF 100%);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  flex-shrink: 0;
+  box-shadow: 0 4px 20px rgba(168, 241, 229, 0.15);
+}
+
+.unite-guest-info h4 {
+  font-size: var(--unite-text-base);
+  font-weight: var(--unite-font-medium);
+  color: var(--unite-midnight);
+  margin-bottom: var(--unite-space-xs);
+  letter-spacing: 0.01em;
+}
+
+.unite-pet-details {
+  font-size: var(--unite-text-sm);
+  color: var(--unite-steel);
+  font-weight: var(--unite-font-light);
+  line-height: 1.4;
+}
+
+.unite-service-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--unite-space-sm);
+  margin-top: var(--unite-space-sm);
+}
+
+.unite-service-tag {
+  font-size: var(--unite-text-xs);
+  color: var(--unite-blue-refined);
+  background: linear-gradient(90deg, rgba(168, 241, 229, 0.15) 0%, rgba(185, 243, 237, 0.15) 100%);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(168, 241, 229, 0.2);
+  padding: var(--unite-space-xs) var(--unite-space-sm);
+  border-radius: var(--unite-radius-sm);
+  font-weight: var(--unite-font-normal);
+  letter-spacing: 0.02em;
+}
+
+.unite-timeline-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 100px;
+}
+
+.unite-status {
+  font-size: var(--unite-text-xs);
+  font-weight: var(--unite-font-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: var(--unite-space-xs) var(--unite-space-sm);
+  border-radius: var(--unite-radius-sm);
+  text-align: center;
+}
+
+.unite-status-confirmed {
+  background: var(--unite-blue-silk);
+  color: var(--unite-refined);
+}
+
+.unite-status-progress {
+  background: var(--unite-purple-mist);
+  color: var(--unite-steel);
+}
+
+.unite-status-pending {
+  background: var(--unite-mist);
+  color: var(--unite-graphite);
+}
+
+/* ============================================
+   ARFLEX ATTENTION SECTION
+   ギャラリー風の注意喚起
+   ============================================ */
+
+.unite-attention-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--unite-space-xl);
+}
+
+.unite-attention-card {
+  background: var(--unite-white);
+  border-left: 4px solid var(--unite-blue-serene);
+  border-radius: var(--unite-radius-md);
+  padding: var(--unite-space-xl);
+  box-shadow: var(--unite-shadow-subtle);
+  transition: all 0.3s ease;
+}
+
+.unite-attention-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--unite-shadow-medium);
+}
+
+.unite-attention-header {
+  display: flex;
+  align-items: center;
+  gap: var(--unite-space-md);
+  margin-bottom: var(--unite-space-md);
+}
+
+.unite-attention-photo {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--unite-radius-md);
+  object-fit: cover;
+  background: var(--unite-gradient-gentle);
+}
+
+.unite-attention-info h5 {
+  font-size: var(--unite-text-base);
+  font-weight: var(--unite-font-medium);
+  color: var(--unite-midnight);
+  margin-bottom: var(--unite-space-xs);
+}
+
+.unite-attention-owner {
+  font-size: var(--unite-text-sm);
+  color: var(--unite-steel);
+  font-weight: var(--unite-font-light);
+}
+
+.unite-attention-note {
+  font-size: var(--unite-text-sm);
+  color: var(--unite-steel);
+  line-height: 1.5;
+  margin-bottom: var(--unite-space-md);
+}
+
+.unite-attention-tags {
+  display: flex;
+  gap: var(--unite-space-xs);
+}
+
+.unite-attention-tag {
+  font-size: var(--unite-text-xs);
+  padding: var(--unite-space-xs) var(--unite-space-sm);
+  border-radius: var(--unite-radius-sm);
+  font-weight: var(--unite-font-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.unite-tag-medical {
+  background: rgba(248, 113, 113, 0.1);
+  color: #dc2626;
+}
+
+.unite-tag-behavioral {
+  background: rgba(245, 158, 11, 0.1);
+  color: #d97706;
+}
+
+.unite-tag-health {
+  background: rgba(34, 197, 94, 0.1);
+  color: #059669;
+}
+
+/* ============================================
+   ARFLEX ANALYTICS
+   エディトリアル風チャートセクション
+   ============================================ */
+
+.unite-analytics {
+  background: var(--unite-white);
+  border-radius: var(--unite-radius-lg);
+  padding: var(--unite-space-3xl);
+  box-shadow: var(--unite-shadow-soft);
+  margin-bottom: var(--unite-space-3xl);
+}
+
+.unite-analytics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--unite-space-3xl);
+}
+
+.unite-analytics-title {
+  font-family: var(--unite-font-display);
+  font-size: var(--unite-text-2xl);
+  font-weight: var(--unite-font-light);
+  color: var(--unite-midnight);
+  letter-spacing: -0.01em;
+  margin-bottom: var(--unite-space-sm);
+}
+
+.unite-analytics-subtitle {
+  font-size: var(--unite-text-sm);
+  color: var(--unite-graphite);
+  font-weight: var(--unite-font-light);
+}
+
+.unite-period-tabs {
+  display: flex;
+  gap: var(--unite-space-sm);
+}
+
+.unite-period-tab {
+  font-size: var(--unite-text-sm);
+  color: var(--unite-steel);
+  background: transparent;
+  border: 1px solid var(--unite-silver);
+  padding: var(--unite-space-sm) var(--unite-space-lg);
+  border-radius: var(--unite-radius-md);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: var(--unite-font-normal);
+}
+
+.unite-period-tab:hover,
+.unite-period-tab.active {
+  background: var(--unite-blue-silk);
+  border-color: var(--unite-blue-serene);
+  color: var(--unite-refined);
+}
+
+.unite-chart-area {
+  height: 300px;
+  background: var(--unite-gradient-whisper);
+  border-radius: var(--unite-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--unite-pearl);
+  position: relative;
+  overflow: hidden;
+}
+
+.unite-chart-placeholder {
+  text-align: center;
+  color: var(--unite-graphite);
+  font-size: var(--unite-text-sm);
+  font-weight: var(--unite-font-light);
+}
+
+/* ============================================
+   ARFLEX ACTIVITY FEED
+   雑誌風レイアウト
+   ============================================ */
+
+.unite-activity {
+  background: var(--unite-white);
+  border-radius: var(--unite-radius-lg);
+  padding: var(--unite-space-2xl);
+  box-shadow: var(--unite-shadow-subtle);
+}
+
+.unite-activity-list {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: var(--unite-space-sm);
+}
+
+.unite-activity-item {
+  display: flex;
+  gap: var(--unite-space-md);
+  padding: var(--unite-space-lg) 0;
+  border-bottom: 1px solid var(--unite-mist);
+  transition: background-color 0.2s ease;
+}
+
+.unite-activity-item:hover {
+  background: var(--unite-whisper);
+  margin: 0 calc(-1 * var(--unite-space-lg));
+  padding-left: var(--unite-space-lg);
+  padding-right: var(--unite-space-lg);
+  border-radius: var(--unite-radius-md);
+}
+
+.unite-activity-item:last-child {
+  border-bottom: none;
+}
+
+.unite-activity-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--unite-gradient-gentle);
+  border-radius: var(--unite-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: var(--unite-text-sm);
+}
+
+.unite-activity-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.unite-activity-content h6 {
+  font-size: var(--unite-text-sm);
+  font-weight: var(--unite-font-medium);
+  color: var(--unite-midnight);
+  margin-bottom: var(--unite-space-xs);
+}
+
+.unite-activity-content p {
+  font-size: var(--unite-text-sm);
+  color: var(--unite-steel);
+  font-weight: var(--unite-font-light);
+  line-height: 1.4;
+}
+
+.unite-activity-time {
+  font-size: var(--unite-text-xs);
+  color: var(--unite-graphite);
+  font-weight: var(--unite-font-light);
+  white-space: nowrap;
+  padding-top: var(--unite-space-xs);
+}
+
+/* ============================================
+   ARFLEX BUTTONS & ACTIONS
+   控えめ・上品なボタンデザイン
+   ============================================ */
+
+/* Global button size protection */
+button, .btn, [role="button"] {
+  max-width: 300px !important;
+  max-height: 60px !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+.unite-btn {
+  font-family: var(--unite-font-primary);
+  font-size: var(--unite-text-sm);
+  font-weight: var(--unite-font-normal);
+  padding: var(--unite-space-sm) var(--unite-space-lg);
+  border-radius: var(--unite-radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--unite-space-sm);
+  letter-spacing: 0.01em;
+  /* Prevent infinite size growth */
+  max-width: 300px;
+  max-height: 60px;
+  box-sizing: border-box;
+}
+
+.unite-btn-primary {
+  background: linear-gradient(135deg, var(--unite-blue-serene) 0%, var(--unite-blue-refined) 100%);
+  color: var(--unite-white);
+  border: 1px solid rgba(200, 168, 240, 0.3);
+  box-shadow: 0 4px 20px rgba(200, 168, 240, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.unite-btn-primary:hover {
+  background: linear-gradient(135deg, var(--unite-blue-refined) 0%, var(--unite-blue-serene) 100%);
+  border-color: rgba(184, 162, 232, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(200, 168, 240, 0.3);
+}
+
+.unite-btn-outline {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  color: var(--unite-blue-refined);
+  border: 1px solid rgba(168, 241, 229, 0.3);
+}
+
+.unite-btn-outline:hover {
+  background: rgba(168, 241, 229, 0.1);
+  border-color: rgba(168, 241, 229, 0.5);
+  color: var(--unite-blue-refined);
+  box-shadow: 0 4px 20px rgba(168, 241, 229, 0.15);
+}
+
+.unite-btn-ghost {
+  background: transparent;
+  color: var(--unite-blue-refined);
+  border: none;
+  padding: var(--unite-space-sm);
+}
+
+.unite-btn-ghost:hover {
+  background: rgba(239, 239, 255, 0.3);
+  color: var(--unite-blue-refined);
+  backdrop-filter: blur(5px);
+}
+
+/* Ripple animation - Milky Tiffany Effect */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(168, 241, 229, 0.4) 0%, rgba(239, 239, 255, 0.3) 50%, rgba(255, 255, 255, 0.2) 100%);
+  transform: scale(0);
+  animation: ripple-effect 0.6s ease-out;
+  pointer-events: none;
+}
+
+@keyframes ripple-effect {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Button press animation */
+.btn-press {
+  transform: scale(0.98) !important;
+  transition: transform 0.1s ease !important;
+}
+
+/* ============================================
+   RESPONSIVE COMPONENTS
+   ============================================ */
+
+@media (max-width: 768px) {
+  .unite-login-container {
+    min-width: unset;
+    width: 90vw;
+    padding: var(--unite-space-2xl);
+  }
+  
+  .unite-login-title {
+    font-size: var(--unite-text-2xl);
+  }
+  
+  .unite-user-header {
+    padding: var(--unite-space-md) var(--unite-space-lg);
+  }
+  
+  .unite-user-info {
+    flex-direction: column;
+    gap: var(--unite-space-sm);
+    text-align: center;
+  }
+  
+  .unite-timeline-item {
+    grid-template-columns: 1fr;
+    gap: var(--unite-space-md);
+    text-align: left;
+  }
+  
+  .unite-timeline-time {
+    text-align: left;
+    font-size: var(--unite-text-base);
+  }
+  
+  .unite-guest-profile {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--unite-space-md);
+  }
+  
+  .unite-pet-photo {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .unite-attention-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .unite-analytics-header {
+    flex-direction: column;
+    gap: var(--unite-space-lg);
+  }
+  
+  .unite-period-tabs {
+    justify-content: center;
+  }
+  
+  .unite-chart-area {
+    height: 200px;
+  }
+}
+
+/* ============================================
+   ARFLEX LOGIN SCREEN
+   ============================================ */
+
+.unite-login-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: var(--unite-gradient-whisper);
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  visibility: visible;
+  opacity: 1;
+  /* ミルキー質感の追加 */
+  backdrop-filter: blur(1px);
+}
+
+.unite-login-container {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(168, 241, 229, 0.15);
+  border-radius: var(--unite-radius-lg);
+  box-shadow: 0 8px 40px rgba(168, 241, 229, 0.1), 0 4px 20px rgba(239, 239, 255, 0.1);
+  padding: var(--unite-space-3xl);
+  min-width: 400px;
+  max-width: 90vw;
+  text-align: center;
+  /* ミルキーグロー */
+  position: relative;
+  overflow: hidden;
+}
+
+.unite-login-header {
+  margin-bottom: var(--unite-space-3xl);
+}
+
+.unite-login-title {
+  font-family: var(--unite-font-display);
+  font-size: var(--unite-text-3xl);
+  font-weight: var(--unite-font-light);
+  color: var(--unite-midnight);
+  margin-bottom: var(--unite-space-sm);
+  letter-spacing: -0.02em;
+}
+
+.unite-login-subtitle {
+  font-size: var(--unite-text-base);
+  color: var(--unite-graphite);
+  font-weight: var(--unite-font-light);
+}
+
+.unite-login-form {
+  text-align: left;
+}
+
+.unite-login-btn {
+  width: 100%;
+  justify-content: center;
+  padding: var(--unite-space-lg);
+  font-weight: var(--unite-font-medium);
+}
+
+.unite-user-header {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(15px);
+  border-bottom: 1px solid rgba(168, 241, 229, 0.1);
+  padding: var(--unite-space-lg) var(--unite-space-xl);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  /* ミルキーグロー効果 */
+  box-shadow: 0 2px 20px rgba(168, 241, 229, 0.05);
+}
+
+.unite-user-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.unite-user-info span {
+  font-size: var(--unite-text-sm);
+  color: var(--unite-steel);
+  font-weight: var(--unite-font-medium);
+}
+
+.unite-main-content {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.unite-main-content.loaded {
+  opacity: 1;
+}
+
+/* ============================================
+   ARFLEX MODAL & AUTH
+   ============================================ */
+
+.unite-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.unite-modal-content {
+  background: var(--unite-white);
+  border-radius: var(--unite-radius-lg);
+  box-shadow: var(--unite-shadow-medium);
+  min-width: 400px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: hidden;
+}
+
+.unite-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--unite-space-xl);
+  border-bottom: 1px solid var(--unite-pearl);
+}
+
+.unite-modal-header h3 {
+  font-family: var(--unite-font-display);
+  font-size: var(--unite-text-xl);
+  font-weight: var(--unite-font-light);
+  color: var(--unite-midnight);
+  margin: 0;
+}
+
+.unite-modal-body {
+  padding: var(--unite-space-xl);
+}
+
+.unite-auth-tabs {
+  display: flex;
+  gap: var(--unite-space-sm);
+  margin-bottom: var(--unite-space-xl);
+  border-bottom: 1px solid var(--unite-pearl);
+}
+
+.unite-auth-tab {
+  background: transparent;
+  border: none;
+  padding: var(--unite-space-md) var(--unite-space-lg);
+  font-size: var(--unite-text-sm);
+  color: var(--unite-graphite);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s ease;
+  margin-bottom: -1px;
+}
+
+.unite-auth-tab:hover,
+.unite-auth-tab.active {
+  color: var(--unite-refined);
+  border-bottom-color: var(--unite-blue-serene);
+}
+
+.unite-auth-content {
+  margin-top: var(--unite-space-lg);
+}
+
+.unite-form-group {
+  margin-bottom: var(--unite-space-lg);
+}
+
+.unite-form-group label {
+  display: block;
+  font-size: var(--unite-text-sm);
+  font-weight: var(--unite-font-medium);
+  color: var(--unite-steel);
+  margin-bottom: var(--unite-space-sm);
+}
+
+.unite-form-group input {
+  width: 100%;
+  padding: var(--unite-space-md);
+  border: 1px solid var(--unite-silver);
+  border-radius: var(--unite-radius-md);
+  font-size: var(--unite-text-sm);
+  font-family: var(--unite-font-primary);
+  background: var(--unite-white);
+  transition: all 0.3s ease;
+}
+
+.unite-form-group input:focus {
+  outline: none;
+  border-color: var(--unite-blue-serene);
+  box-shadow: 0 0 0 3px rgba(51, 65, 85, 0.1);
+}
+
+.unite-auth-error {
+  background: rgba(248, 113, 113, 0.1);
+  color: #dc2626;
+  padding: var(--unite-space-md);
+  border-radius: var(--unite-radius-md);
+  font-size: var(--unite-text-sm);
+  margin-top: var(--unite-space-lg);
+}
+
+/* ============================================
+   ARFLEX UTILITIES
+   ============================================ */
+
+.unite-text-center { text-align: center; }
+.unite-text-right { text-align: right; }
+
+.unite-mb-0 { margin-bottom: 0; }
+.unite-mb-sm { margin-bottom: var(--unite-space-sm); }
+.unite-mb-md { margin-bottom: var(--unite-space-md); }
+.unite-mb-lg { margin-bottom: var(--unite-space-lg); }
+.unite-mb-xl { margin-bottom: var(--unite-space-xl); }
+
+.unite-mt-0 { margin-top: 0; }
+.unite-mt-sm { margin-top: var(--unite-space-sm); }
+.unite-mt-md { margin-top: var(--unite-space-md); }
+.unite-mt-lg { margin-top: var(--unite-space-lg); }
+.unite-mt-xl { margin-top: var(--unite-space-xl); }

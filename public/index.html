@@ -6,8 +6,8 @@
     <title>Unite Pet Salon Gallery | 高級ペットサロン</title>
     
     <!-- Arflex Design System -->
-    <link rel="stylesheet" href="arflex-design.css">
-    <link rel="stylesheet" href="arflex-components.css">
+    <link rel="stylesheet" href="unite-design.css">
+    <link rel="stylesheet" href="unite-components.css">
     
     <!-- Icons -->
     <script src="https://unpkg.com/feather-icons"></script>
@@ -30,45 +30,50 @@
         </div>
     </noscript>
     <!-- LOGIN SCREEN -->
-    <div id="loginScreen" class="arflex-login-screen" style="display: flex;">
-        <div class="arflex-login-container">
-            <div class="arflex-login-header">
-                <h1 class="arflex-login-title">Unite Gallery</h1>
-                <p class="arflex-login-subtitle">Pet Salon Gallery Access</p>
+    <div id="loginScreen" class="unite-login-screen" style="display: flex;">
+        <div class="unite-login-container">
+            <div class="unite-login-header">
+                <h1 class="unite-login-title">Unite Gallery</h1>
+                <p class="unite-login-subtitle">Pet Salon Gallery Access</p>
             </div>
             
-            <div class="arflex-login-form">
-                <div class="arflex-auth-tabs">
-                    <button class="arflex-auth-tab active" data-tab="email">Email</button>
-                    <button class="arflex-auth-tab" data-tab="google">Google</button>
+            <div class="unite-login-form">
+                <div class="unite-auth-tabs">
+                    <button class="unite-auth-tab active" data-tab="email">Email</button>
+                    <button class="unite-auth-tab" data-tab="google">Google</button>
                 </div>
                 
-                <div class="arflex-auth-content" id="emailAuth">
+                <div class="unite-auth-content" id="emailAuth">
                     <form id="emailLoginForm">
-                        <div class="arflex-form-group">
+                        <div class="unite-form-group">
                             <label>Email Address</label>
                             <input type="email" id="loginEmail" required placeholder="your@email.com">
                         </div>
-                        <div class="arflex-form-group">
+                        <div class="unite-form-group">
                             <label>Password</label>
                             <input type="password" id="loginPassword" required placeholder="Password">
                         </div>
-                        <button type="submit" class="arflex-btn arflex-btn-primary arflex-login-btn">
+                        <button type="submit" class="unite-btn unite-btn-primary unite-login-btn">
                             <i data-feather="log-in"></i>
                             Enter Gallery
                         </button>
                     </form>
                     
-                    <div style="text-align: center; margin-top: var(--arflex-space-lg); padding-top: var(--arflex-space-lg); border-top: 1px solid var(--arflex-pearl);">
-                        <button type="button" id="demoLoginBtn" class="arflex-btn arflex-btn-outline" style="width: 100%;">
+                    <div style="text-align: center; margin-top: var(--unite-space-lg); padding-top: var(--unite-space-lg); border-top: 1px solid var(--unite-pearl);">
+                        <div style="margin-bottom: var(--unite-space-md); font-size: var(--unite-text-sm); color: var(--unite-graphite); line-height: 1.4;">
+                            <strong>🎆 デモアカウント</strong><br>
+                            メール: <code style="background: rgba(168, 241, 229, 0.1); padding: 2px 4px; border-radius: 3px; font-size: 0.85em;">demo@unite.gallery</code><br>
+                            パスワード: <code style="background: rgba(168, 241, 229, 0.1); padding: 2px 4px; border-radius: 3px; font-size: 0.85em;">unite2025</code>
+                        </div>
+                        <button type="button" id="demoLoginBtn" class="unite-btn unite-btn-outline" style="width: 100%;">
                             <i data-feather="zap"></i>
-                            Demo Login
+                            ワンクリックデモログイン
                         </button>
                     </div>
                 </div>
                 
-                <div class="arflex-auth-content" id="googleAuth" style="display: none;">
-                    <button id="googleLoginButton" class="arflex-btn arflex-btn-outline arflex-login-btn">
+                <div class="unite-auth-content" id="googleAuth" style="display: none;">
+                    <button id="googleLoginButton" class="unite-btn unite-btn-outline unite-login-btn">
                         <svg width="20" height="20" viewBox="0 0 24 24">
                             <path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                             <path fill="#34a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -79,18 +84,18 @@
                     </button>
                 </div>
                 
-                <div class="arflex-auth-error" id="authError" style="display: none;"></div>
+                <div class="unite-auth-error" id="authError" style="display: none;"></div>
             </div>
         </div>
     </div>
 
     <!-- MAIN CONTENT (Hidden until authenticated) -->
-    <div id="mainContent" class="arflex-main-content" style="display: none; opacity: 0;">
+    <div id="mainContent" class="unite-main-content" style="display: none; opacity: 0;">
         <!-- User Info Header -->
-        <div class="arflex-user-header">
-            <div class="arflex-user-info">
+        <div class="unite-user-header">
+            <div class="unite-user-info">
                 <span id="userDisplayName">Loading...</span>
-                <button id="logoutBtn" class="arflex-btn arflex-btn-ghost">
+                <button id="logoutBtn" class="unite-btn unite-btn-ghost">
                     <i data-feather="log-out"></i>
                     Logout
                 </button>
@@ -98,179 +103,179 @@
         </div>
         
         <!-- ARFLEX HEADER GALLERY -->
-        <div class="arflex-hero">
-        <div class="arflex-hero-content">
-            <div class="arflex-hero-text">
-                <h1 class="arflex-hero-title">
+        <div class="unite-hero">
+        <div class="unite-hero-content">
+            <div class="unite-hero-text">
+                <h1 class="unite-hero-title">
                     Unite Gallery<br>
-                    <span class="arflex-hero-subtitle">Pet Salon</span>
+                    <span class="unite-hero-subtitle">Pet Salon</span>
                 </h1>
-                <p class="arflex-hero-description">
+                <p class="unite-hero-description">
                     静寂な空間で、愛するペットとの特別な時間を。<br>
                     ギャラリーのような美しさと、最高級のサービスを提供します。
                 </p>
             </div>
         </div>
-        <div class="arflex-hero-image">
+        <div class="unite-hero-image">
             <!-- ここに大きなペット写真が入ります -->
-            <div style="width: 100%; height: 500px; background: var(--arflex-gradient-whisper); border-radius: var(--arflex-radius-lg); display: flex; align-items: center; justify-content: center; color: var(--arflex-graphite); font-size: var(--arflex-text-sm);">
+            <div style="width: 100%; height: 500px; background: var(--unite-gradient-whisper); border-radius: var(--unite-radius-lg); display: flex; align-items: center; justify-content: center; color: var(--unite-graphite); font-size: var(--unite-text-sm);">
                 Pet Gallery Image Area
             </div>
         </div>
     </div>
 
     <!-- MAIN EXHIBITION SPACE -->
-    <div class="arflex-container">
+    <div class="unite-container">
         
         <!-- TODAY'S EXHIBITION - Reservation Timeline -->
-        <div class="arflex-editorial-section">
-            <div class="arflex-editorial-header">
-                <h2 class="arflex-editorial-title">Today's Exhibition</h2>
-                <p class="arflex-editorial-subtitle">本日の予約スケジュール</p>
+        <div class="unite-editorial-section">
+            <div class="unite-editorial-header">
+                <h2 class="unite-editorial-title">Today's Exhibition</h2>
+                <p class="unite-editorial-subtitle">本日の予約スケジュール</p>
             </div>
             
-            <div class="arflex-timeline">
-                <div class="arflex-timeline-item">
-                    <div class="arflex-timeline-time">
+            <div class="unite-timeline">
+                <div class="unite-timeline-item">
+                    <div class="unite-timeline-time">
                         09:00<br>
-                        <span style="font-size: var(--arflex-text-xs); color: var(--arflex-graphite);">AM</span>
+                        <span style="font-size: var(--unite-text-xs); color: var(--unite-graphite);">AM</span>
                     </div>
-                    <div class="arflex-timeline-content">
-                        <div class="arflex-guest-profile">
-                            <img src="" alt="ペット写真" class="arflex-pet-photo" style="background: linear-gradient(45deg, var(--arflex-blue-silk), var(--arflex-blue-serene));">
-                            <div class="arflex-guest-info">
+                    <div class="unite-timeline-content">
+                        <div class="unite-guest-profile">
+                            <img src="" alt="ペット写真" class="unite-pet-photo" style="background: linear-gradient(45deg, var(--unite-blue-silk), var(--unite-blue-serene));">
+                            <div class="unite-guest-info">
                                 <h4>ルナちゃん</h4>
-                                <div class="arflex-pet-details">
+                                <div class="unite-pet-details">
                                     トイプードル・3歳・オーナー：田中様<br>
                                     シャンプー・カット・爪切り・耳掃除
                                 </div>
-                                <div class="arflex-service-tags">
-                                    <span class="arflex-service-tag">Premium Spa</span>
-                                    <span class="arflex-service-tag">Style Cut</span>
+                                <div class="unite-service-tags">
+                                    <span class="unite-service-tag">Premium Spa</span>
+                                    <span class="unite-service-tag">Style Cut</span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="arflex-timeline-status">
-                        <span class="arflex-status arflex-status-confirmed">Confirmed</span>
+                    <div class="unite-timeline-status">
+                        <span class="unite-status unite-status-confirmed">Confirmed</span>
                     </div>
                 </div>
 
-                <div class="arflex-timeline-item">
-                    <div class="arflex-timeline-time">
+                <div class="unite-timeline-item">
+                    <div class="unite-timeline-time">
                         10:30<br>
-                        <span style="font-size: var(--arflex-text-xs); color: var(--arflex-graphite);">AM</span>
+                        <span style="font-size: var(--unite-text-xs); color: var(--unite-graphite);">AM</span>
                     </div>
-                    <div class="arflex-timeline-content">
-                        <div class="arflex-guest-profile">
-                            <img src="" alt="ペット写真" class="arflex-pet-photo" style="background: linear-gradient(45deg, var(--arflex-blue-mist), var(--arflex-blue-serene));">
-                            <div class="arflex-guest-info">
+                    <div class="unite-timeline-content">
+                        <div class="unite-guest-profile">
+                            <img src="" alt="ペット写真" class="unite-pet-photo" style="background: linear-gradient(45deg, var(--unite-blue-mist), var(--unite-blue-serene));">
+                            <div class="unite-guest-info">
                                 <h4>チョコくん</h4>
-                                <div class="arflex-pet-details">
+                                <div class="unite-pet-details">
                                     柴犬・5歳・オーナー：佐藤様<br>
                                     シャンプー・ブロー・部分カット
                                 </div>
-                                <div class="arflex-service-tags">
-                                    <span class="arflex-service-tag">Basic Care</span>
-                                    <span class="arflex-service-tag">Nail Trim</span>
+                                <div class="unite-service-tags">
+                                    <span class="unite-service-tag">Basic Care</span>
+                                    <span class="unite-service-tag">Nail Trim</span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="arflex-timeline-status">
-                        <span class="arflex-status arflex-status-progress">In Progress</span>
+                    <div class="unite-timeline-status">
+                        <span class="unite-status unite-status-progress">In Progress</span>
                     </div>
                 </div>
 
-                <div class="arflex-timeline-item">
-                    <div class="arflex-timeline-time">
+                <div class="unite-timeline-item">
+                    <div class="unite-timeline-time">
                         14:00<br>
-                        <span style="font-size: var(--arflex-text-xs); color: var(--arflex-graphite);">PM</span>
+                        <span style="font-size: var(--unite-text-xs); color: var(--unite-graphite);">PM</span>
                     </div>
-                    <div class="arflex-timeline-content">
-                        <div class="arflex-guest-profile">
-                            <img src="" alt="ペット写真" class="arflex-pet-photo" style="background: linear-gradient(45deg, var(--arflex-blue-whisper), var(--arflex-blue-mist));">
-                            <div class="arflex-guest-info">
+                    <div class="unite-timeline-content">
+                        <div class="unite-guest-profile">
+                            <img src="" alt="ペット写真" class="unite-pet-photo" style="background: linear-gradient(45deg, var(--unite-blue-whisper), var(--unite-blue-mist));">
+                            <div class="unite-guest-info">
                                 <h4>ミミちゃん</h4>
-                                <div class="arflex-pet-details">
+                                <div class="unite-pet-details">
                                     マルチーズ・2歳・オーナー：山田様<br>
                                     フルコース・アロマバス・毛玉取り
                                 </div>
-                                <div class="arflex-service-tags">
-                                    <span class="arflex-service-tag">Luxury Spa</span>
-                                    <span class="arflex-service-tag">Aromatherapy</span>
+                                <div class="unite-service-tags">
+                                    <span class="unite-service-tag">Luxury Spa</span>
+                                    <span class="unite-service-tag">Aromatherapy</span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="arflex-timeline-status">
-                        <span class="arflex-status arflex-status-pending">Pending</span>
+                    <div class="unite-timeline-status">
+                        <span class="unite-status unite-status-pending">Pending</span>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- ATTENTION GALLERY -->
-        <div class="arflex-editorial-section">
-            <div class="arflex-editorial-header">
-                <h2 class="arflex-editorial-title">Attention Gallery</h2>
-                <p class="arflex-editorial-subtitle">特別なケアが必要なゲスト様</p>
+        <div class="unite-editorial-section">
+            <div class="unite-editorial-header">
+                <h2 class="unite-editorial-title">Attention Gallery</h2>
+                <p class="unite-editorial-subtitle">特別なケアが必要なゲスト様</p>
             </div>
             
-            <div class="arflex-attention-grid">
-                <div class="arflex-attention-card">
-                    <div class="arflex-attention-header">
-                        <img src="" alt="ペット写真" class="arflex-attention-photo" style="background: linear-gradient(45deg, #fbbf24, #f59e0b);">
-                        <div class="arflex-attention-info">
+            <div class="unite-attention-grid">
+                <div class="unite-attention-card">
+                    <div class="unite-attention-header">
+                        <img src="" alt="ペット写真" class="unite-attention-photo" style="background: linear-gradient(45deg, #fbbf24, #f59e0b);">
+                        <div class="unite-attention-info">
                             <h5>ハナちゃん</h5>
-                            <p class="arflex-attention-owner">ゴールデンレトリバー・鈴木様</p>
+                            <p class="unite-attention-owner">ゴールデンレトリバー・鈴木様</p>
                         </div>
                     </div>
-                    <p class="arflex-attention-note">
+                    <p class="unite-attention-note">
                         皮膚が敏感なため、低刺激シャンプーを使用。ドライヤーの温度は低めに設定してください。
                     </p>
-                    <div class="arflex-attention-tags">
-                        <span class="arflex-attention-tag arflex-tag-medical">Medical</span>
+                    <div class="unite-attention-tags">
+                        <span class="unite-attention-tag unite-tag-medical">Medical</span>
                     </div>
                 </div>
 
-                <div class="arflex-attention-card">
-                    <div class="arflex-attention-header">
-                        <img src="" alt="ペット写真" class="arflex-attention-photo" style="background: linear-gradient(45deg, #ef4444, #dc2626);">
-                        <div class="arflex-attention-info">
+                <div class="unite-attention-card">
+                    <div class="unite-attention-header">
+                        <img src="" alt="ペット写真" class="unite-attention-photo" style="background: linear-gradient(45deg, #ef4444, #dc2626);">
+                        <div class="unite-attention-info">
                             <h5>タロウくん</h5>
-                            <p class="arflex-attention-owner">秋田犬・高橋様</p>
+                            <p class="unite-attention-owner">秋田犬・高橋様</p>
                         </div>
                     </div>
-                    <p class="arflex-attention-note">
+                    <p class="unite-attention-note">
                         初回来店で緊張しています。ゆっくりと慣らしながら作業を進めてください。
                     </p>
-                    <div class="arflex-attention-tags">
-                        <span class="arflex-attention-tag arflex-tag-behavioral">Behavioral</span>
+                    <div class="unite-attention-tags">
+                        <span class="unite-attention-tag unite-tag-behavioral">Behavioral</span>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- COLLECTION ANALYTICS -->
-        <div class="arflex-editorial-section">
-            <div class="arflex-analytics">
-                <div class="arflex-analytics-header">
+        <div class="unite-editorial-section">
+            <div class="unite-analytics">
+                <div class="unite-analytics-header">
                     <div>
-                        <h2 class="arflex-analytics-title">Collection Analytics</h2>
-                        <p class="arflex-analytics-subtitle">サロンパフォーマンス・アナリティクス</p>
+                        <h2 class="unite-analytics-title">Collection Analytics</h2>
+                        <p class="unite-analytics-subtitle">サロンパフォーマンス・アナリティクス</p>
                     </div>
-                    <div class="arflex-period-tabs">
-                        <button class="arflex-period-tab active">Today</button>
-                        <button class="arflex-period-tab">Week</button>
-                        <button class="arflex-period-tab">Month</button>
+                    <div class="unite-period-tabs">
+                        <button class="unite-period-tab active">Today</button>
+                        <button class="unite-period-tab">Week</button>
+                        <button class="unite-period-tab">Month</button>
                     </div>
                 </div>
                 
-                <div class="arflex-chart-area">
-                    <div class="arflex-chart-placeholder">
+                <div class="unite-chart-area">
+                    <div class="unite-chart-placeholder">
                         📊 Chart Area<br>
-                        <span style="color: var(--arflex-steel); font-size: var(--arflex-text-xs);">
+                        <span style="color: var(--unite-steel); font-size: var(--unite-text-xs);">
                             予約数・売上・顧客満足度のグラフがここに表示されます
                         </span>
                     </div>
@@ -279,62 +284,62 @@
         </div>
 
         <!-- ACTIVITY EXHIBITION -->
-        <div class="arflex-editorial-section">
-            <div class="arflex-editorial-header">
-                <h2 class="arflex-editorial-title">Activity Exhibition</h2>
-                <p class="arflex-editorial-subtitle">本日のサロン活動履歴</p>
+        <div class="unite-editorial-section">
+            <div class="unite-editorial-header">
+                <h2 class="unite-editorial-title">Activity Exhibition</h2>
+                <p class="unite-editorial-subtitle">本日のサロン活動履歴</p>
             </div>
             
-            <div class="arflex-activity">
-                <div class="arflex-activity-list">
-                    <div class="arflex-activity-item">
-                        <div class="arflex-activity-icon" style="background: var(--arflex-blue-silk); color: var(--arflex-blue-refined);">
+            <div class="unite-activity">
+                <div class="unite-activity-list">
+                    <div class="unite-activity-item">
+                        <div class="unite-activity-icon" style="background: var(--unite-blue-silk); color: var(--unite-blue-refined);">
                             <i data-feather="calendar"></i>
                         </div>
-                        <div class="arflex-activity-content">
+                        <div class="unite-activity-content">
                             <h6>新規予約を受付</h6>
                             <p>ももちゃん（チワワ）の予約を明日15:00で受付いたしました。</p>
                         </div>
-                        <div class="arflex-activity-time">
+                        <div class="unite-activity-time">
                             10分前
                         </div>
                     </div>
 
-                    <div class="arflex-activity-item">
-                        <div class="arflex-activity-icon" style="background: var(--arflex-purple-mist); color: var(--arflex-steel);">
+                    <div class="unite-activity-item">
+                        <div class="unite-activity-icon" style="background: var(--unite-purple-mist); color: var(--unite-steel);">
                             <i data-feather="check-circle"></i>
                         </div>
-                        <div class="arflex-activity-content">
+                        <div class="unite-activity-content">
                             <h6>サービス完了</h6>
                             <p>チョコくん（柴犬）のシャンプー・カットが完了しました。</p>
                         </div>
-                        <div class="arflex-activity-time">
+                        <div class="unite-activity-time">
                             25分前
                         </div>
                     </div>
 
-                    <div class="arflex-activity-item">
-                        <div class="arflex-activity-icon" style="background: var(--arflex-mist); color: var(--arflex-graphite);">
+                    <div class="unite-activity-item">
+                        <div class="unite-activity-icon" style="background: var(--unite-mist); color: var(--unite-graphite);">
                             <i data-feather="edit-3"></i>
                         </div>
-                        <div class="arflex-activity-content">
+                        <div class="unite-activity-content">
                             <h6>顧客情報を更新</h6>
                             <p>ルナちゃんの健康状態・アレルギー情報を更新しました。</p>
                         </div>
-                        <div class="arflex-activity-time">
+                        <div class="unite-activity-time">
                             1時間前
                         </div>
                     </div>
 
-                    <div class="arflex-activity-item">
-                        <div class="arflex-activity-icon" style="background: var(--arflex-blue-serene); color: white;">
+                    <div class="unite-activity-item">
+                        <div class="unite-activity-icon" style="background: var(--unite-blue-serene); color: white;">
                             <i data-feather="dollar-sign"></i>
                         </div>
-                        <div class="arflex-activity-content">
+                        <div class="unite-activity-content">
                             <h6>お支払い処理</h6>
                             <p>田中様（ルナちゃんの飼い主）からのお支払いを受け取りました。</p>
                         </div>
-                        <div class="arflex-activity-time">
+                        <div class="unite-activity-time">
                             2時間前
                         </div>
                     </div>
@@ -343,29 +348,29 @@
         </div>
 
         <!-- ACTION GALLERY -->
-        <div class="arflex-editorial-section">
-            <div class="arflex-editorial-header">
-                <h2 class="arflex-editorial-title">Quick Actions</h2>
-                <p class="arflex-editorial-subtitle">よく使用する機能</p>
+        <div class="unite-editorial-section">
+            <div class="unite-editorial-header">
+                <h2 class="unite-editorial-title">Quick Actions</h2>
+                <p class="unite-editorial-subtitle">よく使用する機能</p>
             </div>
             
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--arflex-space-lg);">
-                <button class="arflex-btn arflex-btn-primary" data-tab="calendar" style="justify-content: center; padding: var(--arflex-space-lg);">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--unite-space-lg);">
+                <button class="unite-btn unite-btn-primary" data-tab="calendar" style="justify-content: center; padding: var(--unite-space-lg);">
                     <i data-feather="plus-circle"></i>
                     新規予約登録
                 </button>
                 
-                <button class="arflex-btn arflex-btn-outline" data-tab="customer" style="justify-content: center; padding: var(--arflex-space-lg);">
+                <button class="unite-btn unite-btn-outline" data-tab="customer" style="justify-content: center; padding: var(--unite-space-lg);">
                     <i data-feather="users"></i>
                     顧客管理
                 </button>
                 
-                <button class="arflex-btn arflex-btn-outline" data-tab="ops" style="justify-content: center; padding: var(--arflex-space-lg);">
+                <button class="unite-btn unite-btn-outline" data-tab="ops" style="justify-content: center; padding: var(--unite-space-lg);">
                     <i data-feather="calendar"></i>
                     オペレーション
                 </button>
                 
-                <button class="arflex-btn arflex-btn-outline" data-tab="settings" style="justify-content: center; padding: var(--arflex-space-lg);">
+                <button class="unite-btn unite-btn-outline" data-tab="settings" style="justify-content: center; padding: var(--unite-space-lg);">
                     <i data-feather="settings"></i>
                     設定
                 </button>
@@ -422,16 +427,19 @@
 
 
     <script>
-        // Firebase Configuration - Demo Mode Compatible
-        // 実際の本番環境では、正しいFirebase設定を使用してください
-        const firebaseConfig = {
-            apiKey: "AIzaSyDemo-UniteGallery-Key-ForDemoMode",
-            authDomain: "unite-gallery-demo.firebaseapp.com",
-            projectId: "unite-gallery-demo",
-            storageBucket: "unite-gallery-demo.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "1:123456789:web:demo-unite-gallery"
-        };
+        // Firebase Configuration - Demo Mode (Disabled to prevent API calls)
+        // デモ環境ではFirebase API呼び出しを防止するため、意図的に無効化
+        const firebaseConfig = null; // デモモード用: nullでFirebaseを無効化
+        
+        // 本番環境では以下のような設定を使用してください。
+        // const firebaseConfig = {
+        //     apiKey: "your-real-api-key",
+        //     authDomain: "your-project.firebaseapp.com",
+        //     projectId: "your-project-id",
+        //     storageBucket: "your-project.appspot.com",
+        //     messagingSenderId: "your-sender-id",
+        //     appId: "your-app-id"
+        // };
 
         // Initialize Firebase - prevent duplicate initialization
         let firebaseApp = null;
@@ -459,18 +467,24 @@
                 // Ensure login screen is visible initially
                 showLoginScreen();
                 
-                if (typeof firebase !== 'undefined' && firebase.auth && firebaseApp) {
+                // Firebase認証監視は有効なFirebase設定がある場合のみ
+                if (typeof firebase !== 'undefined' && firebase.auth && firebaseApp && firebaseConfig !== null) {
+                    console.log('🔥 Firebase認証監視を開始');
                     firebase.auth().onAuthStateChanged((user) => {
                         if (user) {
                             // User is signed in
+                            console.log('✓ Firebaseユーザーログイン検出:', user.email);
                             currentUser = user;
                             showMainContent(user);
                         } else {
                             // User is signed out
+                            console.log('📝 Firebaseユーザーログアウト');
                             currentUser = null;
                             showLoginScreen();
                         }
                     });
+                } else {
+                    console.log('📝 デモモード: Firebase認証の監視はスキップし、ログイン画面を表示');
                 }
                 
                 setupEventListeners();
@@ -519,14 +533,14 @@
         function setupEventListeners() {
             try {
                 // Auth tab switching
-                const authTabs = document.querySelectorAll('.arflex-auth-tab');
+                const authTabs = document.querySelectorAll('.unite-auth-tab');
                 authTabs.forEach(tab => {
                 tab.addEventListener('click', function() {
                     const targetTab = this.getAttribute('data-tab');
-                    document.querySelectorAll('.arflex-auth-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.unite-auth-tab').forEach(t => t.classList.remove('active'));
                     this.classList.add('active');
                     
-                    document.querySelectorAll('.arflex-auth-content').forEach(content => {
+                    document.querySelectorAll('.unite-auth-content').forEach(content => {
                         content.style.display = 'none';
                     });
                     document.getElementById(targetTab + 'Auth').style.display = 'block';
@@ -567,10 +581,10 @@
                 }
 
                 // Period tab functionality
-                const periodTabs = document.querySelectorAll('.arflex-period-tab');
+                const periodTabs = document.querySelectorAll('.unite-period-tab');
                 periodTabs.forEach(tab => {
                     tab.addEventListener('click', () => {
-                        document.querySelectorAll('.arflex-period-tab').forEach(t => t.classList.remove('active'));
+                        document.querySelectorAll('.unite-period-tab').forEach(t => t.classList.remove('active'));
                         tab.classList.add('active');
                     });
                 });
@@ -596,29 +610,62 @@
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
 
-            if (typeof firebase !== 'undefined' && firebase.auth && firebaseApp) {
+            // デモアカウントの場合は直接デモログインを実行
+            if (email === 'demo@unite.gallery' && password === 'unite2025') {
+                console.log('🎆 デモアカウントでのログインを検出');
+                handleDemoLogin();
+                return;
+            }
+
+            // Firebaseが有効で本番設定の場合のみ実際の認証を試みる
+            // デモ環境ではFirebase認証を完全にスキップしてエラーを防止
+            const isValidFirebaseConfig = typeof firebase !== 'undefined' && 
+                firebase.auth && firebaseApp && 
+                firebaseConfig.apiKey && 
+                !firebaseConfig.apiKey.includes('Demo') &&
+                !firebaseConfig.apiKey.includes('demo') &&
+                firebaseConfig.apiKey.length > 30; // 有効なAPIキーは通常30文字以上
+            
+            if (isValidFirebaseConfig) {
+                console.log('🔥 有効なFirebase設定で認証を試みます');
                 firebase.auth().signInWithEmailAndPassword(email, password)
                     .then((userCredential) => {
                         // Success - onAuthStateChanged will handle UI update
                         hideAuthError();
+                        console.log('✓ Firebase認証成功');
                     })
                     .catch((error) => {
-                        showAuthError(error.message);
+                        console.error('Firebase authentication error:', error);
+                        console.log('📝 Firebase認証エラー、デモモードにフォールバック');
+                        
+                        // デモ関連情報の場合、デモログインを実行
+                        if (email === 'demo@unite.gallery' || email.includes('demo') || 
+                            email.includes('unite') || password === 'unite2025') {
+                            console.log('🎆 デモ関連情報でデモログインを実行');
+                            handleDemoLogin();
+                        } else {
+                            showAuthError('認証に失敗しました。\n\nデモアカウントを使用してください：\nメール: demo@unite.gallery\nパスワード: unite2025');
+                        }
                     });
             } else {
-                // Demo mode - simulate login
+                console.log('📝 Firebase設定が無効またはデモ環境 - デモモードで処理');
+                // デモモード - Firebaseリクエストを送信せずにシミュレーション
                 if (email && password) {
+                    console.log('🎆 デモモードでログインシミュレーション開始');
                     setTimeout(() => {
                         const mockUser = {
                             email: email,
-                            displayName: email.split('@')[0]
+                            displayName: email.includes('@') ? email.split('@')[0] : 'Demo User',
+                            uid: 'demo-user-' + Date.now()
                         };
                         currentUser = mockUser;
+                        window.currentUser = mockUser;
                         showMainContent(mockUser);
                         hideAuthError();
-                    }, 1000);
+                        console.log('✨ デモモードログイン成功:', mockUser.email);
+                    }, 800);
                 } else {
-                    showAuthError('Please enter both email and password');
+                    showAuthError('メールアドレスとパスワードを入力してください');
                 }
             }
         }
