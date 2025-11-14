@@ -428,6 +428,26 @@
    ============================================ */
 
 @media (max-width: 768px) {
+  .arflex-login-container {
+    min-width: unset;
+    width: 90vw;
+    padding: var(--arflex-space-2xl);
+  }
+  
+  .arflex-login-title {
+    font-size: var(--arflex-text-2xl);
+  }
+  
+  .arflex-user-header {
+    padding: var(--arflex-space-md) var(--arflex-space-lg);
+  }
+  
+  .arflex-user-info {
+    flex-direction: column;
+    gap: var(--arflex-space-sm);
+    text-align: center;
+  }
+  
   .arflex-timeline-item {
     grid-template-columns: 1fr;
     gap: var(--arflex-space-md);
@@ -467,6 +487,97 @@
   .arflex-chart-area {
     height: 200px;
   }
+}
+
+/* ============================================
+   ARFLEX LOGIN SCREEN
+   ============================================ */
+
+.arflex-login-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(135deg, var(--arflex-blue-whisper) 0%, var(--arflex-blue-mist) 100%);
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  visibility: visible;
+  opacity: 1;
+}
+
+.arflex-login-container {
+  background: var(--arflex-white);
+  border-radius: var(--arflex-radius-lg);
+  box-shadow: var(--arflex-shadow-medium);
+  padding: var(--arflex-space-3xl);
+  min-width: 400px;
+  max-width: 90vw;
+  text-align: center;
+}
+
+.arflex-login-header {
+  margin-bottom: var(--arflex-space-3xl);
+}
+
+.arflex-login-title {
+  font-family: var(--arflex-font-display);
+  font-size: var(--arflex-text-3xl);
+  font-weight: var(--arflex-font-light);
+  color: var(--arflex-midnight);
+  margin-bottom: var(--arflex-space-sm);
+  letter-spacing: -0.02em;
+}
+
+.arflex-login-subtitle {
+  font-size: var(--arflex-text-base);
+  color: var(--arflex-graphite);
+  font-weight: var(--arflex-font-light);
+}
+
+.arflex-login-form {
+  text-align: left;
+}
+
+.arflex-login-btn {
+  width: 100%;
+  justify-content: center;
+  padding: var(--arflex-space-lg);
+  font-weight: var(--arflex-font-medium);
+}
+
+.arflex-user-header {
+  background: var(--arflex-white);
+  border-bottom: 1px solid var(--arflex-pearl);
+  padding: var(--arflex-space-lg) var(--arflex-space-xl);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.arflex-user-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.arflex-user-info span {
+  font-size: var(--arflex-text-sm);
+  color: var(--arflex-steel);
+  font-weight: var(--arflex-font-medium);
+}
+
+.arflex-main-content {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.arflex-main-content.loaded {
+  opacity: 1;
 }
 
 /* ============================================

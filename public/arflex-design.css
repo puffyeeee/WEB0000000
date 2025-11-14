@@ -123,6 +123,12 @@ body {
   background: var(--arflex-gradient-whisper);
   background-attachment: fixed;
   min-height: 100vh;
+  position: relative;
+}
+
+/* Prevent flash of unstyled content */
+body:not(.loaded) .arflex-main-content {
+  display: none !important;
 }
 
 /* ============================================
