@@ -7,18 +7,20 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Original CSS System -->
+    <!-- Luxury Salon Design System (優先読み込み) -->
+    <link rel="stylesheet" href="luxury-salon-design.css">
+    <link rel="stylesheet" href="dashboard-components.css">
+    <link rel="stylesheet" href="detail-pages.css">
+    <link rel="stylesheet" href="typography-animations.css">
+    
+    <!-- Original CSS System (後から読み込み) -->
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="mobile-overrides.css">
     <link rel="stylesheet" href="home-enhancements.css">
     <link rel="stylesheet" href="sophisticated-design.css">
     <link rel="stylesheet" href="layout-reset.css">
     
-    <!-- Luxury Salon Design System -->
-    <link rel="stylesheet" href="luxury-salon-design.css">
-    <link rel="stylesheet" href="dashboard-components.css">
-    <link rel="stylesheet" href="detail-pages.css">
-    <link rel="stylesheet" href="typography-animations.css">
+    <!-- Compatibility Layer (最後に読み込み) -->
     <link rel="stylesheet" href="luxury-compatibility.css">
       <!-- Feather icons for sophisticated line icon system -->
       <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js" defer></script>
@@ -30,7 +32,7 @@
       <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage-compat.js"></script>
       <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-functions-compat.js"></script>
 </head>
-<body class="loading luxury-fade-in">
+<body class="loading luxury-fade-in" style="margin: 0; padding: 0; background: var(--luxury-gray-50, #f8fafc);">
 <header class="luxury-header">
   <div class="luxury-header-brand">
     <div class="luxury-brand-logo">🐾 表参道サロン</div>

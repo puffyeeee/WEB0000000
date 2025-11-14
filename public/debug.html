@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>デバッグページ - 高級サロンデザイン</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- 高級デザインシステム -->
+  <link rel="stylesheet" href="luxury-salon-design.css">
+  <link rel="stylesheet" href="dashboard-components.css">
+  
+  <style>
+    /* デバッグ用スタイル */
+    .debug-section {
+      padding: 2rem;
+      margin: 1rem;
+      border: 2px solid #007acc;
+      border-radius: 8px;
+      background: white;
+    }
+    
+    .debug-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 1rem;
+    }
+    
+    .debug-item {
+      padding: 0.5rem;
+      margin: 0.5rem 0;
+      background: #f8f9fa;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="debug-section">
+  <h1 class="debug-title">🔧 CSS 読み込みテスト</h1>
+  
+  <div class="debug-item">
+    <strong>基本フォント:</strong> この文字が Noto Sans JP で表示されているか確認
+  </div>
+  
+  <div class="debug-item">
+    <strong>CSS変数テスト:</strong>
+    <div style="color: var(--luxury-primary-600, red); font-size: var(--luxury-text-lg, 18px);">
+      この文字が青系で大きめに表示されていればCSS変数が読み込まれています
+    </div>
+  </div>
+  
+  <div class="debug-item">
+    <strong>高級カードコンポーネント:</strong>
+    <div class="luxury-card" style="max-width: 300px; margin-top: 10px;">
+      <div class="luxury-card-header">
+        <h3>テストカード</h3>
+      </div>
+      <div class="luxury-card-body">
+        このカードが美しくスタイルされていれば、高級デザインCSSが正常に読み込まれています。
+      </div>
+    </div>
+  </div>
+  
+  <div class="debug-item">
+    <strong>ダッシュボードコンポーネント:</strong>
+    <div class="reservation-card" style="max-width: 400px; margin-top: 10px;">
+      <div class="reservation-card-header">
+        <span class="reservation-time">10:00</span>
+        <div class="status-badge status-confirmed">確定</div>
+      </div>
+      <div class="reservation-card-body">
+        <div class="customer-info">
+          <span class="customer-name">田中様</span>
+          <span class="pet-name">ポチ</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="debug-section">
+  <h2 class="debug-title">📋 ファイル確認</h2>
+  <div class="debug-item">
+    ブラウザの開発者ツール（F12）→ Network タブで以下ファイルが正常に読み込まれているか確認:
+    <ul>
+      <li>luxury-salon-design.css</li>
+      <li>dashboard-components.css</li>
+      <li>Noto Sans JP フォント</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+console.log('🔧 デバッグページ読み込み完了');
+console.log('CSS変数テスト:', getComputedStyle(document.documentElement).getPropertyValue('--luxury-primary-600'));
+</script>
+
+</body>
+</html>
