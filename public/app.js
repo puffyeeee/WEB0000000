@@ -4913,43 +4913,54 @@ function renderAvailList(slots, ctx){
     imgBox.appendChild(act2); imgBox.appendChild(upMsg);
     panel.appendChild(imgBox);
 
-    btnUp.addEventListener('click', ()=>{
+    btnUp.addEventListener('click', async ()=>{
       const files = document.getElementById('imgFiles').files;
       if (!files || !files.length){ msg(upMsg,'err','ファイルを選択してください'); return; }
       const petId = bundle.pet?.PetID; if (!petId){ msg(upMsg,'err','PetID が取得できません'); return; }
       const body = document.getElementById('imgBody').value; const sym = document.getElementById('imgSym').value;
-      const tasks = Array.from(files).map(f=> new Promise((resolve,reject)=>{
-        const fr=new FileReader();
-        fr.onload=()=>{
-          const base64=String(fr.result).split(',')[1];
-          callServer('savePetImage', { PetID: petId, BodyPartCode: body, Symptom: sym, filename: f.name, mimeType: f.type, base64 })
-            .then(resolve).catch(reject);
-        };
-        fr.onerror=()=> reject(fr.error||'読込エラー');
-        fr.readAsDataURL(f);
-      }));
-      msg(upMsg,'','アップロード中…');
-      Promise.allSettled(tasks).then(rs=>{
-        const ok=rs.filter(x=>x.status==='fulfilled').length; const ng=rs.length-ok;
-        msg(upMsg, ok? 'ok':'err', `完了: ${ok}件 / 失敗: ${ng}件`);
-      });
+      
+      btnUp.disabled = true;
+      btnUp.textContent = 'アップロード中...';
+      msg(upMsg, 'info', 'アップロード開始...');
+      
+      try {
+        const uploadPromises = Array.from(files).map(file => 
+          petImageManager.uploadPetImage(file, petId, {
+            bodyPart: body,
+            symptom: sym,
+            description: `${body}: ${sym}`
+          })
+        );
+        
+        const results = await Promise.all(uploadPromises);
+        msg(upMsg, 'ok', `${results.length}枚の画像をアップロードしました`);
+        
+        // 画像リストを更新
+        await refreshPetImages(petId);
+        
+        // フォームリセット
+        document.getElementById('imgFiles').value = '';
+        document.getElementById('imgSym').value = '';
+        
+      } catch (error) {
+        console.error('画像アップロードエラー:', error);
+        msg(upMsg, 'err', `アップロードエラー: ${error.message}`);
+      } finally {
+        btnUp.disabled = false;
+        btnUp.textContent = 'アップロード';
+      }
     });
 
-    const imgs = bundle.images||[];
-    if (imgs.length){
-      const box=el('div',{class:'card'},[]);
-      box.appendChild(el('div',{style:'font-weight:700;margin:6px 0'},['画像一覧']));
-      const g=el('div',{class:'imgGrid'},[]);
-      imgs.slice(0,18).forEach(r=>{
-        const it=el('div',{class:'imgItem'},[]);
-        const a=el('a',{href:r.ImageURL, target:'_blank'},[]);
-        const im=el('img',{src:r.ImageURL, alt:r.Symptom||r.BodyPartCode||''},[]);
-        a.appendChild(im); it.appendChild(a);
-        it.appendChild(el('div',{},[`${r.BodyPartCode||''} ${r.Symptom?('｜'+r.Symptom):''}`]));
-        g.appendChild(it);
-      });
-      box.appendChild(g);
-      panel.appendChild(box);
+    // 新しい画像システムで画像を表示
+    const imageDisplayBox = el('div',{class:'card', id:'petImageDisplay'},[]);
+    imageDisplayBox.appendChild(el('div',{style:'font-weight:700;margin:6px 0'},['画像一覧（Firebase Storage）']));
+    const imageGrid = el('div',{class:'imgGrid', id:'petImageGrid'},[]);
+    imageDisplayBox.appendChild(imageGrid);
+    panel.appendChild(imageDisplayBox);
+    
+    // 画像を読み込み表示
+    if (bundle.pet?.PetID) {
+      refreshPetImages(bundle.pet.PetID);
     }
   }
 
@@ -5940,11 +5951,12 @@ function renderAvailList(slots, ctx){
  const OWNER_EMAIL = "duffy.chocolate.aya@gmail.com";
 
 // Firebase初期化
- let app, auth, db, functions;
+ let app, auth, db, storage, functions;
  try {
   app = firebase.initializeApp(firebaseConfig);
   auth = firebase.auth();
   db = firebase.firestore();
+  storage = firebase.storage();
   functions = firebase.functions();
 } catch (error) {
   console.warn("Firebase initialization failed:", error);
@@ -5987,6 +5999,13 @@ if (auth) {
       }
     } else {
       console.log('ℹ ユーザーはログアウト状態');
+      // ログアウト状態の場合は認証モーダルを表示
+      setTimeout(() => {
+        if (!isAuthenticated) {
+          console.log('🔒 ログアウト検出 - ログイン画面を表示');
+          showAuthModal();
+        }
+      }, 1000);
     }
 
     updateAuthUI();
@@ -6056,14 +6075,328 @@ if (auth) {
   }
 }
 
-// ログアウト機能
- async function logout() {
+// ペット画像管理システム
+class PetImageManager {
+  constructor() {
+    this.storageRef = storage ? storage.ref() : null;
+    this.maxFileSize = 5 * 1024 * 1024; // 5MB
+    this.allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+  }
+
+  // 画像アップロード
+  async uploadPetImage(file, petId, metadata = {}) {
+    try {
+      if (!this.storageRef) throw new Error('Firebase Storage未初期化');
+      if (!isAuthenticated) throw new Error('認証が必要です');
+
+      // ファイル検証
+      this.validateFile(file);
+
+      // 安全なファイル名生成
+      const timestamp = Date.now();
+      const safeFileName = `${petId}_${timestamp}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+      const imagePath = `pet-images/${petId}/${safeFileName}`;
+
+      // メタデータ設定
+      const uploadMetadata = {
+        contentType: file.type,
+        customMetadata: {
+          petId: petId,
+          uploadedBy: currentUser.email,
+          originalName: file.name,
+          ...metadata
+        }
+      };
+
+      console.log('📸 画像アップロード開始:', imagePath);
+
+      // Firebase Storageにアップロード
+      const uploadTask = this.storageRef.child(imagePath).put(file, uploadMetadata);
+      
+      return new Promise((resolve, reject) => {
+        uploadTask.on('state_changed',
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log(`アップロード進行状況: ${progress}%`);
+          },
+          (error) => {
+            console.error('アップロードエラー:', error);
+            reject(error);
+          },
+          async () => {
+            try {
+              const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+              
+              // Firestoreに画像情報を保存
+              const imageDoc = {
+                petId: petId,
+                fileName: safeFileName,
+                originalName: file.name,
+                downloadURL: downloadURL,
+                storagePath: imagePath,
+                fileSize: file.size,
+                contentType: file.type,
+                uploadedBy: currentUser.email,
+                uploadedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                metadata: metadata
+              };
+
+              const docRef = await db.collection('pet-images').add(imageDoc);
+              
+              resolve({
+                id: docRef.id,
+                downloadURL: downloadURL,
+                ...imageDoc
+              });
+              
+              console.log('✅ 画像アップロード完了:', downloadURL);
+            } catch (error) {
+              reject(error);
+            }
+          }
+        );
+      });
+
+    } catch (error) {
+      console.error('画像アップロードエラー:', error);
+      throw error;
+    }
+  }
+
+  // ペットの画像一覧取得
+  async getPetImages(petId) {
+    try {
+      if (!db) throw new Error('Firestore未初期化');
+      
+      const snapshot = await db.collection('pet-images')
+        .where('petId', '==', petId)
+        .orderBy('uploadedAt', 'desc')
+        .get();
+      
+      return snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        uploadedAt: doc.data().uploadedAt?.toDate()
+      }));
+      
+    } catch (error) {
+      console.error('画像取得エラー:', error);
+      return [];
+    }
+  }
+
+  // 画像削除
+  async deletePetImage(imageId, storagePath) {
+    try {
+      if (!isAuthenticated) throw new Error('認証が必要です');
+
+      // Storageから削除
+      if (this.storageRef && storagePath) {
+        await this.storageRef.child(storagePath).delete();
+      }
+
+      // Firestoreから削除
+      await db.collection('pet-images').doc(imageId).delete();
+      
+      console.log('✅ 画像削除完了:', imageId);
+      
+    } catch (error) {
+      console.error('画像削除エラー:', error);
+      throw error;
+    }
+  }
+
+  // ファイル検証
+  validateFile(file) {
+    if (!file) throw new Error('ファイルが選択されていません');
+    
+    if (file.size > this.maxFileSize) {
+      throw new Error('ファイルサイズが大きすぎます（5MB以下）');
+    }
+    
+    if (!this.allowedTypes.includes(file.type)) {
+      throw new Error('対応していないファイル形式です（JPEG, PNG, WebP のみ）');
+    }
+  }
+
+  // 画像表示用のセキュアURL生成
+  getSecureImageURL(downloadURL) {
+    // 必要に応じて追加のセキュリティ層を実装可能
+    return downloadURL;
+  }
+}
+
+// グローバルインスタンス
+const petImageManager = new PetImageManager();
+
+// ペット画像表示更新関数
+async function refreshPetImages(petId) {
   try {
+    const imageGrid = document.getElementById('petImageGrid');
+    if (!imageGrid) return;
+
+    imageGrid.innerHTML = '<div style="padding:20px;text-align:center;color:#666;">画像を読み込み中...</div>';
+
+    const images = await petImageManager.getPetImages(petId);
+    
+    imageGrid.innerHTML = '';
+    
+    if (images.length === 0) {
+      imageGrid.innerHTML = '<div style="padding:20px;text-align:center;color:#666;">まだ画像がありません</div>';
+      return;
+    }
+
+    images.forEach(imageData => {
+      const imageItem = el('div', {class: 'imgItem'}, []);
+      
+      // 画像表示
+      const imageLink = el('a', {href: imageData.downloadURL, target: '_blank'}, []);
+      const image = el('img', {
+        src: imageData.downloadURL, 
+        alt: imageData.metadata?.description || '画像',
+        style: 'width:100%;height:120px;object-fit:cover;border-radius:8px;'
+      }, []);
+      imageLink.appendChild(image);
+      imageItem.appendChild(imageLink);
+      
+      // メタデータ表示
+      const metaDiv = el('div', {style: 'padding:8px;font-size:12px;'}, []);
+      const bodyPart = imageData.metadata?.bodyPart || '';
+      const symptom = imageData.metadata?.symptom || '';
+      metaDiv.textContent = `${bodyPart} ${symptom ? '｜' + symptom : ''}`;
+      imageItem.appendChild(metaDiv);
+      
+      // 削除ボタン
+      const deleteBtn = el('button', {
+        class: 'btn-ghost',
+        style: 'width:100%;padding:4px;font-size:11px;',
+        title: '画像を削除'
+      }, ['削除']);
+      
+      deleteBtn.addEventListener('click', async () => {
+        if (confirm('この画像を削除しますか？')) {
+          try {
+            await petImageManager.deletePetImage(imageData.id, imageData.storagePath);
+            showNotification('画像を削除しました', 'success');
+            await refreshPetImages(petId);
+          } catch (error) {
+            showNotification('削除に失敗しました: ' + error.message, 'error');
+          }
+        }
+      });
+      
+      imageItem.appendChild(deleteBtn);
+      imageGrid.appendChild(imageItem);
+    });
+
+  } catch (error) {
+    console.error('画像表示エラー:', error);
+    const imageGrid = document.getElementById('petImageGrid');
+    if (imageGrid) {
+      imageGrid.innerHTML = '<div style="padding:20px;text-align:center;color:red;">画像の読み込みに失敗しました</div>';
+    }
+  }
+}
+
+// CSVエクスポート機能
+async function exportCustomersToCSV() {
+  try {
+    console.log('📊 顧客データのCSVエクスポートを開始');
+    
+    if (!isAuthenticated) {
+      showAuthModal();
+      return;
+    }
+
+    // 顧客データを取得
+    const response = await apiCall('listCustomersLite');
+    const customers = response || [];
+    
+    if (customers.length === 0) {
+      showNotification('エクスポートする顧客データがありません', 'info');
+      return;
+    }
+
+    // CSV形式に変換（個人情報保護のため必要最小限の情報のみ）
+    const csvHeaders = [
+      'ID',
+      'お名前',
+      '電話番号',
+      'メールアドレス', 
+      '住所',
+      'タグ',
+      '備考',
+      '最終更新日'
+    ];
+    
+    const csvData = customers.map(customer => [
+      customer.CustomerID || '',
+      customer.Name || '',
+      // 電話番号は一部マスク（法的配慮）
+      customer.Phone ? customer.Phone.replace(/(\d{3})-(\d{4})-(\d{4})/, '$1-****-$3') : '',
+      customer.Email || '',
+      // 住所は都道府県レベルまで（プライバシー保護）
+      customer.Address ? customer.Address.split(/[市区町村]/)[0] + '市区町村' : '',
+      customer.Tags ? customer.Tags.map(tag => tag.label).join(';') : '',
+      customer.Notes || '',
+      new Date().toLocaleDateString('ja-JP')
+    ]);
+    
+    // CSVテキストを生成
+    const csvContent = [
+      csvHeaders.join(','),
+      ...csvData.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+    ].join('\n');
+    
+    // BOMを追加してExcelで正しく表示されるように
+    const bom = '\uFEFF';
+    const blob = new Blob([bom + csvContent], { type: 'text/csv;charset=utf-8;' });
+    
+    // ダウンロード実行
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `顧客一覧_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    showNotification(`${customers.length}件の顧客データをエクスポートしました`, 'success');
+    console.log('✅ CSVエクスポート完了:', customers.length, '件');
+    
+  } catch (error) {
+    console.error('CSVエクスポートエラー:', error);
+    showNotification('CSVエクスポートに失敗しました', 'error');
+  }
+}
+
+// ログアウト機能
+async function logout() {
+  try {
+    console.log("ログアウト開始...");
+    console.log("現在の認証状態:", auth.currentUser);
+    
     await auth.signOut();
+    
+    console.log("ログアウト完了");
     showNotification("ログアウトしました", "info");
+    
+    // 手動で認証状態をリセット
+    isAuthenticated = false;
+    currentUser = null;
+    updateAuthUI();
+    
+    // ログアウト後にログイン画面を表示
+    setTimeout(() => {
+      console.log("ログイン画面を表示");
+      showAuthModal();
+    }, 500); // 通知が表示された後に表示
+    
   } catch (error) {
     console.error("Logout error:", error);
-    showNotification("ログアウトエラー", "error");
+    showNotification(`ログアウトエラー: ${error.message}`, "error");
   }
 }
 
@@ -6265,10 +6598,33 @@ window.showAuthModal = showAuthModal;
       }
     }, 100);
     
-    // ログアウトボタン
+    // ログアウトボタン - 複数の方法で確実に設定
     const logoutButton = document.getElementById('logoutButton');
     if (logoutButton) {
-      logoutButton.addEventListener('click', logout);
+      console.log("ログアウトボタンにイベントリスナーを設定");
+      
+      // 既存のイベントリスナーを削除
+      logoutButton.replaceWith(logoutButton.cloneNode(true));
+      const newLogoutButton = document.getElementById('logoutButton');
+      
+      // 新しいイベントリスナーを設定
+      newLogoutButton.addEventListener('click', async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log("ログアウトボタンがクリックされました");
+        await logout();
+      }, true);
+      
+      // onclick属性も設定（バックアップ）
+      newLogoutButton.onclick = async function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log("onclick経由でログアウト");
+        await logout();
+      };
+      
+    } else {
+      console.log("ログアウトボタンが見つかりません");
     }
     
     // モーダル閉じるボタン
@@ -6574,8 +6930,16 @@ window.showAuthModal = showAuthModal;
         // ログインボタンの onclick は削除（専用ハンドラーで処理）
         
         // 全ボタンに診断用イベント追加
-        button.addEventListener('click', function(e) {
+        button.addEventListener('click', async function(e) {
           console.log(`ボタンクリック検出: ${button.id || 'no-id'} | ${button.className} | ${button.textContent.slice(0, 20)}`);
+          
+          // ログアウトボタンの場合は直接処理
+          if (button.id === 'logoutButton') {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log("診断用イベントからログアウト実行");
+            await logout();
+          }
         }, true); // キャプチャフェーズで確実に捕捉
       });
       console.log('DOM ready後のボタン修正完了:', allButtons.length, '個');
@@ -6596,6 +6960,13 @@ window.showAuthModal = showAuthModal;
       });
       console.log('タブボタン安定化完了:', navButtons.length, '個');
     }, 200);
+    
+    // CSVエクスポートボタンのイベントリスナー
+    const exportCustomersBtn = document.getElementById('exportCustomersCSV');
+    if (exportCustomersBtn) {
+      exportCustomersBtn.addEventListener('click', exportCustomersToCSV);
+      console.log('CSVエクスポートボタンにイベントリスナーを設定');
+    }
     
     // Featherアイコンを再初期化（認証UIのアイコン用）
     if (typeof feather !== 'undefined') {
