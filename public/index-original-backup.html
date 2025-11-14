@@ -1,0 +1,2242 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Modern Pet Salon - 超現代的ペットサロン</title>
+  
+  <!-- Ultra-Modern Fonts -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Ultra-Modern Design System -->
+  <link rel="stylesheet" href="ultra-modern.css">
+  <link rel="stylesheet" href="modern-login.css">
+  
+  <!-- Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-functions-compat.js"></script>
+</head>
+<body class="modern-body">
+  
+  <!-- 🎯 Ultra-Modern Header -->
+  <header class="modern-header">
+    <div class="modern-header-content">
+      <!-- Brand -->
+      <div class="modern-brand">
+        <div class="modern-brand-logo">Pet Salon</div>
+      </div>
+      
+      <!-- Search -->
+      <div class="modern-search-container">
+        <div class="modern-search-input-wrapper">
+          <i data-feather="search" class="modern-search-icon"></i>
+          <input 
+            type="search" 
+            class="modern-search-input" 
+            placeholder="検索..."
+            id="globalSearchInput"
+          >
+        </div>
+      </div>
+      
+      <!-- Actions -->
+      <div class="modern-header-actions">
+        <button type="button" class="modern-header-btn" id="notificationBtn">
+          <i data-feather="bell"></i>
+          <span class="modern-notification-badge">3</span>
+        </button>
+        <button type="button" class="modern-header-btn login-btn" id="loginBtn">
+          <i data-feather="user"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 🚀 Ultra-Modern App Container -->
+  <div class="modern-app">
+    
+    <!-- Sidebar -->
+    <aside class="modern-sidebar">
+      <nav class="modern-nav">
+        <div class="modern-nav-group">
+          <div class="modern-nav-label">顧客管理</div>
+          <a href="#customer-search" class="modern-nav-link" data-nav="record">
+            <i data-feather="search"></i>
+            <span>カルテ検索</span>
+          </a>
+          <a href="#customer-list" class="modern-nav-link" data-nav="directory">
+            <i data-feather="users"></i>
+            <span>顧客一覧</span>
+          </a>
+          <a href="#pet-registration" class="modern-nav-link" data-nav="pet">
+            <i data-feather="heart"></i>
+            <span>ペット登録</span>
+          </a>
+        </div>
+        
+        <div class="modern-nav-group">
+          <div class="modern-nav-label">予約・来店</div>
+          <a href="#reservations" class="modern-nav-link" data-nav="calendar">
+            <i data-feather="calendar"></i>
+            <span>予約管理</span>
+          </a>
+          <a href="#operations" class="modern-nav-link" data-nav="ops">
+            <i data-feather="clock"></i>
+            <span>オペレーション</span>
+          </a>
+        </div>
+        
+        <div class="modern-nav-group">
+          <div class="modern-nav-label">売上・在庫</div>
+          <a href="#sales" class="modern-nav-link" data-nav="billing">
+            <i data-feather="trending-up"></i>
+            <span>売上分析</span>
+          </a>
+          <a href="#inventory" class="modern-nav-link" data-nav="merch">
+            <i data-feather="package"></i>
+            <span>在庫管理</span>
+          </a>
+        </div>
+        
+        <div class="modern-nav-group">
+          <div class="modern-nav-label">設定</div>
+          <a href="#staff" class="modern-nav-link" data-nav="notes">
+            <i data-feather="user-check"></i>
+            <span>スタッフ</span>
+          </a>
+          <a href="#settings" class="modern-nav-link" data-nav="settings">
+            <i data-feather="settings"></i>
+            <span>システム設定</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="modern-main">
+
+<!-- 既存のクイックパネル等を維持 -->
+<div class="quick-panel" id="reservationPanel" role="dialog" aria-modal="false" aria-labelledby="reservationPanelTitle" hidden>
+  <div class="quick-panel-head">
+    <div class="quick-panel-title" id="reservationPanelTitle">本日の予約タイムライン</div>
+    <button type="button" class="quick-panel-close" id="btnCloseReservationPanel" aria-label="閉じる">✕</button>
+  </div>
+  <div class="quick-panel-body">
+    <div class="quick-panel-summary" id="reservationPanelSummary">本日の予約はありません。</div>
+    <div class="timeline-wrapper" id="reservationTimelineWrapper">
+      <div class="reservation-timeline" id="reservationTimeline" aria-live="polite"></div>
+      <div class="timeline-empty" id="reservationTimelineEmpty" hidden>本日のタイムラインに表示できる予約はありません。</div>
+    </div>
+  </div>
+</div>
+    <!-- Legacy Navigation - Hidden in luxury mode -->
+    <nav class="quick-nav legacy-nav" aria-label="メインメニュー" style="display: none;">
+        <button type="button" class="nav-icon has-tooltip active" data-tab="home" aria-label="ホーム" title="ホーム" data-tooltip="ホーム"><i data-feather="home"></i></button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="record" aria-label="カルテ検索" title="カルテ検索" data-tooltip="カルテ検索"><i data-feather="search"></i></button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="directory" aria-label="顧客・会員" title="顧客・会員" data-tooltip="顧客・会員"><i data-feather="users"></i></button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="customer" aria-label="お客様登録" title="お客様登録" data-tooltip="お客様登録"><i data-feather="user-plus"></i></button>
+  <button type="button" class="nav-icon has-tooltip pet-only" data-tab="pet" aria-label="ご愛犬登録" title="ご愛犬登録" data-tooltip="ご愛犬登録"><i data-feather="heart"></i></button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="calendar" aria-label="予約" title="予約" data-tooltip="予約"><i data-feather="calendar"></i></button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="merch" aria-label="物販・在庫" title="物販・在庫" data-tooltip="物販・在庫"><i data-feather="shopping-bag"></i></button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="events" aria-label="イベント管理" title="イベント管理" data-tooltip="イベント管理"><span class="emoji-icon">🎪</span></button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="ops" aria-label="オペレーションハブ" title="オペレーションハブ" data-tooltip="オペレーションハブ"><i data-feather="compass"></i></button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="billing" aria-label="売上・請求" title="売上・請求" data-tooltip="売上・請求"><i data-feather="dollar-sign"></i></button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="notes" aria-label="スタッフ連絡事項" title="スタッフ連絡事項" data-tooltip="スタッフ連絡"><i data-feather="clipboard"></i></button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="board" aria-label="申請/変更" title="申請/変更" data-tooltip="申請・改善"><i data-feather="edit-3"></i></button>
+        <button type="button" class="nav-icon has-tooltip" data-tab="settings" aria-label="設定" title="設定" data-tooltip="設定"><i data-feather="settings"></i></button>
+    </nav>
+  <div class="quick-panel-head">
+    <div class="quick-panel-title" id="reservationPanelTitle">本日の予約タイムライン</div>
+    <button type="button" class="quick-panel-close" id="btnCloseReservationPanel" aria-label="閉じる">✕</button>
+  </div>
+  <div class="quick-panel-body">
+    <div class="quick-panel-summary" id="reservationPanelSummary">本日の予約はありません。</div>
+    <div class="timeline-wrapper" id="reservationTimelineWrapper">
+      <div class="reservation-timeline" id="reservationTimeline" aria-live="polite"></div>
+      <div class="timeline-empty" id="reservationTimelineEmpty" hidden>本日のタイムラインに表示できる予約はありません。</div>
+    </div>
+  </div>
+</div>
+
+<!-- 認証ステータスとユーティリティ (非表示) -->
+<div class="auth-status" id="authStatus" style="display: none;">
+  <button type="button" class="auth-button" id="loginButton">
+    <i data-feather="log-in"></i>
+    <span>ログイン</span>
+  </button>
+  <div class="user-info" id="userInfo" style="display: none;">
+    <span class="user-name" id="userName"></span>
+    <button type="button" class="auth-button" id="logoutButton">
+      <i data-feather="log-out"></i>
+      <span>ログアウト</span>
+    </button>
+  </div>
+</div>
+
+<div class="header-utilities" style="display: none;">
+  <button type="button" class="help-icon has-tooltip" id="btnHelp" aria-haspopup="dialog" aria-controls="helpPanel" aria-label="使い方ガイド" title="使い方ガイド" data-tooltip="使い方ガイド">❓</button>
+</div>
+<div class="quick-panel" id="staffNotesPanel" role="dialog" aria-modal="false" aria-labelledby="staffNotesPanelTitle" hidden>
+  <div class="quick-panel-head">
+    <div class="quick-panel-title" id="staffNotesPanelTitle">スタッフ連絡事項</div>
+    <button type="button" class="quick-panel-close" id="btnCloseNotesPanel" aria-label="閉じる">✕</button>
+  </div>
+  <div class="quick-panel-body">
+    <section class="quick-section">
+      <h3>全体への連絡事項</h3>
+      <div class="quick-section-content" id="staffNotesGeneral">読み込み中です…</div>
+    </section>
+    <section class="quick-section">
+      <h3>スタッフ別の重要事項</h3>
+      <div class="quick-section-content" id="staffNotesByStaff">読み込み中です…</div>
+    </section>
+  </div>
+</div>
+      <!-- 🏠 Ultra-Modern Dashboard -->
+      <section id="tab-home" class="tab-pane active">
+        <div class="modern-container">
+          
+          <!-- Welcome Section -->
+          <div class="modern-welcome">
+            <h1 class="modern-page-title">ダッシュボード</h1>
+            <p class="modern-page-subtitle">今日の概要とクイックアクション</p>
+          </div>
+          
+          <!-- Stats Grid -->
+          <div class="modern-stats-grid">
+            <div class="modern-stat-card">
+              <div class="modern-stat-icon">
+                <i data-feather="calendar"></i>
+              </div>
+              <div class="modern-stat-content">
+                <div class="modern-stat-number">8</div>
+                <div class="modern-stat-label">今日の予約</div>
+              </div>
+            </div>
+            
+            <div class="modern-stat-card">
+              <div class="modern-stat-icon">
+                <i data-feather="users"></i>
+              </div>
+              <div class="modern-stat-content">
+                <div class="modern-stat-number">124</div>
+                <div class="modern-stat-label">総顧客数</div>
+              </div>
+            </div>
+            
+            <div class="modern-stat-card">
+              <div class="modern-stat-icon">
+                <i data-feather="trending-up"></i>
+              </div>
+              <div class="modern-stat-content">
+                <div class="modern-stat-number">¥45,200</div>
+                <div class="modern-stat-label">今日の売上</div>
+              </div>
+            </div>
+            
+            <div class="modern-stat-card">
+              <div class="modern-stat-icon">
+                <i data-feather="heart"></i>
+              </div>
+              <div class="modern-stat-content">
+                <div class="modern-stat-number">89</div>
+                <div class="modern-stat-label">登録ペット</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Main Content Grid -->
+          <div class="modern-dashboard-grid">
+            
+            <!-- Today's Schedule -->
+            <div class="modern-card">
+              <div class="modern-card-header">
+                <h3 class="modern-card-title">
+                  <i data-feather="clock"></i>
+                  今日のスケジュール
+                </h3>
+                <button class="modern-btn-icon">
+                  <i data-feather="plus"></i>
+                </button>
+              </div>
+              
+              <div class="modern-schedule">
+                <div class="modern-schedule-item">
+                  <div class="modern-schedule-time">10:00</div>
+                  <div class="modern-schedule-content">
+                    <div class="modern-schedule-title">モコちゃん - トリミング</div>
+                    <div class="modern-schedule-subtitle">担当: 田中さん</div>
+                  </div>
+                  <div class="modern-badge modern-badge-blue">予約済み</div>
+                </div>
+                
+                <div class="modern-schedule-item">
+                  <div class="modern-schedule-time">13:00</div>
+                  <div class="modern-schedule-content">
+                    <div class="modern-schedule-title">タロウくん - シャンプー</div>
+                    <div class="modern-schedule-subtitle">担当: 佐藤さん</div>
+                  </div>
+                  <div class="modern-badge modern-badge-green">進行中</div>
+                </div>
+                
+                <div class="modern-schedule-item">
+                  <div class="modern-schedule-time">15:30</div>
+                  <div class="modern-schedule-content">
+                    <div class="modern-schedule-title">ミケちゃん - 爪切り</div>
+                    <div class="modern-schedule-subtitle">担当: 鈴木さん</div>
+                  </div>
+                  <div class="modern-badge modern-badge-gray">待機中</div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Recent Activity -->
+            <div class="modern-card">
+              <div class="modern-card-header">
+                <h3 class="modern-card-title">
+                  <i data-feather="activity"></i>
+                  最近のアクティビティ
+                </h3>
+              </div>
+              
+              <div class="modern-activity-list">
+                <div class="modern-activity-item">
+                  <div class="modern-activity-icon">
+                    <i data-feather="user-plus"></i>
+                  </div>
+                  <div class="modern-activity-content">
+                    <div class="modern-activity-title">新しい顧客が追加されました</div>
+                    <div class="modern-activity-time">2時間前</div>
+                  </div>
+                </div>
+                
+                <div class="modern-activity-item">
+                  <div class="modern-activity-icon">
+                    <i data-feather="calendar"></i>
+                  </div>
+                  <div class="modern-activity-content">
+                    <div class="modern-activity-title">予約がキャンセルされました</div>
+                    <div class="modern-activity-time">4時間前</div>
+                  </div>
+                </div>
+                
+                <div class="modern-activity-item">
+                  <div class="modern-activity-icon">
+                    <i data-feather="dollar-sign"></i>
+                  </div>
+                  <div class="modern-activity-content">
+                    <div class="modern-activity-title">支払いが完了しました</div>
+                    <div class="modern-activity-time">6時間前</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="modern-card">
+              <div class="modern-card-header">
+                <h3 class="modern-card-title">
+                  <i data-feather="zap"></i>
+                  クイックアクション
+                </h3>
+              </div>
+              
+              <div class="modern-quick-actions">
+                <button class="modern-quick-action" data-tab="customer">
+                  <i data-feather="user-plus"></i>
+                  <span>新規顧客</span>
+                </button>
+                
+                <button class="modern-quick-action" data-tab="calendar">
+                  <i data-feather="calendar"></i>
+                  <span>予約追加</span>
+                </button>
+                
+                <button class="modern-quick-action" data-tab="record">
+                  <i data-feather="search"></i>
+                  <span>検索</span>
+                </button>
+                
+                <button class="modern-quick-action" data-tab="billing">
+                  <i data-feather="dollar-sign"></i>
+                  <span>会計</span>
+                </button>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </section>
+
+    <!-- 注意が必要なご愛犬 -->
+    <div class="luxury-card">
+      <div class="luxury-card-header">
+        <h2 class="luxury-card-title">
+          <i data-feather="alert-triangle" class="luxury-card-title-icon" style="color: var(--luxury-warning-500);"></i>
+          注意が必要なご愛犬
+        </h2>
+      </div>
+      
+      <div class="attention-pets-list">
+        <div class="attention-pet-item">
+          <div class="pet-avatar">🐕</div>
+          <div class="pet-info">
+            <div class="pet-name">チャーリー</div>
+            <div class="attention-tags">
+              <span class="attention-tag tag-medicine">💊 薬あり</span>
+              <span class="attention-tag tag-allergy">🚫 アレルギー</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="attention-pet-item">
+          <div class="pet-avatar">🐱</div>
+          <div class="pet-info">
+            <div class="pet-name">ルナ</div>
+            <div class="attention-tags">
+              <span class="attention-tag tag-caution">⚠️ 噛みつき注意</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="attention-pet-item">
+          <div class="pet-avatar">🐕</div>
+          <div class="pet-info">
+            <div class="pet-name">ベル</div>
+            <div class="attention-tags">
+              <span class="attention-tag tag-illness">🏥 持病あり</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <button type="button" class="luxury-btn luxury-btn-ghost" style="width: 100%; margin-top: var(--luxury-spacing-lg);">
+        すべて見る
+      </button>
+    </div>
+
+    <!-- 売上サマリー -->
+    <div class="luxury-card">
+      <div class="luxury-card-header">
+        <h2 class="luxury-card-title">
+          <i data-feather="bar-chart-2" class="luxury-card-title-icon"></i>
+          売上サマリー
+        </h2>
+        <div class="sales-tabs">
+          <button type="button" class="sales-tab active" data-period="today">今日</button>
+          <button type="button" class="sales-tab" data-period="week">今週</button>
+          <button type="button" class="sales-tab" data-period="month">今月</button>
+        </div>
+      </div>
+      
+      <div class="sales-summary">
+        <div class="sales-metric">
+          <div class="metric-label">施術売上</div>
+          <div class="metric-value">¥45,000</div>
+          <div class="metric-change positive">+15% 先週比</div>
+        </div>
+        <div class="sales-metric">
+          <div class="metric-label">物販売上</div>
+          <div class="metric-value">¥12,000</div>
+          <div class="metric-change positive">+8% 先週比</div>
+        </div>
+      </div>
+      
+      <!-- シンプルな売上チャート（プレースホルダー） -->
+      <div class="sales-chart">
+        <div class="chart-placeholder">
+          📊 売上グラフエリア<br>
+          <small>実装時にChart.js等で可視化</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- 最近のカルテ更新 -->
+    <div class="luxury-card">
+      <div class="luxury-card-header">
+        <h2 class="luxury-card-title">
+          <i data-feather="file-text" class="luxury-card-title-icon"></i>
+          最近のカルテ更新
+        </h2>
+      </div>
+      
+      <div class="recent-updates-list">
+        <div class="update-item">
+          <div class="pet-thumbnail">🐕</div>
+          <div class="update-details">
+            <div class="pet-name">モコちゃん</div>
+            <div class="update-date">2時間前</div>
+            <div class="update-note">施術記録とアフターケア情報を追加</div>
+          </div>
+        </div>
+        
+        <div class="update-item">
+          <div class="pet-thumbnail">🐱</div>
+          <div class="update-details">
+            <div class="pet-name">まるちゃん</div>
+            <div class="update-date">5時間前</div>
+            <div class="update-note">健康チェック結果を記録</div>
+          </div>
+        </div>
+        
+        <div class="update-item">
+          <div class="pet-thumbnail">🐕</div>
+          <div class="update-details">
+            <div class="pet-name">チャーリー</div>
+            <div class="update-date">昨日</div>
+            <div class="update-note">薬の服用状況を更新</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- /luxury-dashboard -->
+
+  <!-- クイックアクション -->
+  <div class="luxury-card">
+    <div class="luxury-card-header">
+      <h2 class="luxury-card-title">
+        <i data-feather="zap" class="luxury-card-title-icon"></i>
+        クイックアクション
+      </h2>
+    </div>
+    
+    <div class="quick-actions-grid">
+      <button type="button" class="luxury-btn luxury-btn-secondary" data-tab="customer">
+        <i data-feather="user-plus" aria-hidden="true"></i>
+        新規お客様登録
+      </button>
+      <button type="button" class="luxury-btn luxury-btn-secondary" data-tab="calendar">
+        <i data-feather="calendar" aria-hidden="true"></i>
+        新規予約追加
+      </button>
+      <button type="button" class="luxury-btn luxury-btn-secondary" data-tab="record">
+        <i data-feather="search" aria-hidden="true"></i>
+        顧客・犬検索
+      </button>
+      <button type="button" class="luxury-btn luxury-btn-secondary" data-tab="pet">
+        <i data-feather="clipboard" aria-hidden="true"></i>
+        施術記録入力
+      </button>
+      <button type="button" class="luxury-btn luxury-btn-secondary" data-tab="billing">
+        <i data-feather="dollar-sign" aria-hidden="true"></i>
+        会計・請求
+      </button>
+      <button type="button" class="luxury-btn luxury-btn-secondary" data-tab="merch">
+        <i data-feather="package" aria-hidden="true"></i>
+        在庫確認
+      </button>
+    </div>
+  </div>
+
+  <!-- 既存のホームコンテンツをフォールバック用に非表示で保存 -->
+  <div class="legacy-home-content" style="display: none;">
+          <button type="button" class="home-tile" data-home-shortcut="1" data-tab="record" data-mode="owner">
+            <i data-feather="users" class="icon gradient-effect" aria-hidden="true"></i>
+            <span class="label">お客様カルテ</span>
+            <span class="desc">タグ・メモ・LINE連携状況まで一目で確認</span>
+            <span class="badge-note">キーワード/タグ検索対応</span>
+            <div class="home-tile-tooltip">
+              <span class="tooltip-title">お客様カルテ</span>
+              <div class="tooltip-desc">タグ・メモ・LINE連携状況まで一目で確認できます。顧客情報を統合管理し、来店履歴や施術記録を簡単に検索できます。</div>
+              <div class="tooltip-badge">キーワード/タグ検索対応</div>
+            </div>
+          </button>
+          <button type="button" class="home-tile pet-only" data-home-shortcut="1" data-tab="record" data-mode="pet">
+            <i data-feather="heart" class="icon" aria-hidden="true"></i>
+            <span class="label">ご愛犬カルテ</span>
+            <span class="desc">写真と記録ブックで施術履歴を整理</span>
+            <span class="badge-note">タグ・ピン留めに対応</span>
+            <div class="home-tile-tooltip">
+              <span class="tooltip-title">ご愛犬カルテ</span>
+              <div class="tooltip-desc">写真付きの記録ブックで施術履歴を整理し、健康状態や注意事項を管理できます。アレルギー情報や特別ケアの記録も保存できます。</div>
+              <div class="tooltip-badge">タグ・ピン留めに対応</div>
+            </div>
+          </button>
+          <button type="button" class="home-tile" data-home-shortcut="1" data-tab="customer">
+            <i data-feather="edit-2" class="icon" aria-hidden="true"></i>
+            <span class="label">お客様登録</span>
+            <span class="desc">連絡先・LINE・タグをまとめて登録</span>
+            <div class="home-tile-tooltip">
+              <span class="tooltip-title">お客様登録</span>
+              <div class="tooltip-desc">新しいお客様の基本情報、連絡先、LINEアカウント、特別タグを一括で登録できます。初回来店時の情報をスムーズに入力し、今後のサービス向上に役立てます。</div>
+            </div>
+          </button>
+          <button type="button" class="home-tile pet-only" data-home-shortcut="1" data-tab="pet">
+            <i data-feather="heart" class="icon" aria-hidden="true"></i>
+            <span class="label">ご愛犬登録</span>
+            <span class="desc">健康情報と写真・記録ブックを管理</span>
+            <div class="home-tile-tooltip">
+              <span class="tooltip-title">ご愛犬登録</span>
+              <div class="tooltip-desc">新しいご愛犬の基本情報、健康状態、アレルギー情報を登録し、写真付きの記録ブックを作成できます。施術履歴や特別なケアの記録も管理できます。</div>
+            </div>
+          </button>
+        </div>
+      </div>
+      <div class="home-group">
+        <div class="home-group-title">日々のオペレーション</div>
+        <div class="tile-grid">
+          <button type="button" class="home-tile" data-home-shortcut="1" data-tab="calendar">
+            <i data-feather="calendar" class="icon gradient-effect" aria-hidden="true"></i>
+            <span class="label">予約カレンダー</span>
+            <span class="desc">空き枠の確認と予約登録・リマインド送信</span>
+            <div class="home-tile-tooltip">
+              <span class="tooltip-title">予約カレンダー</span>
+              <div class="tooltip-desc">日別の空き枠を一目で確認し、新しい予約を簡単に登録できます。自動リマインド送信機能で、お客様へのサービスも向上します。</div>
+            </div>
+          </button>
+          <button type="button" class="home-tile" data-home-shortcut="1" data-tab="billing">
+            <i data-feather="dollar-sign" class="icon gradient-effect" aria-hidden="true"></i>
+            <span class="label">売上・請求</span>
+            <span class="desc">会計/戦略ビューで日次・月次の売上を把握</span>
+            <div class="home-tile-tooltip">
+              <span class="tooltip-title">売上・請求</span>
+              <div class="tooltip-desc">日別・月別の売上データをグラフで視覚化し、請求状況を一元管理できます。サービス別、スタッフ別の売上分析で戦略的な経営をサポートします。</div>
+            </div>
+          </button>
+          <button type="button" class="home-tile pet-only" data-home-shortcut="1" data-tab="pet" data-pane="journal">
+            <i data-feather="book" class="icon" aria-hidden="true"></i>
+            <span class="label">ご愛犬記録ブック</span>
+            <span class="desc">施術ごとのメモと写真をカルテに残す</span>
+          </button>
+        </div>
+      </div>
+      <div class="home-group">
+        <div class="home-group-title">共有と設定</div>
+        <div class="tile-grid">
+          <button type="button" class="home-tile" data-home-shortcut="1" data-tab="notes">
+            <i data-feather="bookmark" class="icon" aria-hidden="true"></i>
+            <span class="label">スタッフ連絡</span>
+            <span class="desc">ピン留めメモで注意事項を共有</span>
+          </button>
+          <button type="button" class="home-tile" data-home-shortcut="1" data-tab="board">
+            <i data-feather="edit-2" class="icon" aria-hidden="true"></i>
+            <span class="label">申請・改善</span>
+            <span class="desc">変更申請や改善要望の履歴を管理</span>
+          </button>
+          <button type="button" class="home-tile" data-home-shortcut="1" data-tab="settings">
+            <i data-feather="settings" class="icon" aria-hidden="true"></i>
+            <span class="label">設定</span>
+            <span class="desc">店舗・施術・スタッフ・支払い方法を整理</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card home-dashboard">
+      <div class="home-status-header">
+      <div class="section-title"><span class="icon emoji">⚡</span><span>今日のワークスペース</span></div>
+      <button type="button" class="home-dashboard-action" data-home-shortcut="1" data-action="sync-now" aria-label="最新データに更新">
+        <i data-feather="rotate-cw" class="icon" aria-hidden="true"></i>
+        <span class="text">最新データに更新</span>
+      </button>
+    </div>
+    <div class="home-status-grid">
+      <button type="button" class="home-status-tile" data-home-shortcut="1" data-action="open-reservations" aria-describedby="homeReservationRange homeReservationStaff">
+          <div class="home-status-icon" aria-hidden="true"><i data-feather="calendar" class="icon" aria-hidden="true"></i></div>
+        <div class="home-status-content">
+          <div class="home-status-label">今日の予約</div>
+          <div class="home-status-value" id="homeReservationCount">0件</div>
+          <div class="home-status-sub"><span class="label">次:</span><span id="homeReservationNext">予約はありません</span></div>
+          <div class="home-status-sub"><span class="label">時間帯:</span><span id="homeReservationRange">未設定</span></div>
+          <div class="home-status-sub"><span class="label">担当:</span><span id="homeReservationStaff">未割り当て</span></div>
+        </div>
+      </button>
+      <button type="button" class="home-status-tile" data-home-shortcut="1" data-action="open-notes">
+          <div class="home-status-icon" aria-hidden="true"><i data-feather="bookmark" class="icon" aria-hidden="true"></i></div>
+        <div class="home-status-content">
+          <div class="home-status-label">スタッフ連絡事項</div>
+          <div class="home-status-value" id="homeNotesGeneralCount">全体 0件</div>
+          <div class="home-status-sub"><span class="label">重要:</span><span id="homeNotesImportantCount">0件</span></div>
+          <div class="home-status-sub" id="homeNotesHighlight">優先メモはありません</div>
+        </div>
+      </button>
+      <button type="button" class="home-status-tile" data-home-shortcut="1" data-action="open-sales">
+          <div class="home-status-icon" aria-hidden="true"><i data-feather="trending-up" class="icon" aria-hidden="true"></i></div>
+        <div class="home-status-content">
+          <div class="home-status-label">売上サマリー</div>
+          <div class="home-status-value" id="homeSalesToday">今日 ¥0</div>
+          <div class="home-status-sub"><span class="label">今月:</span><span id="homeSalesMonth">¥0</span></div>
+          <div class="home-status-sub"><span class="label">トップ担当:</span><span id="homeSalesHighlight">なし</span></div>
+        </div>
+      </button>
+    </div>
+  </div>
+  <div class="card home-shortcuts-card">
+  <div class="section-title"><span class="icon emoji">⚡</span><span>クイック操作</span></div>
+    <div class="home-shortcut-grid">
+      <div class="home-shortcut">
+        <h3>予約・受付</h3>
+        <div class="home-shortcut-list">
+          <button type="button" class="home-shortcut-btn" data-home-shortcut="1" data-action="open-reservations">
+            <i data-feather="calendar" class="shortcut-icon icon" aria-hidden="true"></i>
+            <span class="shortcut-text">
+              <span class="shortcut-title">今日の予約を確認</span>
+              <span class="shortcut-desc">タイムラインを開いて状況を把握</span>
+            </span>
+          </button>
+          <button type="button" class="home-shortcut-btn" data-home-shortcut="1" data-tab="calendar">
+            <i data-feather="plus" class="shortcut-icon icon" aria-hidden="true"></i>
+            <span class="shortcut-text">
+              <span class="shortcut-title">新規予約を登録</span>
+              <span class="shortcut-desc">空き枠チェックとリマインド送信</span>
+            </span>
+          </button>
+          <button type="button" class="home-shortcut-btn" data-home-shortcut="1" data-action="open-search">
+            <i data-feather="search" class="shortcut-icon icon" aria-hidden="true"></i>
+            <span class="shortcut-text">
+              <span class="shortcut-title">顧客・予約を検索</span>
+              <span class="shortcut-desc">名前・電話・タグで横断検索</span>
+            </span>
+          </button>
+        </div>
+      </div>
+      <div class="home-shortcut">
+        <h3>カルテ・施術</h3>
+        <div class="home-shortcut-list">
+          <button type="button" class="home-shortcut-btn" data-home-shortcut="1" data-tab="record" data-mode="owner">
+            <i data-feather="users" class="shortcut-icon icon" aria-hidden="true"></i>
+            <span class="shortcut-text">
+              <span class="shortcut-title">お客様カルテを開く</span>
+              <span class="shortcut-desc">タグ・メモ・来店履歴を確認</span>
+            </span>
+          </button>
+          <button type="button" class="home-shortcut-btn pet-only" data-tab="record" data-mode="pet">
+            <i data-feather="heart" class="shortcut-icon icon" aria-hidden="true"></i>
+            <span class="shortcut-text">
+              <span class="shortcut-title">ご愛犬カルテを探す</span>
+              <span class="shortcut-desc">写真付きの施術履歴をチェック</span>
+            </span>
+          </button>
+          <button type="button" class="home-shortcut-btn pet-only" data-tab="pet" data-pane="journal">
+            <i data-feather="book" class="shortcut-icon icon" aria-hidden="true"></i>
+            <span class="shortcut-text">
+              <span class="shortcut-title">記録ブックを更新</span>
+              <span class="shortcut-desc">施術後のメモと写真を共有</span>
+            </span>
+          </button>
+        </div>
+      </div>
+      <div class="home-shortcut">
+        <h3>共有・管理</h3>
+        <div class="home-shortcut-list">
+          <button type="button" class="home-shortcut-btn" data-home-shortcut="1" data-tab="ops">
+            <i data-feather="compass" class="shortcut-icon icon" aria-hidden="true"></i>
+            <span class="shortcut-text">
+              <span class="shortcut-title">オペレーションハブ</span>
+              <span class="shortcut-desc">到着前の確認と受付準備</span>
+            </span>
+          </button>
+          <button type="button" class="home-shortcut-btn" data-home-shortcut="1" data-tab="notes">
+            <i data-feather="bookmark" class="shortcut-icon icon" aria-hidden="true"></i>
+            <span class="shortcut-text">
+              <span class="shortcut-title">スタッフ連絡を整理</span>
+              <span class="shortcut-desc">ピン留めメモを一括で確認</span>
+            </span>
+          </button>
+          <button type="button" class="home-shortcut-btn" data-home-shortcut="1" data-tab="billing">
+            <i data-feather="dollar-sign" class="shortcut-icon icon" aria-hidden="true"></i>
+            <span class="shortcut-text">
+              <span class="shortcut-title">売上ダッシュボード</span>
+              <span class="shortcut-desc">日別・月別の売上を把握</span>
+            </span>
+          </button>
+          <button type="button" class="home-shortcut-btn" data-home-shortcut="1" data-tab="merch">
+            <i data-feather="shopping-bag" class="shortcut-icon icon" aria-hidden="true"></i>
+            <div class="shortcut-text">
+              <span class="shortcut-title">物販・在庫をチェック</span>
+              <span class="shortcut-desc">在庫アラートと発注状況を確認</span>
+            </div>
+          </button>
+          <button type="button" class="home-shortcut-btn" data-home-shortcut="1" data-tab="events">
+            <i data-feather="calendar" class="shortcut-icon icon" aria-hidden="true"></i>
+            <div class="shortcut-text">
+              <span class="shortcut-title">イベントを管理</span>
+              <span class="shortcut-desc">開催予定と担当者を整理</span>
+            </div>
+          </button>
+          <button type="button" class="home-shortcut-btn" data-home-shortcut="1" data-tab="board">
+            <i data-feather="edit-2" class="shortcut-icon icon" aria-hidden="true"></i>
+            <div class="shortcut-text">
+              <span class="shortcut-title">申請・改善をフォロー</span>
+              <span class="shortcut-desc">未対応の申請をチェック</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card home-overview-card" id="homeOverview">
+    <div class="home-overview-header">
+      <div class="section-title"><span class="icon emoji">📊</span><span>ホームデータビュー</span></div>
+      <p class="home-overview-sub">フォームを離れずに、直近の予約・連絡・売上の推移と詳細をまとめて確認できます。</p>
+    </div>
+    <div class="home-overview-grid">
+      <section class="overview-section" aria-labelledby="homeReservationSectionTitle">
+        <header class="overview-header">
+          <div>
+            <h3 id="homeReservationSectionTitle">予約の推移と本日の明細</h3>
+            <p class="overview-hint">直近7日間の件数と本日のタイムライン</p>
+          </div>
+          <button type="button" class="overview-link" data-home-shortcut="1" data-action="open-reservations">詳細を開く</button>
+        </header>
+        <div class="spark-chart" id="homeReservationChart" role="img" aria-live="polite" aria-label="直近の予約件数の推移">
+          <div class="spark-bars" id="homeReservationChartBars"></div>
+        </div>
+        <div class="spark-legend" id="homeReservationChartLegend">最新データを読み込み中です…</div>
+        <div class="overview-list" id="homeReservationDetails" data-has-data="0">
+          <div class="muted-text">読み込み中です…</div>
+        </div>
+      </section>
+      <section class="overview-section" aria-labelledby="homeNotesSectionTitle">
+        <header class="overview-header">
+          <div>
+            <h3 id="homeNotesSectionTitle">スタッフ連絡事項</h3>
+            <p class="overview-hint">全体通知と重要メモをまとめて表示</p>
+          </div>
+          <button type="button" class="overview-link" data-home-shortcut="1" data-action="open-notes">詳細を開く</button>
+        </header>
+        <div class="overview-stats" id="homeNotesStats"></div>
+        <div class="overview-list" id="homeNotesDetails" data-has-data="0">
+          <div class="muted-text">読み込み中です…</div>
+        </div>
+      </section>
+      <section class="overview-section" aria-labelledby="homeSalesSectionTitle">
+        <header class="overview-header">
+          <div>
+            <h3 id="homeSalesSectionTitle">売上の推移と本日の内訳</h3>
+            <p class="overview-hint">直近7日間の売上推移と本日の来店状況</p>
+          </div>
+          <button type="button" class="overview-link" data-home-shortcut="1" data-action="open-sales">詳細を開く</button>
+        </header>
+        <div class="spark-chart sales" id="homeSalesChart" role="img" aria-live="polite" aria-label="直近の売上推移">
+          <div class="spark-bars" id="homeSalesChartBars"></div>
+        </div>
+        <div class="spark-legend" id="homeSalesChartLegend">最新データを読み込み中です…</div>
+        <div class="overview-list" id="homeSalesDetails" data-has-data="0">
+          <div class="muted-text">読み込み中です…</div>
+        </div>
+      </section>
+    </div>
+    <div class="overview-empty" id="homeOverviewEmpty">上部の「最新データに更新」ボタンを押すと、予約・連絡・売上の情報がここに表示されます。</div>
+  </div>
+  </section>
+  <!-- 顧客・会員ディレクトリ -->
+  <section id="tab-directory" class="tab-pane">
+    <div class="card directory-card">
+      <div class="section-toolbar">
+        <div class="section-title"><span class="icon emoji">👥</span><span>顧客・会員ディレクトリ</span></div>
+        <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+      </div>
+      <p class="lead">スプレッドシートを開かなくても、顧客一覧と STORES 会員のステータスをまとめて確認できます。検索やフィルタで目的の方を素早く見つけてください。</p>
+      <div class="directory-grid">
+        <section class="directory-section" aria-labelledby="directoryCustomersTitle">
+          <header class="directory-head">
+            <div>
+              <h3 id="directoryCustomersTitle">お客様一覧</h3>
+              <p class="muted-text">店舗の切り替えに合わせて自動で絞り込みます。</p>
+            </div>
+            <div class="directory-tools">
+              <input type="search" id="directoryCustomerFilter" placeholder="氏名・電話・タグで絞り込む">
+              <button type="button" class="btn-ghost" id="exportCustomersCSV" title="顧客データをCSVでエクスポート">
+                <i data-feather="download"></i>
+                <span>CSV</span>
+              </button>
+              <span class="directory-count" id="directoryCustomerSummary">0 件</span>
+            </div>
+          </header>
+          <div class="directory-list" id="directoryCustomerList" aria-live="polite"></div>
+        </section>
+        <section class="directory-section" aria-labelledby="directoryMembersTitle">
+          <header class="directory-head">
+            <div>
+              <h3 id="directoryMembersTitle">STORES 会員</h3>
+              <p class="muted-text">アクティブ会員・解約予定を一目で把握できます。</p>
+            </div>
+            <div class="directory-tools">
+              <input type="search" id="directoryMemberFilter" placeholder="会員名・プラン名で検索">
+              <span class="directory-count" id="directoryMemberSummary">-</span>
+            </div>
+          </header>
+          <div class="directory-list" id="directoryMemberList" aria-live="polite"></div>
+        </section>
+      </div>
+    </div>
+  </section>
+  <main>
+  <!-- 予約 -->
+  <section id="tab-calendar" class="tab-pane">
+    <div class="card">
+      <div class="section-toolbar">
+        <div class="section-title"><span class="icon emoji">📅</span><span>予約管理</span></div>
+        <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+      </div>
+      <p class="lead">お客様・ご愛犬・施術・担当者を選んで予約を登録できます。空き枠チェックで候補時間を確認し、必要に応じて前日リマインドの送信設定も行ってください。</p>
+      <div class="calendar-layout">
+        <section class="calendar-main">
+          <h3>予約登録</h3>
+          <div id="reservationForm" class="calendar-form">
+            <div class="grid">
+              <label>お客様
+                <select id="calCustomer">
+                  <option value="">選択してください</option>
+                </select>
+              </label>
+              <label>ご愛犬
+                <select id="calPet">
+                  <option value="">選択してください</option>
+                </select>
+              </label>
+              <label>施術
+                <select id="calService">
+                  <option value="">選択してください</option>
+                </select>
+              </label>
+              <label>担当者
+                <select id="calStaff">
+                  <option value="">選択してください</option>
+                </select>
+              </label>
+              <label class="field-sm">日付
+                <input type="date" id="calDate">
+              </label>
+              <label class="field-sm">開始
+                <input type="time" id="calStart" value="10:00">
+              </label>
+              <label class="field-sm">終了
+                <input type="time" id="calEnd" value="11:00">
+              </label>
+              <label>タイトル
+                <input type="text" id="calTitle" placeholder="例：シャンプーコース">
+              </label>
+              <label>備考
+                <textarea id="calNotes" rows="3" placeholder="共有したい連絡事項"></textarea>
+              </label>
+            </div>
+            <div class="calendar-reminder">
+              <label>前日リマインド
+                <select id="chkReminder">
+                  <option value="true" selected>送信する</option>
+                  <option value="false">送信しない</option>
+                </select>
+              </label>
+              <label>送信時刻
+                <input type="time" id="reminderTime" value="09:00">
+              </label>
+            </div>
+            <div class="calendar-actions">
+              <button type="button" class="btn-primary" id="btnCreateReservation">予約を登録</button>
+              <button type="button" class="btn-ghost" id="btnSendTomorrowReminders">明日のリマインドをテスト送信</button>
+            </div>
+            <div id="calMsg" class="msg"></div>
+          </div>
+        </section>
+        <aside class="calendar-side">
+          <section class="availability-card">
+            <h3>空き枠チェック</h3>
+            <div class="availability-grid">
+              <label>日付
+                <input type="date" id="avlDate">
+              </label>
+              <label>担当者
+                <select id="avlStaff">
+                  <option value="">選択してください</option>
+                </select>
+              </label>
+              <label>施術
+                <select id="avlService">
+                  <option value="">選択してください</option>
+                </select>
+              </label>
+              <label>開始
+                <input type="time" id="avlFrom" value="10:00">
+              </label>
+              <label>終了
+                <input type="time" id="avlTo" value="20:00">
+              </label>
+              <label>間隔
+                <select id="avlStep">
+                  <option value="15">15分刻み</option>
+                  <option value="30" selected>30分刻み</option>
+                  <option value="60">60分刻み</option>
+                </select>
+              </label>
+            </div>
+            <div class="calendar-actions">
+              <button type="button" class="btn-ghost" id="btnCheckAvail">空き枠を確認</button>
+            </div>
+            <div id="availList" class="availability-list">条件を選択して空き枠を確認してください。</div>
+          </section>
+          <section class="calendar-list-card">
+            <h3>登録済みの予約</h3>
+            <div id="reservationList" class="calendar-list">読み込み中です…</div>
+          </section>
+        </aside>
+      </div>
+    </div>
+  </section>
+  <!-- 物販・在庫管理 -->
+  <section id="tab-merch" class="tab-pane">
+    <div class="card merch-card">
+      <div class="section-toolbar">
+        <div class="section-title"><span class="icon emoji">🛍️</span><span>物販・在庫管理</span></div>
+        <div class="merch-toolbar">
+          <button type="button" class="btn-ghost" id="btnReloadMerch">最新に更新</button>
+          <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+        </div>
+      </div>
+      <p class="lead">物販商品の登録状況、店舗別の在庫残量、発注ステータスをワンビューで確認できます。低在庫や入荷予定をチェックしながら、適切なタイミングで補充してください。</p>
+      <div class="merch-summary" aria-live="polite">
+        <div><span class="label">登録商品</span><span class="value" id="merchSummaryTotal">0 件</span></div>
+        <div><span class="label">販売中</span><span class="value" id="merchSummaryActive">0 件</span></div>
+        <div><span class="label">平均単価</span><span class="value" id="merchSummaryAverage">¥0</span></div>
+        <div><span class="label">カテゴリ</span><span class="value" id="merchSummaryCategories">-</span></div>
+      </div>
+      <div class="merch-grid">
+        <section class="merch-section" aria-labelledby="merchGoodsTitle">
+          <header class="merch-head">
+            <h3 id="merchGoodsTitle">商品カタログ</h3>
+            <p class="muted-text">販売停止中の商品も含めて一覧表示します。行をタップすると詳細を確認できます。</p>
+          </header>
+          <div class="merch-list" id="merchGoodsList" aria-live="polite"></div>
+        </section>
+        <section class="merch-section" aria-labelledby="inventoryTitle">
+          <header class="merch-head">
+            <h3 id="inventoryTitle">在庫サマリー</h3>
+            <div class="inventory-summary" aria-live="polite">
+              <span>追跡数 <strong id="inventorySummaryTracked">0</strong></span>
+              <span>在庫合計 <strong id="inventorySummaryOnHand">0</strong></span>
+              <span>警戒中 <strong id="inventorySummaryAlerts">0</strong></span>
+            </div>
+          </header>
+          <div class="inventory-list" id="inventoryList" aria-live="polite"></div>
+        </section>
+        <section class="merch-section" aria-labelledby="purchaseTitle">
+          <header class="merch-head">
+            <h3 id="purchaseTitle">発注状況</h3>
+            <div class="purchase-summary" aria-live="polite">
+              <span>未入荷 <strong id="purchaseSummaryPending">0 件</strong></span>
+              <span>入荷予定数 <strong id="purchaseSummaryIncoming">0</strong></span>
+              <span>次の入荷 <strong id="purchaseSummaryNext">-</strong></span>
+            </div>
+          </header>
+          <div class="purchase-list" id="purchaseList" aria-live="polite"></div>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <!-- イベント管理 -->
+  <section id="tab-events" class="tab-pane">
+    <div class="card events-card">
+      <div class="section-toolbar">
+        <div class="section-title"><span class="icon emoji">🎪</span><span>イベント管理</span></div>
+        <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+      </div>
+      <p class="lead">ワークショップや店頭イベントのスケジュール、担当スタッフ、会場情報を管理します。キーワードとステータスで絞り込み、直近のイベント準備を抜け漏れなく進めましょう。</p>
+      <div class="events-toolbar">
+        <label class="sr-only" for="eventFilterKeyword">イベント検索</label>
+        <input type="search" id="eventFilterKeyword" placeholder="タイトル・担当者で検索">
+        <label class="sr-only" for="eventFilterStatus">ステータス</label>
+        <select id="eventFilterStatus">
+          <option value="">すべて</option>
+          <option value="upcoming">今後のイベント</option>
+          <option value="today">本日開催</option>
+          <option value="past">終了したイベント</option>
+        </select>
+        <button type="button" class="btn-ghost" id="btnReloadEvents">最新に更新</button>
+      </div>
+      <div class="events-summary" aria-live="polite">
+        <div><span class="label">今後</span><span class="value" id="eventSummaryUpcoming">0 件</span></div>
+        <div><span class="label">本日</span><span class="value" id="eventSummaryToday">0 件</span></div>
+        <div><span class="label">担当スタッフ</span><span class="value" id="eventSummaryStaff">0 名</span></div>
+        <div><span class="label">次のイベント</span><span class="value" id="eventSummaryNext">-</span></div>
+      </div>
+      <div class="events-list" id="eventsList" aria-live="polite"></div>
+      <div class="events-empty" id="eventsEmpty" hidden>イベントが登録されていません。</div>
+    </div>
+  </section>
+
+  <!-- オペレーションハブ -->
+  <section id="tab-ops" class="tab-pane">
+    <div class="card">
+      <div class="section-toolbar">
+        <div class="section-title"><span class="icon emoji">🧭</span><span>オペレーションハブ</span></div>
+        <div class="ops-toolbar">
+          <span class="ops-stats" id="opsStats"></span>
+          <button type="button" class="btn-ghost" id="btnOpsRefresh">最新に更新</button>
+          <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+        </div>
+      </div>
+      <p class="lead">予約・請求・共有メモをまとめて確認できます。受付・施術・マネージャーそれぞれの視点でフォローすべき項目を迷わず追えます。</p>
+      <div id="opsMsg" class="msg"></div>
+      <div class="ops-grid">
+        <article class="ops-column">
+          <h3>予約とタスク</h3>
+          <div class="ops-list" id="opsReservations"></div>
+          <div class="ops-empty" id="opsReservationsEmpty" hidden>直近の予約はありません。</div>
+        </article>
+        <article class="ops-column">
+          <h3>請求フォロー</h3>
+          <div class="ops-list" id="opsInvoices"></div>
+          <div class="ops-empty" id="opsInvoicesEmpty" hidden>フォローが必要な請求はありません。</div>
+        </article>
+        <article class="ops-column">
+          <h3>共有メモ・申請</h3>
+          <div class="ops-subhead">スタッフ連絡</div>
+          <div class="ops-list" id="opsNotes"></div>
+          <div class="ops-subhead">変更申請</div>
+          <div class="ops-list" id="opsBoard"></div>
+          <div class="ops-empty" id="opsCommEmpty" hidden>共有メモや申請はまだ登録されていません。</div>
+        </article>
+       <div class="divider"></div>
+        <section class="accounting-breakdown" aria-labelledby="accountingBreakdownTitle">
+          <div class="section-toolbar">
+            <div class="section-title"><span class="icon emoji">📊</span><span id="accountingBreakdownTitle">項目別会計内訳</span></div>
+            <div class="accounting-controls">
+              <label>開始日
+                <input type="date" id="accountingFrom">
+              </label>
+              <label>終了日
+                <input type="date" id="accountingTo">
+              </label>
+              <button type="button" class="btn-ghost" id="btnAccountingPreset7">直近7日</button>
+              <button type="button" class="btn-ghost" id="btnAccountingPreset30">直近30日</button>
+              <button type="button" class="btn-primary" id="btnAccountingReload">内訳を更新</button>
+            </div>
+          </div>
+          <p class="muted-text" id="accountingBreakdownPeriod">-</p>
+          <div class="accounting-summary" id="accountingSummary" aria-live="polite">
+            <div><span class="label">対象売上</span><span class="value" id="accountingTotalAmount">¥0</span></div>
+            <div><span class="label">来店件数</span><span class="value" id="accountingTotalVisits">0 件</span></div>
+            <div><span class="label">明細数</span><span class="value" id="accountingTotalItems">0 明細</span></div>
+          </div>
+          <div class="accounting-grid">
+            <section class="accounting-panel" aria-labelledby="accountingTypeTitle">
+              <h4 id="accountingTypeTitle">区分別</h4>
+              <ul class="accounting-pill-list" id="accountingTypeList"></ul>
+            </section>
+            <section class="accounting-panel" aria-labelledby="accountingCategoryTitle">
+              <h4 id="accountingCategoryTitle">カテゴリ別</h4>
+              <div class="accounting-table-wrapper">
+                <table>
+                  <thead><tr><th scope="col">カテゴリ</th><th scope="col">売上</th><th scope="col">数量</th></tr></thead>
+                  <tbody id="accountingCategoryBody"></tbody>
+                </table>
+              </div>
+            </section>
+            <section class="accounting-panel" aria-labelledby="accountingItemTitle">
+              <h4 id="accountingItemTitle">メニュー別</h4>
+              <div class="accounting-table-wrapper">
+                <table>
+                  <thead><tr><th scope="col">メニュー</th><th scope="col">カテゴリ</th><th scope="col">売上</th><th scope="col">数量</th></tr></thead>
+                  <tbody id="accountingItemBody"></tbody>
+                </table>
+              </div>
+            </section>
+            <section class="accounting-panel" aria-labelledby="accountingPaymentTitle">
+              <h4 id="accountingPaymentTitle">決済別</h4>
+              <div class="accounting-table-wrapper">
+                <table>
+                  <thead><tr><th scope="col">決済方法</th><th scope="col">売上</th><th scope="col">件数</th><th scope="col">未収</th></tr></thead>
+                  <tbody id="accountingPaymentBody"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+          <div class="accounting-empty" id="accountingEmpty" hidden>指定期間の売上データがありません。</div>
+        </section> 
+      </div>
+    </div>
+  </section>
+
+  <!-- 請求管理 -->
+  <section id="tab-billing" class="tab-pane">
+    <div class="card">
+      <div class="section-toolbar">
+        <div class="section-title"><span class="icon emoji">💰</span><span>請求・売上管理</span></div>
+        <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+      </div>
+      <p class="lead">請求検索機能を使うと、支払待ちの請求を素早く把握したり、対象月の売上詳細をCSVでダウンロードできます。</p>
+      <div class="billing-filters" aria-label="請求検索条件">
+        <label>キーワード
+          <input type="text" id="invKeyword" placeholder="請求ID・顧客名・メモを検索">
+        </label>
+        <label>請求状態
+          <select id="invStatus">
+            <option value="">すべて</option>
+            <option value="PENDING">支払待ち</option>
+            <option value="PAID">支払済み</option>
+          </select>
+        </label>
+        <label>請求日(開始)
+          <input type="date" id="invFrom">
+        </label>
+        <label>請求日(終了)
+          <input type="date" id="invTo">
+        </label>
+        <label>支払い方法
+          <select id="invPayment"><option value="">すべて</option></select>
+        </label>
+      </div>
+      <div class="billing-actions">
+        <button type="button" id="btnInvoiceSearch" class="btn-primary">請求を検索</button>
+        <button type="button" id="btnInvoicePending" class="btn-ghost">支払待ちだけ表示</button>
+        <div class="billing-inline">
+          <label>対象月
+            <input type="month" id="invMonth">
+          </label>
+          <button type="button" id="btnDownloadSales" class="btn-primary">月次売上CSVダウンロード</button>
+        </div>
+      </div>
+      <div id="invoiceMsg" class="msg"></div>
+      <div id="invoiceSummary" class="billing-summary" style="display:none">
+        <div>
+          <div class="label">対象件数</div>
+          <div class="value" id="invoiceSummaryCount">0 件</div>
+        </div>
+        <div>
+          <div class="label">合計金額</div>
+          <div class="value" id="invoiceSummaryTotal">¥0</div>
+        </div>
+        <div>
+          <div class="label">支払待ち件数</div>
+          <div class="value" id="invoiceSummaryPendingCount">0 件</div>
+        </div>
+        <div>
+          <div class="label">支払待ち残高</div>
+          <div class="value" id="invoiceSummaryPendingTotal">¥0</div>
+        </div>
+        <div>
+          <div class="label">対象期間</div>
+          <div class="value" id="invoiceSummaryPeriod">-</div>
+        </div>
+      </div>
+      <div id="invoiceResults" class="invoice-results"></div>
+      <div id="invoiceEmpty" class="billing-empty" style="display:none">請求がまだ登録されていません。条件を変更してお試しください。</div>
+      <div class="divider"></div>
+      <div id="dailyReport" class="daily-report" aria-live="polite">
+        <div class="daily-report-head">
+          <div>
+            <h3>日別売上レポート</h3>
+            <p class="daily-report-lead">日毎の売上推移がグラフで確認できます。期間ボタンから表示期間を切り替え、ダウンロードでCSVを取得して売上管理に活用できます。</p>
+          </div>
+          <div class="daily-report-actions">
+            <button type="button" id="btnDailyRange" class="btn-ghost">期間</button>
+            <button type="button" id="btnDailyDownload" class="btn-primary">ダウンロード</button>
+          </div>
+        </div>
+        <div class="daily-range-info">
+          <span id="dailyRangeLabel">表示期間: -</span>
+          <span id="dailySummaryLine" class="muted-text"></span>
+        </div>
+        <div id="dailyRangeMenu" class="daily-range-menu" hidden>
+          <div class="menu-group" role="group" aria-label="期間プリセット">
+            <button type="button" data-range="7">直近7日</button>
+            <button type="button" data-range="14">直近14日</button>
+            <button type="button" data-range="30" class="active">直近30日</button>
+            <button type="button" data-range="90">直近90日</button>
+          </div>
+          <div class="menu-custom">
+            <div class="menu-custom-fields">
+              <label>開始日
+                <input type="date" id="dailyCustomFrom">
+              </label>
+              <label>終了日
+                <input type="date" id="dailyCustomTo">
+              </label>
+            </div>
+            <div class="menu-custom-actions">
+              <button type="button" id="btnDailyApply" class="btn-primary">適用</button>
+              <button type="button" id="btnDailyCancel" class="btn-ghost">閉じる</button>
+            </div>
+          </div>
+        </div>
+        <div class="daily-chart-area">
+          <svg id="dailySalesChart" viewBox="0 0 640 240" role="img" aria-labelledby="dailyChartTitle" preserveAspectRatio="none">
+            <title id="dailyChartTitle">日別売上推移グラフ</title>
+          </svg>
+          <div id="dailyChartEmpty" class="daily-chart-empty">日別の売上データがありません。</div>
+        </div>
+        <div id="dailyMsg" class="msg"></div>
+        <div id="dailySalesList" class="daily-sales-list">
+          <div class="daily-tables">
+            <section class="daily-table" aria-labelledby="dailyAccountingTitle">
+              <h4 id="dailyAccountingTitle">会計用サマリー <span class="tag">会計士向け</span></h4>
+              <table>
+                <thead>
+                  <tr><th scope="col">日付</th><th scope="col">総売上</th><th scope="col">現金</th><th scope="col">未収</th><th scope="col">前受金</th></tr>
+                </thead>
+                <tbody id="dailyAccountingBody"></tbody>
+              </table>
+            </section>
+            <section class="daily-table" aria-labelledby="dailyStrategyTitle">
+              <h4 id="dailyStrategyTitle">戦略用サマリー <span class="tag">店舗責任者向け</span></h4>
+              <table>
+                <thead>
+                  <tr><th scope="col">日付</th><th scope="col">売上</th><th scope="col">来店件数</th><th scope="col">顧客数</th><th scope="col">顧客単価</th></tr>
+                </thead>
+                <tbody id="dailyStrategyBody"></tbody>
+              </table>
+            </section>
+          </div>
+        </div>
+        <div id="dailyDetailPanel" class="daily-detail" style="display:none;">
+          <div class="daily-detail-head">
+            <div>
+              <h4 id="dailyDetailTitle">-</h4>
+              <p class="muted-text" id="dailyDetailStats"></p>
+            </div>
+          </div>
+          <div id="dailyDetailBody" class="daily-detail-body"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 検索 -->
+  <section id="tab-record" class="tab-pane">
+    <div class="card">
+      <div class="section-toolbar">
+        <div class="section-title"><span class="icon emoji">🔍</span><span>カルテ検索</span></div>
+        <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+      </div>
+      <div class="seg" role="tablist" aria-label="検索対象">
+        <button type="button" id="modeOwner" class="active" role="tab" aria-selected="true">お客様</button>
+        <button type="button" id="modePet" class="pet-only" role="tab" aria-selected="false">ご愛犬</button>
+      </div>
+      <div class="grid" style="margin-top:10px">
+        <label>キーワード
+          <input type="text" id="searchInput" placeholder="氏名／ペット名の一部で検索">
+        </label>
+        <div style="display:flex;align-items:end"><button type="button" id="btnSearch" class="btn-primary">検索</button></div>
+      </div>
+      <div class="filters" aria-label="絞り込み">
+        <label>対象期間(開始)
+          <input type="date" id="filterFrom">
+        </label>
+        <label>対象期間(終了)
+          <input type="date" id="filterTo">
+        </label>
+        <label>施術
+          <select id="filterService"><option value="">すべて</option></select>
+        </label>
+        <label class="pet-only">既往歴
+          <input type="text" id="filterHealth" placeholder="例：ヘルニア">
+        </label>
+        <label class="pet-only">アレルギー
+          <input type="text" id="filterAllergy" placeholder="例：小麦">
+        </label>
+        <label class="pet-only">タグ
+          <input type="text" id="filterTag" placeholder="例：VIP・アレルギー持ち">
+        </label>
+        <label>メモに含む
+          <input type="text" id="filterNotes" placeholder="キーワード">
+        </label>
+      </div>
+      <div class="actions" style="margin-top:6px">
+        <button type="button" id="btnClearFilters" class="btn-ghost">条件クリア</button>
+      </div>
+
+      <div id="resultsToolbar" class="results-toolbar" style="display:none">
+        <div class="left">
+          <span id="resCount">0 件</span>
+          <span id="resTime" class="sub"></span>
+          <span id="activeFilters" class="sub"></span>
+        </div>
+        <div class="right" style="display:flex;gap:8px;align-items:center;">
+          <label style="align-items:center;gap:6px;display:flex;font-weight:600;">
+            並び替え
+            <select id="sortSelect" style="min-width:180px;">
+              <option value="name-asc">名前 A→Z</option>
+              <option value="name-desc">名前 Z→A</option>
+              <option value="visit-desc">最新来店日 新しい順</option>
+              <option value="visit-asc">最新来店日 古い順</option>
+            </select>
+          </label>
+          <div class="seg2" role="group" aria-label="表示切替">
+            <button type="button" id="viewComfort" class="active">ゆったり</button>
+            <button type="button" id="viewCompact">コンパクト</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="searchResults" class="result-list" style="margin-top:6px"></div>
+      <div id="resultDetail" class="detail" style="display:none"></div>
+
+      <div id="recordForm" class="form" style="display:none">
+        <h3 id="selectedCustomerName">お客様を選択してください</h3>
+        <div class="grid">
+          <label class="pet-only field-sm">ご愛犬名 <select id="petSelect"></select></label>
+          <label>施術 <select id="serviceSelect"></select></label>
+          <label class="field-sm">回数 <input type="number" id="qtyInput" value="1" min="1"></label>
+          <label class="field-sm">支払方法 <select id="paymentSelect"></select></label>
+          <label class="field-sm">担当者 <select id="staffSelect"></select></label>
+          <label class="field-sm">来店日 <input type="date" id="visitDate"></label>
+          <label>前受金残高（自動）<input type="text" id="prepaidBalance" readonly></label>
+          <label class="field-sm">前受金の使用<select id="usePrepaid"><option value="true" selected>使用する（優先）</option><option value="false">使用しない</option></select></label>
+        </div>
+        <label>メモ <textarea id="notes" rows="3"></textarea></label>
+        <div class="actions">
+          <button type="button" id="btnSaveVisit" class="btn-primary">記録を保存</button>
+          <button type="button" id="btnAddPet" class="btn-ghost pet-only">新しいペットを追加</button>
+        </div>
+        <div id="visitMsg" class="msg"></div>
+
+        <h4>最新の履歴</h4>
+        <div id="visitList" class="list"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- お客様 -->
+  <section id="tab-customer" class="tab-pane">
+    <div class="card">
+      <div class="section-toolbar">
+        <div class="section-title"><span class="icon emoji">👥</span><span>お客様登録</span></div>
+        <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+      </div>
+      <div id="customerForm">
+        <div class="grid">
+          <label for="newCustName">
+            <span class="label-head">お名前 <span class="req">必須</span></span>
+            <input type="text" id="newCustName" class="is-required" placeholder="山田 太郎" autocomplete="name" required>
+          </label>
+
+          <label for="newCustPhone">
+            <span class="label-head">電話 <span class="req">必須</span></span>
+            <input type="tel" id="newCustPhone" class="is-required" placeholder="090-xxxx-xxxx" autocomplete="tel" required>
+          </label>
+
+          <label for="newCustEmail">メール
+            <input type="email" id="newCustEmail" placeholder="example@mail.jp" autocomplete="email">
+          </label>
+
+          <label for="newCustAddress">住所
+            <input type="text" id="newCustAddress" placeholder="東京都…" autocomplete="street-address">
+          </label>
+
+          <label for="newCustGender" class="field-xs">性別
+            <select id="newCustGender">
+              <option value="">選択してください</option>
+              <option value="女性">女性</option>
+              <option value="男性">男性</option>
+              <option value="その他">その他</option>
+            </select>
+          </label>
+
+          <label for="custNotes">メモ
+            <textarea rows="2" id="custNotes" placeholder="ご希望や注意事項など"></textarea>
+          </label>
+          <label for="custMemoDue" class="field-sm">メモ期限
+            <input type="date" id="custMemoDue">
+          </label>
+          <label for="custMemoPinned" class="field-sm">ピン留め
+            <select id="custMemoPinned">
+              <option value="false">ピン留めしない</option>
+              <option value="true">ピン留めする</option>
+            </select>
+          </label>
+          <label for="custLineId" class="field-xs">LINEユーザーID
+            <input type="text" id="custLineId" placeholder="Uxxxxxxxx">
+          </label>
+          <label for="custLineName" class="field-xs">LINE表示名
+            <input type="text" id="custLineName" placeholder="LINEの表示名">
+          </label>
+          <label for="custLineOptIn" class="field-xs">LINE通知
+            <select id="custLineOptIn">
+              <option value="">未設定</option>
+              <option value="true">許可</option>
+              <option value="false">停止</option>
+            </select>
+          </label>
+          <label for="custProfilePhoto">プロフィール写真URL
+            <input type="url" id="custProfilePhoto" placeholder="https://example.com/photo.jpg">
+            <small class="hint">お客様カルテやLINE共有で表示されます</small>
+          </label>
+          <div class="photo-preview" id="custPhotoPreview" aria-live="polite"></div>
+        </div>
+        <div class="tag-editor" id="customerTagEditor">
+          <h4>タグ管理</h4>
+          <div class="tag-inputs">
+            <input type="text" id="custTagInput" placeholder="タグ名 (例: VIP)">
+            <input type="color" id="custTagColor" value="#f97316" aria-label="タグカラー選択">
+            <button type="button" class="btn-ghost" id="btnAddCustTag">タグを追加</button>
+          </div>
+          <div class="tag-list" id="custTagList" aria-live="polite"></div>
+        </div>
+        <div class="actions">
+          <button type="button" class="btn-primary" id="btnCreateCustomer">登録</button>
+        </div>
+        <div id="custMsg" class="msg"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ご愛犬 -->
+  <section id="tab-pet" class="tab-pane pet-only">
+    <div class="card">
+      <div class="section-toolbar">
+        <div class="section-title"><span class="icon emoji">🐶</span><span>ご愛犬登録</span></div>
+        <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+      </div>
+      <div id="newPetForm">
+        <div class="grid">
+          <label>お客様登録
+            <select id="petOwnerSelect"><option value="">選択してください</option></select>
+            <small class="hint">顧客IDで紐付けます（IDは検索結果で確認できます）</small>
+          </label>
+
+          <label for="petName">
+            <span class="label-head">名前 <span class="req">必須</span></span>
+            <input type="text" id="petName" class="is-required" placeholder="パフィー" required>
+          </label>
+
+          <label for="petNameKana">カナ
+            <input type="text" id="petNameKana" placeholder="パフィー（カナ）">
+          </label>
+
+          <label for="petSpecies">種類
+            <input type="text" id="petSpecies" placeholder="ご愛犬／ご愛猫など">
+          </label>
+
+          <label for="petBreed">
+            <span class="label-head">犬種 <span class="req">必須</span></span>
+            <input type="text" id="petBreed" class="is-required" placeholder="トイプードルなど" required>
+          </label>
+
+          <label for="petSex" class="field-sm">
+            <span class="label-head">ご愛犬性別 <span class="req">必須</span></span>
+            <select id="petSex" class="is-required" required>
+              <option value="">選択してください</option>
+              <option value="女の子">女の子</option>
+              <option value="男の子">男の子</option>
+              <option value="不明">不明</option>
+            </select>
+          </label>
+
+          <label for="petDOB" class="field-sm">誕生日
+            <input type="date" id="petDOB">
+          </label>
+
+          <label for="petWeight">
+            <span class="label-head">体重(kg) <span class="req">必須</span></span>
+            <input type="number" id="petWeight" class="is-required" step="0.1" placeholder="例: 3.2" required>
+          </label>
+
+          <label for="petColor">毛色
+            <input type="text" id="petColor" placeholder="レッド、ブラック＆タン等">
+          </label>
+
+          <label for="petHospital">かかりつけの病院
+            <input type="text" id="petHospital" placeholder="〇〇動物病院">
+          </label>
+
+          <label for="petNeuter" class="field-sm">避妊・去勢
+            <select id="petNeuter">
+              <option value="">選択してください</option>
+              <option value="済み">済み</option>
+              <option value="未">未</option>
+              <option value="不明">不明</option>
+            </select>
+          </label>
+
+          <label for="petNeuterDate" class="field-sm">手術日
+            <input type="date" id="petNeuterDate" disabled>
+          </label>
+
+          <label for="pethealthHistory">既往歴
+            <input type="text" id="pethealthHistory" placeholder="椎間板ヘルニアなど">
+          </label>
+
+          <label for="petAllergies">アレルギー
+            <input type="text" id="petAllergies" placeholder="牛肉、鶏肉など">
+          </label>
+
+          <!-- ペット画像アップロード機能 -->
+          <div class="pet-image-section">
+            <div class="section-header">
+              <h4><i data-feather="camera" class="gradient-effect"></i> ペット画像管理</h4>
+              <p class="hint">顔写真や全身写真をアップロードして管理できます</p>
+            </div>
+            
+            <div class="image-upload-area">
+              <div class="upload-methods">
+                <button type="button" class="btn-ghost upload-btn" id="selectFilesBtn">
+                  <i data-feather="upload"></i>
+                  <span>ファイルを選択</span>
+                </button>
+                <button type="button" class="btn-ghost upload-btn" id="takePictureBtn">
+                  <i data-feather="camera"></i>
+                  <span>カメラで撮影</span>
+                </button>
+              </div>
+              
+              <input type="file" id="petImageFiles" accept="image/*" multiple style="display: none;">
+              <input type="file" id="petCameraInput" accept="image/*" capture="environment" style="display: none;">
+              
+              <div class="upload-info">
+                <small class="hint">
+                  JPEG, PNG, WebP形式・5MB以下・複数選択可能<br>
+                  部位や症状のメモも追加できます
+                </small>
+              </div>
+
+              <div class="image-metadata">
+                <div class="metadata-grid">
+                  <label for="imageBodyPart">部位
+                    <select id="imageBodyPart">
+                      <option value="FACE">顔</option>
+                      <option value="BODY">全身</option>
+                      <option value="HEAD">頭部</option>
+                      <option value="BACK">背中</option>
+                      <option value="ABDOMEN">お腹</option>
+                      <option value="L-FRONT-LEG">左前脚</option>
+                      <option value="R-FRONT-LEG">右前脚</option>
+                      <option value="L-BACK-LEG">左後脚</option>
+                      <option value="R-BACK-LEG">右後脚</option>
+                      <option value="OTHER">その他</option>
+                    </select>
+                  </label>
+                  <label for="imageSymptom">症状・メモ
+                    <input type="text" id="imageSymptom" placeholder="例: 皮膚発赤、施術前の様子">
+                  </label>
+                </div>
+              </div>
+
+              <div class="upload-progress" id="uploadProgress" style="display: none;">
+                <div class="progress-bar">
+                  <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">アップロード中...</div>
+              </div>
+
+              <div class="upload-message" id="uploadMessage"></div>
+            </div>
+
+            <!-- 画像一覧表示 -->
+            <div class="pet-images-display">
+              <h5>登録済み画像</h5>
+              <div class="pet-images-grid" id="petImagesGrid">
+                <div class="no-images-placeholder">
+                  <i data-feather="image"></i>
+                  <p>まだ画像がありません</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <label for="petNotes">メモ
+            <textarea rows="2" id="petNotes" placeholder="性格・苦手など"></textarea>
+          </label>
+          <label for="petMemoDue" class="field-sm">メモ期限
+            <input type="date" id="petMemoDue">
+          </label>
+          <label for="petMemoPinned" class="field-sm">ピン留め
+            <select id="petMemoPinned">
+              <option value="false">ピン留めしない</option>
+              <option value="true">ピン留めする</option>
+            </select>
+          </label>
+
+          <div class="photo-preview" id="petPhotoPreview" aria-live="polite"></div>
+        </div>
+        <div class="tag-editor" id="petTagEditor">
+          <h4>タグ管理</h4>
+          <div class="tag-inputs">
+            <input type="text" id="petTagInput" placeholder="タグ名 (例: シニア)">
+            <input type="color" id="petTagColor" value="#6366f1" aria-label="タグカラー選択">
+            <button type="button" class="btn-ghost" id="btnAddPetTag">タグを追加</button>
+          </div>
+          <div class="tag-list" id="petTagList" aria-live="polite"></div>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn-primary" id="btnSavePet">ご愛犬を登録する</button>
+          <button type="button" class="btn-ghost" id="btnClear2">入力をクリア</button>
+        </div>
+        <div id="petMsg" class="msg"></div>
+      </div>
+    </div>
+    <div class="card pet-journal-card">
+      <div class="section-toolbar">
+        <div class="section-title"><span class="icon emoji">📖</span><span>ご愛犬記録ブック</span></div>
+        <div class="journal-actions">
+          <button type="button" class="btn-ghost" id="btnRefreshJournal">最新を読み込む</button>
+        </div>
+      </div>
+      <p class="lead">施術ごとの気づきやLINE共有したい要点を記録しておくと、スタッフ間やご家族とのコミュニケーションがスムーズになります。</p>
+      <div class="journal-form">
+        <div class="grid">
+          <label>対象のご愛犬
+            <select id="journalPetSelect"><option value="">ご愛犬を選択</option></select>
+          </label>
+          <label class="field-xs">施術日
+            <input type="date" id="journalDate">
+          </label>
+          <label class="field-xs">担当
+            <input type="text" id="journalStaff" placeholder="担当者名">
+          </label>
+          <label>タイトル
+            <input type="text" id="journalTitle" placeholder="施術のポイント">
+          </label>
+          <label>メモ
+            <textarea id="journalSummary" rows="2" placeholder="気づき・次回のポイントなど"></textarea>
+          </label>
+
+          <label class="field-sm">タグ
+            <input type="text" id="journalTag" placeholder="例: 初回, 再診">
+          </label>
+        </div>
+        <div class="actions">
+          <button type="button" class="btn-primary" id="btnAddJournal">記録を追加</button>
+        </div>
+        <div id="journalMsg" class="msg"></div>
+      </div>
+      <div class="journal-list" id="journalList" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- 設定 -->
+  <section id="tab-settings" class="tab-pane">
+    <div class="card">
+      <div class="section-toolbar">
+        <div class="section-title"><span class="icon emoji">⚙️</span><span>設定センター</span></div>
+        <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+      </div>
+      <p class="lead">店舗・施術・スタッフ・支払い方法など、日常的には触れない設定をまとめています。必要な項目を選択して開いてください。</p>
+      <div class="settings-shortcuts" id="settingsShortcuts">
+        <button type="button" data-pane="store"><i data-feather="home" class="icon" aria-hidden="true"></i> 店舗</button>
+        <button type="button" data-pane="service"><i data-feather="file-text" class="icon" aria-hidden="true"></i> 施術メニュー</button>
+        <button type="button" data-pane="staff"><i data-feather="users" class="icon" aria-hidden="true"></i> スタッフ</button>
+        <button type="button" data-pane="payments"><i data-feather="credit-card" class="icon" aria-hidden="true"></i> 支払い方法</button>
+      </div>
+    </div>
+    <article class="settings-pane" data-pane="store">
+    <div class="card">
+      <div class="section-toolbar">
+  <div class="section-title"><span class="icon emoji">🏠</span><span>店舗管理</span></div>
+        <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+      </div>
+      <p class="lead">ドッグケア（犬）とビューティーケア（人）をまとめて管理し、必要に応じて切り替えられます。ビューティーケア（人）ではご愛犬向けのタブが自動的に非表示になります。</p>
+      <input type="hidden" id="storeId">
+      <div class="grid">
+        <label>店舗名
+          <input type="text" id="storeName" placeholder="例：表参道店">
+        </label>
+        <label class="field-sm">店舗種別
+          <select id="storeType">
+            <option value="PET">ドッグケア（犬）</option>
+            <option value="HUMAN">ビューティーケア（人）</option>
+          </select>
+        </label>
+        <label class="field-sm">テーマカラー
+          <input type="color" id="storeColor" value="#6ecad1">
+        </label>
+        <label>説明メモ
+          <textarea id="storeDescription" rows="3" placeholder="特徴や共有事項をメモ"></textarea>
+        </label>
+        <label class="field-sm">表示順
+          <input type="number" id="storeSort" min="0" value="0">
+        </label>
+        <label class="field-sm">利用状態
+          <select id="storeActive">
+            <option value="true" selected>利用中</option>
+            <option value="false">非表示</option>
+          </select>
+        </label>
+      </div>
+      <p class="store-form-note">ビューティーケア（人）を選ぶと、ご愛犬登録タブや検索項目は非表示となり、人向けカルテとして運用できます。</p>
+      <div class="actions">
+        <button type="button" id="btnSaveStore" class="btn-primary">店舗を保存</button>
+        <button type="button" id="btnResetStore" class="btn-ghost">クリア</button>
+      </div>
+      <div id="storeMsg" class="msg"></div>
+      <div class="divider"></div>
+      <h3>登録済み店舗</h3>
+      <div id="storeList" class="store-grid"></div>
+    </div>
+  
+    </article>
+    <article class="settings-pane" data-pane="service">
+    <div class="card">
+      <div class="section-toolbar">
+  <div class="section-title"><span class="icon emoji">📄</span><span>施術メニュー登録</span></div>
+        <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+      </div>
+      <div class="grid">
+        <label>施術ID <input type="text" id="svcId" placeholder="例:svcID0000"></label>
+        <label>施術名 <input type="text" id="svcName" placeholder="例:お客様+ご愛犬総合ケア 約140分"></label>
+        <label class="field-sm">カテゴリ
+          <select id="svcCat"><option value="">選択してください</option></select>
+        </label>
+        <label class="field-sm">所要(分) <input type="number" id="svcDur" min="0"></label>
+        <label class="field-sm">価格(円) <input type="number" id="svcPrice" min="0"></label>
+        <label class="field-sm">税率 <input type="number" id="svcTax" step="0.01" placeholder="0.1"></label>
+        <label class="field-sm">適用開始 <input type="date" id="svcFrom"></label>
+        <label class="field-sm">適用終了 <input type="date" id="svcTo"></label>
+        <label class="field-sm">有効
+          <select id="svcActive">
+            <option value="true" selected>有効</option>
+            <option value="false">無効</option>
+          </select>
+        </label>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn-primary" id="btnCreateService">施術を登録</button>
+        <button type="button" class="btn-ghost" id="btnClearSvc">クリア</button>
+      </div>
+      <div id="svcMsg" class="msg"></div>
+    </div>
+  
+    </article>
+    <article class="settings-pane" data-pane="staff">
+    <div class="card">
+      <div class="section-toolbar">
+  <div class="section-title"><i data-feather="user" class="icon emoji" aria-hidden="true"></i><span>施術者・スタッフ登録</span></div>
+        <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+      </div>
+      <div id="staffForm">
+        <div class="grid">
+          <label>氏名 <input type="text" id="stName" placeholder="例: 佐藤 花子"></label>
+          <label class="field-sm">役割 <input type="text" id="stRole" placeholder="例: セラピスト"></label>
+          <label class="field-sm">電話 <input type="tel" id="stPhone" placeholder="090-xxxx-xxxx"></label>
+          <label class="field-sm">メール <input type="email" id="stEmail" placeholder="example@mail.jp"></label>
+          <label class="field-sm">有効
+            <select id="stActive">
+              <option value="true" selected>有効</option>
+              <option value="false">無効</option>
+            </select>
+          </label>
+        </div>
+        <div class="actions">
+          <button type="button" id="btnCreateStaff" class="btn-primary">担当者を登録</button>
+        </div>
+        <div id="staffMsg" class="msg"></div>
+      </div>
+      <h3>担当者一覧</h3>
+      <div id="staffList" class="list"></div>
+    </div>
+  
+    </article>
+    <article class="settings-pane" data-pane="payments">
+    <div class="card">
+      <div class="section-toolbar">
+  <div class="section-title"><i data-feather="credit-card" class="icon emoji" aria-hidden="true"></i><span>支払い方法管理</span></div>
+        <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+      </div>
+      <div id="paymentForm">
+        <div class="grid">
+          <label>コード <input type="text" id="pmCode" placeholder="例: CASH"></label>
+          <label>名称 <input type="text" id="pmName" placeholder="例: 現金"></label>
+          <label class="field-sm">表示順 <input type="number" id="pmSort" min="0" value="0"></label>
+          <label class="field-sm">有効
+            <select id="pmActive">
+              <option value="true" selected>有効</option>
+              <option value="false">無効</option>
+            </select>
+          </label>
+        </div>
+        <div class="actions">
+          <button type="button" id="btnCreatePayment" class="btn-primary">支払い方法を登録</button>
+        </div>
+        <div id="pmMsg" class="msg"></div>
+      </div>
+      <h3>支払い方法一覧</h3>
+      <div id="paymentList" class="list"></div>
+    </div>
+  
+    </article>
+  </section>
+
+  <!-- スタッフ連絡事項 -->
+  <section id="tab-notes" class="tab-pane">
+    <div class="card">
+      <div class="section-toolbar">
+        <div class="section-title"><i data-feather="bookmark" class="icon emoji" aria-hidden="true"></i><span>スタッフ連絡事項</span></div>
+        <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+      </div>
+      <div id="noteForm">
+        <div class="grid">
+          <label class="field-sm">区分 <input type="text" id="ntCategory" placeholder="例: 店舗連絡/共有事項"></label>
+          <label>タイトル <input id="ntTitle" placeholder="例: 在庫棚卸について"></label>
+          <label class="field-sm">対象 <input type="text" id="ntAudience" placeholder="例: 全員/○○さん"></label>
+          <label class="field-sm">ピン留め
+            <select id="ntPinned">
+              <option value="false">しない</option>
+              <option value="true">する</option>
+            </select>
+          </label>
+        </div>
+        <label>内容 <textarea id="ntBody" rows="3" placeholder="連絡内容を記載"></textarea></label>
+        <div class="actions">
+          <button type="button" id="btnCreateNote" class="btn-primary">連絡事項を登録</button>
+        </div>
+        <div id="ntMsg" class="msg"></div>
+      </div>
+
+      <h3>最新の連絡</h3>
+      <div id="noteList" class="list"></div>
+    </div>
+  </section>
+
+  
+
+  <!-- 変更管理・申請 -->
+  <section id="tab-board" class="tab-pane">
+    <div class="card">
+      <div class="section-toolbar">
+        <div class="section-title"><i data-feather="file-text" class="icon emoji" aria-hidden="true"></i><span>変更管理・申請</span></div>
+        <button type="button" class="home-back" data-tab="home">ホームへ戻る</button>
+      </div>
+      <div id="ticketForm">
+        <div class="grid">
+          <label class="field-sm">カテゴリ
+            <select id="ticketCategory">
+              <option value="担当者">担当者</option>
+              <option value="メニュー">メニュー</option>
+              <option value="サブスク会員/非会員">サブスク会員/非会員</option>
+              <option value="価格">価格</option>
+              <option value="来店ルート">来店ルート</option>
+              <option value="支払い方法">支払い方法</option>
+              <option value="顧客管理">顧客管理</option>
+              <option value="新規/継続">新規/継続</option>
+              <option value="バグ/不具合/その他">バグ/不具合/その他</option>
+            </select>
+          </label>
+          <label>タイトル <input type="text" id="ticketTitle"></label>
+          <label class="field-sm">関連ID <input type="text" id="ticketRelated" placeholder="例: SM-90"></label>
+          <label class="field-sm">担当者 <input type="text" id="ticketAssignee"></label>
+        </div>
+        <label>影響範囲 <textarea id="ticketImpact" rows="2"></textarea></label>
+        <label>内容 <textarea id="ticketDesc" rows="3"></textarea></label>
+        <div class="actions"><button type="button" id="btnCreateTicket" class="btn-primary">申請</button></div>
+        <div id="ticketMsg" class="msg"></div>
+      </div>
+
+      <h3>最近の申請</h3>
+      <div id="ticketList" class="list"></div>
+    </div>
+  </section>
+</main>
+
+<button type="button" class="sales-fab" id="btnQuickSales" aria-controls="salesPanel" aria-expanded="false" title="売上サマリー">
+  <i data-feather="trending-up" class="icon fab-icon" aria-hidden="true"></i>
+  <span class="fab-text">
+    <span class="fab-label">売上</span>
+    <span class="fab-sub" id="quickSalesToday">今日 ¥0</span>
+  </span>
+</button>
+<div class="quick-panel quick-panel--sales" id="salesPanel" role="dialog" aria-modal="false" aria-labelledby="salesPanelTitle" hidden>
+  <div class="quick-panel-head">
+    <div class="quick-panel-title" id="salesPanelTitle">売上サマリー</div>
+    <button type="button" class="quick-panel-close" id="btnCloseSalesPanel" aria-label="閉じる">✕</button>
+  </div>
+  <div class="quick-panel-body">
+    <section class="quick-section">
+      <h3>日別売上集計</h3>
+      <div class="quick-stats" id="salesDailyStats">読み込み中です…</div>
+    </section>
+    <section class="quick-section">
+      <h3>月別売上集計</h3>
+      <div class="quick-stats" id="salesMonthlyStats">読み込み中です…</div>
+    </section>
+    <section class="quick-section">
+      <h3>スタッフ別集計</h3>
+      <div class="quick-list" id="salesByStaff">読み込み中です…</div>
+    </section>
+    <section class="quick-section">
+      <h3>メニュー別集計</h3>
+      <div class="quick-list" id="salesByMenu">読み込み中です…</div>
+    </section>
+  </div>
+</div>
+
+
+<div class="help-panel-backdrop" id="helpBackdrop" hidden></div>
+<div class="help-panel" id="helpPanel" role="dialog" aria-modal="true" aria-labelledby="helpPanelTitle" hidden>
+  <button type="button" class="help-panel-close" id="btnHelpClose">閉じる</button>
+  <h2 id="helpPanelTitle">使い方ガイド</h2>
+  <section>
+    <h3>ヘッダーメニューのアイコン一覧</h3>
+    <p>各アイコンにカーソルを合わせると名称が表示され、クリックすると対応するタブが開きます。</p>
+    <ul class="help-icon-list">
+      <li><i data-feather="home" class="symbol icon" aria-hidden="true"></i><span class="name">ホーム</span><span class="desc">ダッシュボード</span></li>
+      <li><i data-feather="search" class="symbol icon" aria-hidden="true"></i><span class="name">カルテ検索</span><span class="desc">お客様・ご愛犬カルテを横断検索</span></li>
+      <li><i data-feather="users" class="symbol icon" aria-hidden="true"></i><span class="name">顧客・会員</span><span class="desc">顧客一覧とSTORES会員をまとめて確認</span></li>
+      <li><i data-feather="users" class="symbol icon" aria-hidden="true"></i><span class="name">お客様登録</span><span class="desc">新規顧客の基本情報とタグ管理</span></li>
+      <li class="pet"><i data-feather="heart" class="symbol icon" aria-hidden="true"></i><span class="name">ご愛犬登録</span><span class="desc">ドッグケア店舗でのカルテ登録</span></li>
+      <li><i data-feather="calendar" class="symbol icon" aria-hidden="true"></i><span class="name">予約</span><span class="desc">予約枠の確認と登録・リマインド</span></li>
+      <li><i data-feather="shopping-bag" class="symbol icon" aria-hidden="true"></i><span class="name">物販・在庫</span><span class="desc">商品一覧と在庫・発注状況を把握</span></li>
+      <li><i data-feather="calendar" class="symbol icon" aria-hidden="true"></i><span class="name">イベント管理</span><span class="desc">イベントスケジュールと担当者を確認</span></li>
+      <li><i data-feather="compass" class="symbol icon" aria-hidden="true"></i><span class="name">オペレーションハブ</span><span class="desc">今日の予約・申請・メモの集約ビュー</span></li>
+      <li><i data-feather="dollar-sign" class="symbol icon" aria-hidden="true"></i><span class="name">売上・請求</span><span class="desc">日別売上と請求ステータスの確認</span></li>
+      <li><i data-feather="bookmark" class="symbol icon" aria-hidden="true"></i><span class="name">スタッフ連絡</span><span class="desc">共有メモと注意事項のピン留め</span></li>
+      <li><i data-feather="file-text" class="symbol icon" aria-hidden="true"></i><span class="name">申請・改善</span><span class="desc">変更申請と改善要望の進行管理</span></li>
+      <li><i data-feather="settings" class="symbol icon" aria-hidden="true"></i><span class="name">設定</span><span class="desc">店舗・メニュー・スタッフ・支払い方法</span></li>
+    </ul>
+  </section>
+  <section>
+    <h3>どこに何があるか</h3>
+    <div class="help-map">
+      <article>
+        <h4>ホーム</h4>
+        <p>「ホーム」タブではダッシュボードから各タブへ移動できます。</p>
+      </article>
+      <article>
+        <h4>カルテと登録</h4>
+        <p>カルテ関連は🔎カルテ検索、👥お客様登録、🐾ご愛犬登録に分かれています。ビューティーケア（人）の店舗では顧客カルテ中心、ドッグケア（犬）の店舗ではご愛犬カルテと記録ブックが表示されます。</p>
+      </article>
+      <article>
+        <h4>日々の業務</h4>
+        <p>📅予約でスケジュール管理、🧭オペレーションハブで当日の予約・未処理タスク・共有メモをチェックできます。受付は予約カード、施術スタッフはメモ、マネージャーは申請状況を確認してください。</p>
+      </article>
+      <article>
+        <h4>売上と共有</h4>
+        <p>💰売上・請求で会計状況を確認し、📌スタッフ連絡で注意事項を共有、📝申請・改善で提出された申請を追跡します。⚙️設定では店舗情報や施術メニュー、スタッフ、支払い方法を整備できます。</p>
+      </article>
+    </div>
+  </section>
+  <section>
+    <h3>クイック検索と使い方ヒント</h3>
+    <p>ヘッダー右上の検索バーから顧客・ご愛犬・予約・請求をまとめて探せます。検索結果を選ぶと関連タブが開き、必要な画面に即移動します。オペレーションハブを活用して、受付準備から会計までをシームレスに繋げましょう。</p>
+  </section>
+</div>
+
+  <script>
+    // Small runtime mapping to replace remaining prominent emoji with Feather SVGs
+    document.addEventListener('DOMContentLoaded', function(){
+      try{
+        const mappings = [
+          { sel: '#btnQuickReservations .status-icon', icon: 'calendar' },
+          { sel: '#btnQuickNotes .status-icon', icon: 'bookmark' },
+          { sel: '#btnHelp', icon: 'help-circle' }
+        ];
+        mappings.forEach(({sel, icon}) => {
+          const el = document.querySelector(sel);
+          if(!el) return;
+          // clear emoji content and inject placeholder <i data-feather="...">
+          el.textContent = '';
+          const placeholder = document.createElement('i');
+          placeholder.setAttribute('data-feather', icon);
+          placeholder.className = 'icon';
+          placeholder.setAttribute('aria-hidden', 'true');
+          el.appendChild(placeholder);
+        });
+        if(window.feather && typeof feather.replace === 'function'){
+          feather.replace();
+        } else {
+          // try replacing shortly after if feather loaded a bit later
+          setTimeout(function(){ if(window.feather && feather.replace) feather.replace(); }, 250);
+        }
+      }catch(e){ console.error('icon replace:', e); }
+    });
+  </script>
+  <!-- Scripts -->
+  <script src="modern-login.js"></script>
+  <script src="app.js"></script>
+  
+  <!-- Initialize Icons -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.feather) {
+        feather.replace();
+      }
+    });
+  </script>
+  
+</div>
+
+</body>
+</html>
+      
+      <div class="modal-body">
+        <div class="auth-tabs">
+          <button type="button" class="auth-tab active" data-tab="email">メール</button>
+          <button type="button" class="auth-tab" data-tab="google">Google</button>
+        </div>
+        
+        <!-- メール/パスワードログイン -->
+        <div class="auth-content" id="emailAuth">
+          <form id="emailLoginForm">
+            <div class="form-group">
+              <label for="loginEmail">メールアドレス</label>
+              <input type="email" id="loginEmail" required>
+            </div>
+            <div class="form-group">
+              <label for="loginPassword">パスワード</label>
+              <input type="password" id="loginPassword" required>
+            </div>
+            <button type="submit" class="btn-primary">
+              <i data-feather="log-in"></i>
+              ログイン
+            </button>
+          </form>
+        </div>
+        
+        <!-- Googleログイン -->
+        <div class="auth-content" id="googleAuth" style="display: none;">
+          <button type="button" id="googleLoginButton" class="btn-google">
+            <svg width="20" height="20" viewBox="0 0 24 24">
+              <path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#fbbc05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#ea4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            Googleでログイン
+          </button>
+        </div>
+        
+        <div class="auth-error" id="authError" style="display: none;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- アプリ構造の閉じタグ -->
+  </main> <!-- /luxury-main -->
+</div> <!-- /luxury-app -->
+
+<script>
+// 高級サロンデザイン用のJavaScript拡張
+document.addEventListener('DOMContentLoaded', function() {
+  // Feather Iconsの初期化
+  if (window.feather && typeof feather.replace === 'function') {
+    feather.replace();
+  }
+  
+  // サイドバーナビゲーションの処理
+  document.querySelectorAll('.luxury-nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      // アクティブクラスを削除
+      document.querySelectorAll('.luxury-nav-link').forEach(l => l.classList.remove('active'));
+      
+      // クリックされたリンクにアクティブクラスを追加
+      this.classList.add('active');
+      
+      // 対応するタブを表示
+      const navAttr = this.getAttribute('data-nav');
+      if (navAttr) {
+        // 既存のタブ切り替えシステムと連携
+        const tabButton = document.querySelector(`[data-tab="${navAttr}"]`);
+        if (tabButton) {
+          tabButton.click();
+        }
+      }
+      
+      // メインコンテンツにアニメーションを追加
+      const main = document.querySelector('.luxury-main');
+      main.classList.remove('luxury-slide-in');
+      setTimeout(() => {
+        main.classList.add('luxury-slide-in');
+      }, 10);
+    });
+  });
+  
+  // 売上タブの処理
+  document.querySelectorAll('.sales-tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.sales-tab').forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+  
+  // クイックアクションボタンの処理
+  document.querySelectorAll('.quick-actions-grid .luxury-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const tabAttr = this.getAttribute('data-tab');
+      if (tabAttr) {
+        // 既存のタブ切り替えシステムと連携
+        const tabButton = document.querySelector(`[data-tab="${tabAttr}"]`);
+        if (tabButton) {
+          tabButton.click();
+        }
+      }
+    });
+  });
+  
+  // グローバル検索の処理
+  const globalSearch = document.getElementById('globalSearchInput');
+  if (globalSearch) {
+    globalSearch.addEventListener('input', function() {
+      // グローバル検索ロジックをここに実装
+      console.log('Searching for:', this.value);
+    });
+  }
+  
+  // 予約カードの詳細ボタン処理
+  document.querySelectorAll('.reservation-action').forEach(btn => {
+    btn.addEventListener('click', function() {
+      // 予約詳細画面への遷移
+      console.log('Opening reservation details...');
+    });
+  });
+  
+  // 既存のアイコン置換処理を維持
+  try {
+    const mappings = [
+      { sel: '#btnQuickReservations .status-icon', icon: 'calendar' },
+      { sel: '#btnQuickNotes .status-icon', icon: 'bookmark' },
+      { sel: '#btnHelp', icon: 'help-circle' }
+    ];
+    mappings.forEach(({sel, icon}) => {
+      const el = document.querySelector(sel);
+      if(!el) return;
+      el.textContent = '';
+      const placeholder = document.createElement('i');
+      placeholder.setAttribute('data-feather', icon);
+      placeholder.className = 'icon';
+      placeholder.setAttribute('aria-hidden', 'true');
+      el.appendChild(placeholder);
+    });
+    
+    if(window.feather && typeof feather.replace === 'function'){
+      feather.replace();
+    } else {
+      setTimeout(function(){ 
+        if(window.feather && feather.replace) feather.replace(); 
+      }, 250);
+    }
+  } catch(e) { 
+    console.error('icon replace:', e); 
+  }
+});
+</script>
+
+  <script type="module" src="/app.js"></script>
+
+  <!-- Feather Icons 初期化 -->
+  <script>
+    // Featherアイコンが読み込まれたら初期化
+    document.addEventListener('DOMContentLoaded', function() {
+      if (window.feather) {
+        feather.replace();
+      } else {
+        // 少し遅延してから再試行
+        setTimeout(() => {
+          if (window.feather) {
+            feather.replace();
+          }
+        }, 500);
+      }
+    });
+  </script>
+
+  <!-- 改善されたログイン機能 -->
+  <link rel="stylesheet" href="improved-login.css">
+  <script src="improved-login.js"></script>
+  
+  <!-- ログイン互換性修正 -->
+  <script src="login-fix.js"></script>
+
+</body> 
+</html>

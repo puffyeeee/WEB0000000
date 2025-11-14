@@ -1,0 +1,604 @@
+/* 🎨 Arflex-Inspired Components */
+/* エディトリアル × 高級ペットサロン専用コンポーネント */
+
+/* ============================================
+   📅 ARFLEX RESERVATION TIMELINE
+   展示会風レイアウト
+   ============================================ */
+
+.arflex-timeline {
+  position: relative;
+  background: var(--arflex-white);
+  border-radius: var(--arflex-radius-lg);
+  padding: var(--arflex-space-3xl);
+  box-shadow: var(--arflex-shadow-soft);
+}
+
+.arflex-timeline-item {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: var(--arflex-space-xl);
+  padding: var(--arflex-space-xl) 0;
+  border-bottom: 1px solid var(--arflex-pearl);
+  position: relative;
+}
+
+.arflex-timeline-item:last-child {
+  border-bottom: none;
+}
+
+.arflex-timeline-time {
+  font-family: var(--arflex-font-english);
+  font-size: var(--arflex-text-lg);
+  font-weight: var(--arflex-font-light);
+  color: var(--arflex-refined);
+  text-align: right;
+  line-height: 1.2;
+}
+
+.arflex-timeline-content {
+  min-width: 0;
+}
+
+.arflex-guest-profile {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--arflex-space-lg);
+  margin-bottom: var(--arflex-space-md);
+}
+
+.arflex-pet-photo {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--arflex-radius-md);
+  object-fit: cover;
+  background: var(--arflex-gradient-gentle);
+  flex-shrink: 0;
+  box-shadow: var(--arflex-shadow-subtle);
+}
+
+.arflex-guest-info h4 {
+  font-size: var(--arflex-text-base);
+  font-weight: var(--arflex-font-medium);
+  color: var(--arflex-midnight);
+  margin-bottom: var(--arflex-space-xs);
+  letter-spacing: 0.01em;
+}
+
+.arflex-pet-details {
+  font-size: var(--arflex-text-sm);
+  color: var(--arflex-steel);
+  font-weight: var(--arflex-font-light);
+  line-height: 1.4;
+}
+
+.arflex-service-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--arflex-space-sm);
+  margin-top: var(--arflex-space-sm);
+}
+
+.arflex-service-tag {
+  font-size: var(--arflex-text-xs);
+  color: var(--arflex-graphite);
+  background: var(--arflex-blue-silk);
+  padding: var(--arflex-space-xs) var(--arflex-space-sm);
+  border-radius: var(--arflex-radius-sm);
+  font-weight: var(--arflex-font-normal);
+  letter-spacing: 0.02em;
+}
+
+.arflex-timeline-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 100px;
+}
+
+.arflex-status {
+  font-size: var(--arflex-text-xs);
+  font-weight: var(--arflex-font-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: var(--arflex-space-xs) var(--arflex-space-sm);
+  border-radius: var(--arflex-radius-sm);
+  text-align: center;
+}
+
+.arflex-status-confirmed {
+  background: var(--arflex-blue-silk);
+  color: var(--arflex-refined);
+}
+
+.arflex-status-progress {
+  background: var(--arflex-purple-mist);
+  color: var(--arflex-steel);
+}
+
+.arflex-status-pending {
+  background: var(--arflex-mist);
+  color: var(--arflex-graphite);
+}
+
+/* ============================================
+   ⚠️ ARFLEX ATTENTION SECTION
+   ギャラリー風の注意喚起
+   ============================================ */
+
+.arflex-attention-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--arflex-space-xl);
+}
+
+.arflex-attention-card {
+  background: var(--arflex-white);
+  border-left: 4px solid var(--arflex-blue-serene);
+  border-radius: var(--arflex-radius-md);
+  padding: var(--arflex-space-xl);
+  box-shadow: var(--arflex-shadow-subtle);
+  transition: all 0.3s ease;
+}
+
+.arflex-attention-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--arflex-shadow-medium);
+}
+
+.arflex-attention-header {
+  display: flex;
+  align-items: center;
+  gap: var(--arflex-space-md);
+  margin-bottom: var(--arflex-space-md);
+}
+
+.arflex-attention-photo {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--arflex-radius-md);
+  object-fit: cover;
+  background: var(--arflex-gradient-gentle);
+}
+
+.arflex-attention-info h5 {
+  font-size: var(--arflex-text-base);
+  font-weight: var(--arflex-font-medium);
+  color: var(--arflex-midnight);
+  margin-bottom: var(--arflex-space-xs);
+}
+
+.arflex-attention-owner {
+  font-size: var(--arflex-text-sm);
+  color: var(--arflex-steel);
+  font-weight: var(--arflex-font-light);
+}
+
+.arflex-attention-note {
+  font-size: var(--arflex-text-sm);
+  color: var(--arflex-steel);
+  line-height: 1.5;
+  margin-bottom: var(--arflex-space-md);
+}
+
+.arflex-attention-tags {
+  display: flex;
+  gap: var(--arflex-space-xs);
+}
+
+.arflex-attention-tag {
+  font-size: var(--arflex-text-xs);
+  padding: var(--arflex-space-xs) var(--arflex-space-sm);
+  border-radius: var(--arflex-radius-sm);
+  font-weight: var(--arflex-font-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.arflex-tag-medical {
+  background: rgba(248, 113, 113, 0.1);
+  color: #dc2626;
+}
+
+.arflex-tag-behavioral {
+  background: rgba(245, 158, 11, 0.1);
+  color: #d97706;
+}
+
+.arflex-tag-health {
+  background: rgba(34, 197, 94, 0.1);
+  color: #059669;
+}
+
+/* ============================================
+   📊 ARFLEX ANALYTICS
+   エディトリアル風チャートセクション
+   ============================================ */
+
+.arflex-analytics {
+  background: var(--arflex-white);
+  border-radius: var(--arflex-radius-lg);
+  padding: var(--arflex-space-3xl);
+  box-shadow: var(--arflex-shadow-soft);
+  margin-bottom: var(--arflex-space-3xl);
+}
+
+.arflex-analytics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--arflex-space-3xl);
+}
+
+.arflex-analytics-title {
+  font-family: var(--arflex-font-display);
+  font-size: var(--arflex-text-2xl);
+  font-weight: var(--arflex-font-light);
+  color: var(--arflex-midnight);
+  letter-spacing: -0.01em;
+  margin-bottom: var(--arflex-space-sm);
+}
+
+.arflex-analytics-subtitle {
+  font-size: var(--arflex-text-sm);
+  color: var(--arflex-graphite);
+  font-weight: var(--arflex-font-light);
+}
+
+.arflex-period-tabs {
+  display: flex;
+  gap: var(--arflex-space-sm);
+}
+
+.arflex-period-tab {
+  font-size: var(--arflex-text-sm);
+  color: var(--arflex-steel);
+  background: transparent;
+  border: 1px solid var(--arflex-silver);
+  padding: var(--arflex-space-sm) var(--arflex-space-lg);
+  border-radius: var(--arflex-radius-md);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: var(--arflex-font-normal);
+}
+
+.arflex-period-tab:hover,
+.arflex-period-tab.active {
+  background: var(--arflex-blue-silk);
+  border-color: var(--arflex-blue-serene);
+  color: var(--arflex-refined);
+}
+
+.arflex-chart-area {
+  height: 300px;
+  background: var(--arflex-gradient-whisper);
+  border-radius: var(--arflex-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--arflex-pearl);
+  position: relative;
+  overflow: hidden;
+}
+
+.arflex-chart-placeholder {
+  text-align: center;
+  color: var(--arflex-graphite);
+  font-size: var(--arflex-text-sm);
+  font-weight: var(--arflex-font-light);
+}
+
+/* ============================================
+   📝 ARFLEX ACTIVITY FEED
+   雑誌風レイアウト
+   ============================================ */
+
+.arflex-activity {
+  background: var(--arflex-white);
+  border-radius: var(--arflex-radius-lg);
+  padding: var(--arflex-space-2xl);
+  box-shadow: var(--arflex-shadow-subtle);
+}
+
+.arflex-activity-list {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: var(--arflex-space-sm);
+}
+
+.arflex-activity-item {
+  display: flex;
+  gap: var(--arflex-space-md);
+  padding: var(--arflex-space-lg) 0;
+  border-bottom: 1px solid var(--arflex-mist);
+  transition: background-color 0.2s ease;
+}
+
+.arflex-activity-item:hover {
+  background: var(--arflex-whisper);
+  margin: 0 calc(-1 * var(--arflex-space-lg));
+  padding-left: var(--arflex-space-lg);
+  padding-right: var(--arflex-space-lg);
+  border-radius: var(--arflex-radius-md);
+}
+
+.arflex-activity-item:last-child {
+  border-bottom: none;
+}
+
+.arflex-activity-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--arflex-gradient-gentle);
+  border-radius: var(--arflex-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: var(--arflex-text-sm);
+}
+
+.arflex-activity-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.arflex-activity-content h6 {
+  font-size: var(--arflex-text-sm);
+  font-weight: var(--arflex-font-medium);
+  color: var(--arflex-midnight);
+  margin-bottom: var(--arflex-space-xs);
+}
+
+.arflex-activity-content p {
+  font-size: var(--arflex-text-sm);
+  color: var(--arflex-steel);
+  font-weight: var(--arflex-font-light);
+  line-height: 1.4;
+}
+
+.arflex-activity-time {
+  font-size: var(--arflex-text-xs);
+  color: var(--arflex-graphite);
+  font-weight: var(--arflex-font-light);
+  white-space: nowrap;
+  padding-top: var(--arflex-space-xs);
+}
+
+/* ============================================
+   🎯 ARFLEX BUTTONS & ACTIONS
+   控えめ・上品なボタンデザイン
+   ============================================ */
+
+.arflex-btn {
+  font-family: var(--arflex-font-primary);
+  font-size: var(--arflex-text-sm);
+  font-weight: var(--arflex-font-normal);
+  padding: var(--arflex-space-sm) var(--arflex-space-lg);
+  border-radius: var(--arflex-radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--arflex-space-sm);
+  letter-spacing: 0.01em;
+}
+
+.arflex-btn-primary {
+  background: var(--arflex-blue-serene);
+  color: var(--arflex-white);
+  border-color: var(--arflex-blue-serene);
+}
+
+.arflex-btn-primary:hover {
+  background: var(--arflex-blue-refined);
+  border-color: var(--arflex-blue-refined);
+  transform: translateY(-1px);
+  box-shadow: var(--arflex-shadow-medium);
+}
+
+.arflex-btn-outline {
+  background: transparent;
+  color: var(--arflex-steel);
+  border-color: var(--arflex-silver);
+}
+
+.arflex-btn-outline:hover {
+  background: var(--arflex-blue-silk);
+  border-color: var(--arflex-blue-serene);
+  color: var(--arflex-refined);
+}
+
+.arflex-btn-ghost {
+  background: transparent;
+  color: var(--arflex-graphite);
+  border: none;
+  padding: var(--arflex-space-sm);
+}
+
+.arflex-btn-ghost:hover {
+  background: var(--arflex-mist);
+  color: var(--arflex-steel);
+}
+
+/* ============================================
+   📱 RESPONSIVE COMPONENTS
+   ============================================ */
+
+@media (max-width: 768px) {
+  .arflex-timeline-item {
+    grid-template-columns: 1fr;
+    gap: var(--arflex-space-md);
+    text-align: left;
+  }
+  
+  .arflex-timeline-time {
+    text-align: left;
+    font-size: var(--arflex-text-base);
+  }
+  
+  .arflex-guest-profile {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--arflex-space-md);
+  }
+  
+  .arflex-pet-photo {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .arflex-attention-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .arflex-analytics-header {
+    flex-direction: column;
+    gap: var(--arflex-space-lg);
+  }
+  
+  .arflex-period-tabs {
+    justify-content: center;
+  }
+  
+  .arflex-chart-area {
+    height: 200px;
+  }
+}
+
+/* ============================================
+   🔐 ARFLEX MODAL & AUTH
+   ============================================ */
+
+.arflex-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.arflex-modal-content {
+  background: var(--arflex-white);
+  border-radius: var(--arflex-radius-lg);
+  box-shadow: var(--arflex-shadow-medium);
+  min-width: 400px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: hidden;
+}
+
+.arflex-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--arflex-space-xl);
+  border-bottom: 1px solid var(--arflex-pearl);
+}
+
+.arflex-modal-header h3 {
+  font-family: var(--arflex-font-display);
+  font-size: var(--arflex-text-xl);
+  font-weight: var(--arflex-font-light);
+  color: var(--arflex-midnight);
+  margin: 0;
+}
+
+.arflex-modal-body {
+  padding: var(--arflex-space-xl);
+}
+
+.arflex-auth-tabs {
+  display: flex;
+  gap: var(--arflex-space-sm);
+  margin-bottom: var(--arflex-space-xl);
+  border-bottom: 1px solid var(--arflex-pearl);
+}
+
+.arflex-auth-tab {
+  background: transparent;
+  border: none;
+  padding: var(--arflex-space-md) var(--arflex-space-lg);
+  font-size: var(--arflex-text-sm);
+  color: var(--arflex-graphite);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s ease;
+  margin-bottom: -1px;
+}
+
+.arflex-auth-tab:hover,
+.arflex-auth-tab.active {
+  color: var(--arflex-refined);
+  border-bottom-color: var(--arflex-blue-serene);
+}
+
+.arflex-auth-content {
+  margin-top: var(--arflex-space-lg);
+}
+
+.arflex-form-group {
+  margin-bottom: var(--arflex-space-lg);
+}
+
+.arflex-form-group label {
+  display: block;
+  font-size: var(--arflex-text-sm);
+  font-weight: var(--arflex-font-medium);
+  color: var(--arflex-steel);
+  margin-bottom: var(--arflex-space-sm);
+}
+
+.arflex-form-group input {
+  width: 100%;
+  padding: var(--arflex-space-md);
+  border: 1px solid var(--arflex-silver);
+  border-radius: var(--arflex-radius-md);
+  font-size: var(--arflex-text-sm);
+  font-family: var(--arflex-font-primary);
+  background: var(--arflex-white);
+  transition: all 0.3s ease;
+}
+
+.arflex-form-group input:focus {
+  outline: none;
+  border-color: var(--arflex-blue-serene);
+  box-shadow: 0 0 0 3px rgba(51, 65, 85, 0.1);
+}
+
+.arflex-auth-error {
+  background: rgba(248, 113, 113, 0.1);
+  color: #dc2626;
+  padding: var(--arflex-space-md);
+  border-radius: var(--arflex-radius-md);
+  font-size: var(--arflex-text-sm);
+  margin-top: var(--arflex-space-lg);
+}
+
+/* ============================================
+   ✨ ARFLEX UTILITIES
+   ============================================ */
+
+.arflex-text-center { text-align: center; }
+.arflex-text-right { text-align: right; }
+
+.arflex-mb-0 { margin-bottom: 0; }
+.arflex-mb-sm { margin-bottom: var(--arflex-space-sm); }
+.arflex-mb-md { margin-bottom: var(--arflex-space-md); }
+.arflex-mb-lg { margin-bottom: var(--arflex-space-lg); }
+.arflex-mb-xl { margin-bottom: var(--arflex-space-xl); }
+
+.arflex-mt-0 { margin-top: 0; }
+.arflex-mt-sm { margin-top: var(--arflex-space-sm); }
+.arflex-mt-md { margin-top: var(--arflex-space-md); }
+.arflex-mt-lg { margin-top: var(--arflex-space-lg); }
+.arflex-mt-xl { margin-top: var(--arflex-space-xl); }

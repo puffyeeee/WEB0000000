@@ -1,10 +1,24 @@
 {
-  "name": "pfo-crm-lite-webapp",
-  "version": "1.0.0",
+  "name": "arflex-salon-gallery",
+  "version": "3.0.0",
   "private": true,
-  "description": "Standalone web application build of the Puffy App CRM interface.",
+  "description": "Arflex 2025-26 Collection Inspired Pet Salon Gallery - Editorial Design System",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "arflex": "PORT=4000 node server.js",
+    "gallery": "PORT=3000 node server.js",
+    "luxury": "PORT=4000 node server.js",
+    "dev": "PORT=3000 node server.js",
+    "demo": "PORT=5000 python3 -m http.server --directory public"
   },
-  "type": "module"
+  "type": "module",
+  "keywords": [
+    "arflex-collection",
+    "gallery-design",
+    "editorial-ui",
+    "luxury-salon",
+    "pet-care",
+    "tranquil-design",
+    "premium-ui"
+  ]
 }
