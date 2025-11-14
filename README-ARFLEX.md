@@ -1,18 +1,18 @@
-# 🎨 Arflex 2025-26 Collection | Pet Salon Gallery
+# Arflex 2025-26 Collection | Pet Salon Gallery
 
 Arflex 2025-26 Collection の世界観にインスパイアされた高級ペットサロン管理システム。
 静寂、品、余白を重視したギャラリー・エディトリアル風デザインシステム。
 
-## ✨ デザインコンセプト
+## デザインコンセプト
 
-### 🏛️ Arflex Gallery Aesthetic
+### Arflex Gallery Aesthetic
 
 - **静けさ (Tranquility)**: 落ち着いた色調と十分な余白
 - **品 (Elegance)**: 洗練されたタイポグラフィと控えめな装飾
 - **余白 (White Space)**: ミニマルで美術館のようなレイアウト
 - **Exhibition Feel**: ギャラリー展示のような体験
 
-### 🎨 Color Philosophy
+### Color Philosophy
 
 既存のブルーグラデーションを基調とした10段階カラーシステム：
 
@@ -41,14 +41,14 @@ Arflex 2025-26 Collection の世界観にインスパイアされた高級ペッ
 └── ultra-luxury.html        # 前バージョン（比較用）
 ```
 
-### 🎭 Typography System
+### Typography System
 
 - **Primary**: Noto Sans JP (日本語)
 - **Secondary**: Inter (英数字・ラテン文字)
 - **Display**: Noto Serif JP (見出し用)
 - **English**: Inter (英語表記用)
 
-### 📐 Spacing & Layout
+### Spacing & Layout
 
 ```css
 --arflex-space-xs: 0.25rem     /* 4px */
@@ -62,7 +62,7 @@ Arflex 2025-26 Collection の世界観にインスパイアされた高級ペッ
 --arflex-space-5xl: 6rem       /* 96px */
 ```
 
-## 🚀 Usage
+## Usage
 
 ### Local Development
 
@@ -77,7 +77,7 @@ npm start
 npm run dev
 ```
 
-### 🌐 Available Endpoints
+### Available Endpoints
 
 - `/` - Arflex Gallery (デフォルト)
 - `/arflex-gallery.html` - フルArflexデザイン
@@ -85,9 +85,9 @@ npm run dev
 - `/demo.html` - デモ版
 - `/working.html` - シンプル版
 
-## 🎨 Component Guide
+## Component Guide
 
-### 🏛️ Gallery Components
+### Gallery Components
 
 #### Timeline Exhibition
 
@@ -120,7 +120,7 @@ npm run dev
 </div>
 ```
 
-### 🎯 Button System
+### Button System
 
 ```html
 <!-- Primary Action -->
@@ -140,7 +140,7 @@ npm run dev
 </button>
 ```
 
-## 📱 Responsive Design
+## Responsive Design
 
 ### Breakpoints
 
@@ -154,7 +154,7 @@ npm run dev
 - タッチフレンドリーなボタンサイズ
 - 読みやすいフォントサイズ調整
 
-## 🎨 Design Philosophy
+## Design Philosophy
 
 ### Arflex Inspiration
 
@@ -171,7 +171,7 @@ npm run dev
 - **Calm Environment** - 落ち着いた環境でのケア
 - **Professional Excellence** - プロフェッショナルな品質
 
-## 🛠️ Customization
+## Customization
 
 ### Color Variations
 
@@ -201,7 +201,7 @@ npm run dev
 }
 ```
 
-## 📊 Performance
+## Performance
 
 ### Optimization Features
 
@@ -217,7 +217,7 @@ npm run dev
 3. Icons loaded on-demand
 4. Images with lazy loading
 
-## 🎭 Comparison with Previous Versions
+## Comparison with Previous Versions
 
 | Feature | Arflex Gallery | Ultra-Luxury | Original |
 |---------|----------------|--------------|----------|
@@ -227,7 +227,7 @@ npm run dev
 | Typography | Editorial | Executive | Standard |
 | Mood | Tranquil | Luxurious | Functional |
 
-## 🔮 Future Enhancements
+## Future Enhancements
 
 ### Phase 2 Features
 
@@ -243,7 +243,7 @@ npm run dev
 - [ ] カスタムフォトギャラリー
 - [ ] 予約フロー最適化
 
-## 📞 Support
+## Support
 
 デザインシステムに関する質問や改善提案：
 
@@ -255,4 +255,4 @@ npm run dev
 ---
 
 *Inspired by Arflex 2025-26 Collection*  
-*Designed for Premium Pet Salon Experience* 🎨✨
+*Designed for Premium Pet Salon Experience*

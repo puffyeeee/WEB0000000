@@ -1,15 +1,15 @@
-# 🎨 Arflex 2025-26 Collection | Pet Salon Gallery
+# Arflex 2025-26 Collection | Pet Salon Gallery
 
 高級ペットサロン管理システム - Arflex Collection インスパイアードデザイン
 
-## ✨ 特徴
+## 特徴
 
 - **Arflex 2025-26 Collection風デザイン**: 静寂、品、余白を重視したギャラリーエディトリアルUI
 - **完全な機能性**: Firebase認証、顧客管理、予約システム、売上管理を統合
 - **レスポンシブデザイン**: モバイル・タブレット・デスクトップ対応
 - **エディトリアルレイアウト**: 美術館のような上品な体験
 
-## 🚀 起動方法
+## 起動方法
 
 ```bash
 npm start        # ポート5173で起動
@@ -17,7 +17,7 @@ npm run dev      # 開発モード
 npm run arflex   # Arflexモード
 ```
 
-## 🎨 デザインシステム
+## デザインシステム
 
 ### カラーパレット
 
@@ -45,7 +45,7 @@ npm run arflex   # Arflexモード
 └── index-original-backup.html # 元のバックアップ
 ```
 
-## 🔐 認証・機能
+## 認証・機能
 
 - **Firebase Authentication**: Email/Google認証
 - **顧客管理**: 顧客情報の登録・検索・管理
@@ -55,7 +55,7 @@ npm run arflex   # Arflexモード
 - **スタッフノート**: 連絡事項・注意事項の管理
 - **検索機能**: グローバル検索・フィルタリング
 
-## 🎭 デザインコンセプト
+## デザインコンセプト
 
 ### Arflex Gallery Aesthetic
 
@@ -70,13 +70,13 @@ npm run arflex   # Arflexモード
 - **Secondary**: Inter (英数字)
 - **Display**: Noto Serif JP (見出し用)
 
-## 📱 レスポンシブ対応
+## レスポンシブ対応
 
 - **Mobile**: < 768px (スタック型レイアウト)
 - **Tablet**: 768px - 1024px
 - **Desktop**: > 1024px (フルギャラリー表示)
 
-## 🔧 開発情報
+## 開発情報
 
 ### 削除されたファイル
 
@@ -92,7 +92,7 @@ npm run arflex   # Arflexモード
 
 - `index-original-backup.html`: 元の機能フル版のバックアップ
 
-## 🌐 デプロイ
+## デプロイ
 
 ### Firebase Hosting
 
@@ -104,7 +104,7 @@ firebase deploy --only hosting
 
 main ブランチへの push で自動デプロイ
 
-## 📊 機能一覧
+## 機能一覧
 
 ### コアシステム
 
@@ -134,4 +134,4 @@ main ブランチへの push で自動デプロイ
 ---
 
 *Inspired by Arflex 2025-26 Collection*  
-*Designed for Premium Pet Salon Experience* 🎨✨
+*Designed for Premium Pet Salon Experience*
