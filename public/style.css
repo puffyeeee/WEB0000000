@@ -1,39 +1,80 @@
 :root{
-  /* Pastel-blue / lavender identity variables — tuned for a refined, glassy look */
-  --bg:#f6f9ff; /* very light base */
-  --surface:rgba(255,255,255,.84);
-  --surface-strong:rgba(255,255,255,.94);
-  --ink:#0f1724;
-  --muted:#566476;
-  --brand:#63d1c5; /* keep existing mint/blue touch */
-  --brand-ink:#0f1724;
-  --accent:#cfc3ff; /*淡ラベンダーアクセント*/
-  --accent-soft:rgba(207,195,255,.14);
-  --line:rgba(100,116,139,.12);
-  --radius:8px; /* smaller, more modern corner */
-  --shadow-elev:0 10px 28px rgba(15,23,42,.06);
-  --shadow-soft:0 4px 14px rgba(15,23,42,.04);
-  --gap:20px;
-  --pad:22px;
-  --glass-border:rgba(15,23,42,.06);
-  --glass-bg:linear-gradient(180deg, rgba(255,255,255,0.78), rgba(255,255,255,0.66));
-  --glass-strong:rgba(255,255,255,.88);
-  --hero-gradient:linear-gradient(135deg,#63d1c5 0%, #cfc3ff 45%, #f472b6 100%);
-  --font: 'Inter', 'Noto Sans JP', ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
-  --ring:rgba(111,85,255,.16);
-  --transition-fast:160ms;
-  --transition-base:240ms;
-    }
+  /* === Sophisticated Glass-morphism Design System === */
+  
+  /* Base Colors - 現在の涼しいパステルブルー系を維持 */
+  --bg: #f6f9ff;
+  --surface: rgba(255,255,255,0.84);
+  --brand: #63d1c5;
+  --brand-ink: #0f1724;
+  --accent: #cfc3ff;
+  --accent-light: rgba(207,195,255,0.14);
+  
+  /* Glass-morphism Core Variables */
+  --glass-bg: rgba(255,255,255,0.08);
+  --glass-bg-strong: rgba(255,255,255,0.15);
+  --glass-blur: blur(16px);
+  --glass-border: rgba(255,255,255,0.15);
+  --glass-shadow: 0 8px 32px rgba(15,23,42,0.08);
+  
+  /* Sophisticated Typography Hierarchy */
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-jp: 'Noto Sans JP', -apple-system-ui, sans-serif;
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  /* Line Heights for Sophisticated Typography */
+  --line-height-tight: 1.2;
+  --line-height-base: 1.4;
+  --line-height-relaxed: 1.6;
+  
+  /* Text Colors with Hierarchy */
+  --text-primary: #0f1724;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --text-subtle: #94a3b8;
+  
+  /* Sophisticated Spacing System */
+  --spacing-xs: 6px;
+  --spacing-sm: 12px;
+  --spacing-md: 18px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+  
+  /* Layered Shadow System */
+  --shadow-minimal: 0 1px 3px rgba(15,23,42,0.06);
+  --shadow-soft: 0 4px 14px rgba(15,23,42,0.08);
+  --shadow-elevated: 0 8px 28px rgba(15,23,42,0.12);
+  --shadow-floating: 0 16px 64px rgba(15,23,42,0.16);
+  
+  /* Light Gradient Effects */
+  --light-gradient: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+  --primary-gradient: linear-gradient(135deg, #63d1c5 0%, #6366f1 100%);
+  
+  /* Border Radius */
+  --radius-sm: 6px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  
+  /* Transition Timing */
+  --transition-fast: 150ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
     .sr-only{ position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
     html{ height:100%; }
     body{
       margin:0;
       min-height:100%;
-      padding: var(--spacing-xxl) var(--spacing-lg) var(--spacing-xxl);
+      padding: var(--spacing-xxl) var(--spacing-lg);
       background:
-        radial-gradient(120% 160% at 0% 0%, rgba(243,232,255,.58) 0%, rgba(243,232,255,0) 56%),
-        radial-gradient(120% 140% at 100% 4%, rgba(190,242,255,.5) 0%, rgba(190,242,255,0) 58%),
-        radial-gradient(120% 120% at 50% 96%, rgba(204,251,241,.48) 0%, rgba(204,251,241,0) 68%),
+        radial-gradient(120% 160% at 0% 0%, rgba(243,232,255,0.58) 0%, rgba(243,232,255,0) 56%),
+        radial-gradient(120% 140% at 100% 4%, rgba(190,242,255,0.5) 0%, rgba(190,242,255,0) 58%),
+        radial-gradient(120% 120% at 50% 96%, rgba(204,251,241,0.48) 0%, rgba(204,251,241,0) 68%),
         var(--bg);
       background-attachment:fixed;
       color: var(--text-primary);
@@ -51,6 +92,32 @@
       position:relative;
       overflow-x:hidden;
     }
+    
+    /* === 透明パネル構成システム === */
+    main {
+      width: 100%;
+      max-width: 1200px;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-soft);
+      padding: var(--spacing-xl);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    main::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--light-gradient);
+      z-index: 1;
+    }
     body::before,
     body::after{
       content:"";
@@ -65,18 +132,67 @@
     }
     body::before{ top:-220px; left:-160px; background:radial-gradient(circle at center, rgba(111,85,255,.10), transparent 66%); }
     body::after{ bottom:-240px; right:-160px; background:radial-gradient(circle at center, rgba(99,230,203,.08), transparent 70%); }
+    
+    /* === 都会的タイポグラフィ階層 === */
+    h2 {
+      font-family: var(--font-jp);
+      font-size: 24px;
+      font-weight: var(--font-weight-semibold);
+      color: var(--text-primary);
+      line-height: var(--line-height-tight);
+      margin: 0 0 var(--spacing-md) 0;
+      letter-spacing: -0.02em;
+    }
+    
+    h3 {
+      font-family: var(--font-primary);
+      font-size: 18px;
+      font-weight: var(--font-weight-medium);
+      color: var(--text-primary);
+      line-height: var(--line-height-base);
+      margin: 0 0 var(--spacing-sm) 0;
+      letter-spacing: -0.01em;
+    }
+    
+    h4 {
+      font-family: var(--font-primary);
+      font-size: 16px;
+      font-weight: var(--font-weight-medium);
+      color: var(--text-secondary);
+      line-height: var(--line-height-base);
+      margin: 0 0 var(--spacing-xs) 0;
+    }
+    
+    p {
+      font-family: var(--font-jp);
+      font-size: 14px;
+      font-weight: var(--font-weight-regular);
+      color: var(--text-secondary);
+      line-height: var(--line-height-relaxed);
+      margin: 0 0 var(--spacing-sm) 0;
+    }
+    
+    .text-muted {
+      color: var(--text-muted);
+      font-weight: var(--font-weight-light);
+    }
+    
+    .text-subtle {
+      color: var(--text-subtle);
+      font-size: 13px;
+    }
   body>header,
   body>section,
   body>main{ width:min(1180px, 100%); }
   main{ display:flex; flex-direction:column; gap:28px; }
     h1{
       margin:0; 
-      font-family:var(--font-jp); 
-      font-size:26px; 
-      font-weight:600; 
-      letter-spacing:-0.01em; 
-      color:var(--text-primary); 
-      line-height:1.4;
+      font-family: var(--font-jp); 
+      font-size: 26px; 
+      font-weight: var(--font-weight-semibold); 
+      letter-spacing: -0.01em; 
+      color: var(--text-primary); 
+      line-height: var(--line-height-tight);
     }
     .brand-container{
       position: relative;
@@ -105,11 +221,11 @@
       flex-wrap:wrap;
       padding:var(--spacing-lg) var(--spacing-xl);
       background:var(--glass-bg);
-      border-radius:16px;
+      border-radius:var(--radius-xl);
       border:1px solid var(--glass-border);
       backdrop-filter:var(--glass-blur) saturate(120%);
       -webkit-backdrop-filter:var(--glass-blur) saturate(120%);
-      box-shadow:var(--shadow-floating);
+      box-shadow:var(--shadow-elevated);
       position:relative;
       overflow:hidden;
     }
@@ -166,8 +282,47 @@
       background:linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
       z-index:1;
     }
-  .nav-icon{ background:linear-gradient(150deg, rgba(255,255,255,.92), rgba(255,255,255,.62)); border:1px solid rgba(148,163,184,.32); border-radius:16px; width:48px; height:48px; display:flex; align-items:center; justify-content:center; font-size:21px; color:#0f172a; transition:transform .15s ease, border-color .15s ease, box-shadow .2s ease, background .2s ease; box-shadow:var(--shadow-soft); }
-    .nav-icon:hover{ transform:translateY(-2px); box-shadow:0 24px 50px -28px rgba(15,23,42,.55); border-color:rgba(99,102,241,.3); }
+  .nav-icon{ 
+    background: var(--glass-bg-strong); 
+    backdrop-filter: var(--glass-blur); 
+    -webkit-backdrop-filter: var(--glass-blur); 
+    border: 1px solid var(--glass-border); 
+    border-radius: var(--radius-lg); 
+    width: 48px; 
+    height: 48px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    color: var(--text-primary); 
+    transition: var(--transition-base); 
+    box-shadow: var(--shadow-minimal); 
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .nav-icon i {
+    width: 20px;
+    height: 20px;
+    stroke-width: 1.5;
+  }
+  
+  .nav-icon::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--light-gradient);
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+  }
+  
+  .nav-icon:hover::before {
+    opacity: 1;
+  }
+    .nav-icon:hover{ 
+      transform: translateY(-2px) scale(1.05); 
+      box-shadow: var(--shadow-elevated); 
+      border-color: rgba(99,102,241,0.3); 
+    }
 
     .has-tooltip{ position:relative; }
     .has-tooltip::after{
@@ -869,41 +1024,75 @@
     .tile-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:16px; }
   .tile-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:16px; }
   .home-tile{ 
-    background:var(--glass-bg); 
-    border:1px solid var(--glass-border); 
-    border-radius:16px; 
-    padding:var(--spacing-lg); 
-    text-align:left; 
-    display:flex; 
-    flex-direction:column; 
-    gap:var(--spacing-sm); 
-    align-items:flex-start; 
-    cursor:pointer; 
-    transition:transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), border-color 0.2s ease; 
-    box-shadow:var(--shadow-elevated); 
-    backdrop-filter:var(--glass-blur); 
-    -webkit-backdrop-filter:var(--glass-blur); 
-    position:relative;
-    overflow:hidden;
+    background: var(--glass-bg); 
+    border: 1px solid var(--glass-border); 
+    border-radius: var(--radius-xl); 
+    padding: var(--spacing-lg); 
+    text-align: left; 
+    display: flex; 
+    flex-direction: column; 
+    gap: var(--spacing-sm); 
+    align-items: flex-start; 
+    cursor: pointer; 
+    transition: var(--transition-base); 
+    box-shadow: var(--shadow-soft); 
+    backdrop-filter: var(--glass-blur) saturate(110%); 
+    -webkit-backdrop-filter: var(--glass-blur) saturate(110%); 
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* 重要カード（予約・売上） - 強い浮遊感 */
+  .home-tile[data-priority="high"],
+  .home-tile.priority-high {
+    box-shadow: var(--shadow-elevated);
+    background: var(--glass-bg-strong);
+  }
+  
+  /* 補助カード - 最小の影 */
+  .home-tile[data-priority="low"],
+  .home-tile.priority-low {
+    box-shadow: var(--shadow-minimal);
   }
   .home-tile:hover{ 
-    transform:translateY(-4px) scale(1.02); 
-    box-shadow:var(--shadow-floating); 
-    border-color:rgba(99,102,241,0.4); 
+    transform: translateY(-3px) scale(1.01); 
+    box-shadow: var(--shadow-floating); 
+    border-color: rgba(99,102,241,0.3); 
   }
+  
+  /* 光のグラデーション効果 */
   .home-tile::before{
-    content:'';
-    position:absolute;
-    top:0;
-    left:0;
-    right:0;
-    height:2px;
-    background:linear-gradient(90deg, transparent, var(--accent-light), transparent);
-    opacity:0;
-    transition:opacity 0.3s ease;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--light-gradient);
+    opacity: 0;
+    transition: opacity var(--transition-base);
+    pointer-events: none;
   }
+  
   .home-tile:hover::before{
-    opacity:1;
+    opacity: 1;
+  }
+  
+  /* 上端ライトライン */
+  .home-tile::after{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-light), transparent);
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+  }
+  
+  .home-tile:hover::after{
+    opacity: 1;
   }
     .home-tile:focus-visible{ outline:3px solid var(--accent); outline-offset:2px; }
     .home-tile .icon{ width:56px; height:56px; border-radius:18px; background:linear-gradient(140deg, rgba(99,102,241,.15), rgba(99,230,203,.25)); display:flex; align-items:center; justify-content:center; font-size:24px; color:#0f172a; box-shadow:inset 0 0 0 1px rgba(148,163,184,.2); }

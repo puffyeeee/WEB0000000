@@ -6276,4 +6276,55 @@ function renderAvailList(slots, ctx){
   window.loadPets = window.loadPets || function(){};
   window.refreshVisits = window.refreshVisits || function(){};
   window.onSaveVisit = window.onSaveVisit || function(){};
+  
+  // === Sophisticated Glass-morphism UI Initialization ===
+  
+  // Initialize Feather icons for unified line icon system
+  if (typeof feather !== 'undefined') {
+    feather.replace({
+      'stroke-width': 1.5,
+      'width': 20,
+      'height': 20
+    });
+  }
+  
+  // Apply priority classes to cards based on importance
+  function applyCardPriority() {
+    // High priority cards (reservations, sales)
+    const highPrioritySelectors = [
+      '[data-tab="calendar"]',
+      '[data-tab="billing"]',
+      '.home-tile[data-home-shortcut="1"]'
+    ];
+    
+    highPrioritySelectors.forEach(selector => {
+      const elements = document.querySelectorAll(selector);
+      elements.forEach(el => {
+        if (el.classList.contains('home-tile') || el.classList.contains('status-button')) {
+          el.classList.add('priority-high');
+        }
+      });
+    });
+    
+    // Low priority cards (auxiliary functions)
+    const lowPrioritySelectors = [
+      '[data-tab="settings"]',
+      '[data-tab="board"]'
+    ];
+    
+    lowPrioritySelectors.forEach(selector => {
+      const elements = document.querySelectorAll(selector);
+      elements.forEach(el => {
+        if (el.classList.contains('home-tile') || el.classList.contains('nav-icon')) {
+          el.classList.add('priority-low');
+        }
+      });
+    });
+  }
+  
+  // Initialize on DOM ready
+  document.addEventListener('DOMContentLoaded', function() {
+    applyCardPriority();
+  });
+  
 })(); /* IIFE */
