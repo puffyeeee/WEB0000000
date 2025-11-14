@@ -6324,11 +6324,41 @@ function renderAvailList(slots, ctx){
  };
 
 // 認証状態の変更を監視
-// 認証システムを一時的に完全無効化
-if (false) { // 認証を一時的に無効化
-  // auth.onAuthStateChanged のコードをコメントアウト
+if (auth) {
+  auth.onAuthStateChanged(async (user) => {
+    console.log('認証状態が変更されました:', user ? user.email : 'ログアウト');
+    
+    // 一旦リセット
+    currentUser = null;
+    isAuthenticated = false;
+
+    if (user) {
+      console.log('ユーザーがログインしています:', user.email);
+      if (user.email === OWNER_EMAIL) {
+        // ★ あや本人 → 使用OK
+        currentUser = user;
+        isAuthenticated = true;
+        console.log('✓ 認証成功: オーナーとしてログイン');
+      } else {
+        // ★ 別のメールでログインしてきた → すぐ追い出す
+        console.log('✗ 未認証ユーザー:', user.email);
+        showNotification("このアカウントではアクセスできません", "error");
+        try {
+          await auth.signOut();
+        } catch (e) {
+          console.error("強制サインアウトエラー:", e);
+        }
+      }
+    } else {
+      console.log('ℹ ユーザーはログアウト状態');
+    }
+
+    updateAuthUI();
+    updateFeatureAccess();
+  });
+} else {
+  console.error('Firebase Auth が初期化されていません');
 }
-console.log('Authentication system temporarily disabled - app should work normally');
 
 // 認証UI更新
  function updateAuthUI() {
@@ -6347,20 +6377,19 @@ console.log('Authentication system temporarily disabled - app should work normal
   }
 }
 
- // 機能アクセス制御（一時的に無効化）
+ // 機能アクセス制御
  function updateFeatureAccess() {
-  console.log('Feature access control temporarily disabled');
-  // ボタン機能を復旧させるため、一時的にアクセス制御を無効化
-  // const restrictedElements = document.querySelectorAll("[data-requires-auth]");
-  // restrictedElements.forEach((element) => {
-  //   if (isAuthenticated) {
-  //     element.classList.remove("disabled");
-  //     element.removeAttribute("disabled");
-  //   } else {
-  //     element.classList.add("disabled");
-  //     element.setAttribute("disabled", "true");
-  //   }
-  // });
+  console.log('機能アクセス制御を更新中:', { isAuthenticated });
+  const restrictedElements = document.querySelectorAll("[data-requires-auth]");
+  restrictedElements.forEach((element) => {
+    if (isAuthenticated) {
+      element.classList.remove("disabled");
+      element.removeAttribute("disabled");
+    } else {
+      element.classList.add("disabled");
+      element.setAttribute("disabled", "true");
+    }
+  });
 }
 
  // ログイン機能
@@ -6533,27 +6562,50 @@ console.log('Authentication system temporarily disabled - app should work normal
   
   // 認証関連のイベントハンドラー設定
   function setupAuthEventListeners() {
-    console.log('Auth event listeners temporarily disabled');
-    return; // 認証イベントリスナー設定を一時無効化
+    console.log('Setting up auth event listeners...');
     
-    // // ログインボタン
-    // const loginButton = document.getElementById('loginButton');
-    // if (loginButton) {
-    //   loginButton.setAttribute('data-auth-action', 'true'); // 認証アクションマーカー
-    //   loginButton.addEventListener('click', showAuthModal);
-    // }
+    // 即座にボタン修正を適用
+    const fixButtonStyles = () => {
+      const allButtons = document.querySelectorAll('button');
+      allButtons.forEach(button => {
+        button.style.pointerEvents = 'auto';
+        button.style.cursor = 'pointer';
+        button.style.position = 'relative';
+      });
+      console.log('全ボタンのCSS修正完了:', allButtons.length, '個');
+    };
     
-    // // ログアウトボタン
-    // const logoutButton = document.getElementById('logoutButton');
-    // if (logoutButton) {
-    //   logoutButton.addEventListener('click', logout);
-    // }
+    fixButtonStyles();
     
-    // // モーダル閉じるボタン
-    // const closeAuthModal = document.getElementById('closeAuthModal');
-    // if (closeAuthModal) {
-    //   closeAuthModal.addEventListener('click', hideAuthModal);
-    // }
+    // DOMの準備ができるまで少し待つ
+    setTimeout(() => {
+      fixButtonStyles(); // 再度適用
+      
+      // ログインボタン（メインのログインボタン）
+      const loginButton = document.getElementById('loginButton');
+      if (loginButton) {
+        console.log('ログインボタンが見つかりました - イベントリスナーを追加');
+        loginButton.setAttribute('data-auth-action', 'true');
+        loginButton.addEventListener('click', function(e) {
+          console.log('ログインボタンがクリックされました');
+          showAuthModal();
+        });
+      } else {
+        console.error('ログインボタンが見つかりません');
+      }
+    }, 100);
+    
+    // ログアウトボタン
+    const logoutButton = document.getElementById('logoutButton');
+    if (logoutButton) {
+      logoutButton.addEventListener('click', logout);
+    }
+    
+    // モーダル閉じるボタン
+    const closeAuthModal = document.getElementById('closeAuthModal');
+    if (closeAuthModal) {
+      closeAuthModal.addEventListener('click', hideAuthModal);
+    }
     
     // モーダル外クリックで閉じる
     const authModal = document.getElementById('authModal');
@@ -6579,6 +6631,7 @@ console.log('Authentication system temporarily disabled - app should work normal
     const emailForm = document.getElementById('emailLoginForm');
     if (emailForm) {
       emailForm.addEventListener('submit', async (e) => {
+        console.log('メールログインフォームが送信されました');
         e.preventDefault();
         const email = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
@@ -6594,8 +6647,11 @@ console.log('Authentication system temporarily disabled - app should work normal
     // Googleログインボタン
     const googleLoginButton = document.getElementById('googleLoginButton');
     if (googleLoginButton) {
-      googleLoginButton.setAttribute('data-auth-action', 'true'); // 認証アクションマーカー
-      googleLoginButton.addEventListener('click', loginWithGoogle);
+      googleLoginButton.setAttribute('data-auth-action', 'true');
+      googleLoginButton.addEventListener('click', function(e) {
+        console.log('Googleログインボタンがクリックされました');
+        loginWithGoogle();
+      });
     }
     
     // 認証ガードは一時的に無効化（ボタン機能を復旧）
@@ -6622,10 +6678,96 @@ console.log('Authentication system temporarily disabled - app should work normal
     return;
   }
 
+  // ページ全体の緊急ボタン修復機能
+  function emergencyButtonFix() {
+    console.log('緊急ボタン修復実行中...');
+    
+    // 全ボタンを強制修復
+    document.querySelectorAll('button, .nav-icon, .btn, [role="button"]').forEach((btn, i) => {
+      // CSS完全リセット
+      btn.style.cssText += `
+        pointer-events: auto !important;
+        cursor: pointer !important;
+        user-select: auto !important;
+        touch-action: manipulation !important;
+        position: relative !important;
+        z-index: 1 !important;
+      `;
+      
+      // disabled属性を削除
+      btn.removeAttribute('disabled');
+      btn.classList.remove('disabled');
+      
+      // 汎用クリックハンドラーを追加
+      const handleClick = function(e) {
+        console.log(`緊急修復ボタン${i}クリック:`, btn.id || btn.className);
+        
+        // 特定ボタンの処理
+        if (btn.id === 'loginButton' || btn.classList.contains('auth-button')) {
+          e.preventDefault();
+          e.stopPropagation();
+          if (window.showAuthModal) window.showAuthModal();
+        } else if (btn.dataset.tab) {
+          e.preventDefault();
+          e.stopPropagation();
+          if (window.selectTab) window.selectTab(btn.dataset.tab);
+        }
+      };
+      
+      // 全イベントタイプに対応
+      ['click', 'mousedown', 'touchstart'].forEach(eventType => {
+        btn.addEventListener(eventType, handleClick, { capture: true, passive: false });
+      });
+    });
+  }
+
   // Initialize on DOM ready
   document.addEventListener('DOMContentLoaded', function() {
     applyCardPriority();
-    // setupAuthEventListeners(); // 一時的に無効化
+    setupAuthEventListeners(); // 認証イベントリスナー設定を有効化
+    
+    // 緊急修復を複数回実行
+    emergencyButtonFix();
+    setTimeout(emergencyButtonFix, 100);
+    setTimeout(emergencyButtonFix, 500);
+    setTimeout(emergencyButtonFix, 1000);
+    
+    // 全ボタンのクリック機能を確実にする
+    setTimeout(() => {
+      const allButtons = document.querySelectorAll('button');
+      allButtons.forEach((button, index) => {
+        // CSS修正
+        button.style.pointerEvents = 'auto';
+        button.style.cursor = 'pointer';
+        button.style.zIndex = '1';
+        
+        // 強制的にクリックイベントを再配線
+        if (button.id === 'loginButton') {
+          button.onclick = function() {
+            console.log('強制ログインボタンクリック');
+            showAuthModal();
+          };
+        }
+        
+        // 全ボタンに診断用イベント追加
+        button.addEventListener('click', function(e) {
+          console.log(`ボタンクリック検出: ${button.id || 'no-id'} | ${button.className} | ${button.textContent.slice(0, 20)}`);
+        }, true); // キャプチャフェーズで確実に捕捉
+      });
+      console.log('DOM ready後のボタン修正完了:', allButtons.length, '個');
+      
+      // 元のタブ機能も再配線
+      const navButtons = document.querySelectorAll('.nav-icon[data-tab]');
+      navButtons.forEach(btn => {
+        btn.onclick = function() {
+          console.log('タブボタンクリック:', btn.dataset.tab);
+          if (window.selectTab) {
+            window.selectTab(btn.dataset.tab);
+          }
+        };
+      });
+      console.log('タブボタン再配線完了:', navButtons.length, '個');
+    }, 200);
     
     // Featherアイコンを再初期化（認証UIのアイコン用）
     if (typeof feather !== 'undefined') {
