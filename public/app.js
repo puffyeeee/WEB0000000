@@ -6229,6 +6229,260 @@ class PetImageManager {
 // グローバルインスタンス
 const petImageManager = new PetImageManager();
 
+// ペット画像アップロード機能のセットアップ
+function setupPetImageUpload() {
+  const selectFilesBtn = document.getElementById('selectFilesBtn');
+  const takePictureBtn = document.getElementById('takePictureBtn');
+  const petImageFiles = document.getElementById('petImageFiles');
+  const petCameraInput = document.getElementById('petCameraInput');
+
+  if (selectFilesBtn && petImageFiles) {
+    selectFilesBtn.addEventListener('click', () => {
+      petImageFiles.click();
+    });
+
+    petImageFiles.addEventListener('change', handlePetImageSelection);
+  }
+
+  if (takePictureBtn && petCameraInput) {
+    takePictureBtn.addEventListener('click', () => {
+      petCameraInput.click();
+    });
+
+    petCameraInput.addEventListener('change', handlePetImageSelection);
+  }
+}
+
+// ペット画像選択処理
+async function handlePetImageSelection(event) {
+  const files = event.target.files;
+  if (!files || files.length === 0) return;
+
+  if (!isAuthenticated) {
+    showAuthModal();
+    return;
+  }
+
+  const bodyPart = document.getElementById('imageBodyPart')?.value || 'OTHER';
+  const symptom = document.getElementById('imageSymptom')?.value || '';
+
+  // 現在編集中のペットIDを取得（新規登録の場合は一時的なID生成）
+  let petId = getCurrentEditingPetId();
+  if (!petId) {
+    // 新規登録の場合、一時的なIDを生成
+    petId = 'temp_' + Date.now();
+  }
+
+  try {
+    showUploadProgress(true);
+    const uploadPromises = Array.from(files).map((file, index) => 
+      uploadPetImageWithProgress(file, petId, { bodyPart, symptom }, index, files.length)
+    );
+
+    const results = await Promise.all(uploadPromises);
+    
+    showUploadMessage(`${results.length}枚の画像をアップロードしました`, 'success');
+    
+    // 画像一覧を更新
+    await displayPetImages(petId);
+    
+    // フォームリセット
+    event.target.value = '';
+    if (document.getElementById('imageSymptom')) {
+      document.getElementById('imageSymptom').value = '';
+    }
+
+  } catch (error) {
+    console.error('画像アップロードエラー:', error);
+    showUploadMessage(`アップロードエラー: ${error.message}`, 'error');
+  } finally {
+    showUploadProgress(false);
+  }
+}
+
+// 進行状況付き画像アップロード
+async function uploadPetImageWithProgress(file, petId, metadata, index, total) {
+  try {
+    updateProgressBar((index / total) * 100, `アップロード中... ${index + 1}/${total}`);
+    
+    const result = await petImageManager.uploadPetImage(file, petId, metadata);
+    
+    updateProgressBar(((index + 1) / total) * 100, `完了: ${index + 1}/${total}`);
+    
+    return result;
+  } catch (error) {
+    updateProgressBar(((index + 1) / total) * 100, `エラー: ${error.message}`);
+    throw error;
+  }
+}
+
+// 現在編集中のペットIDを取得
+function getCurrentEditingPetId() {
+  // ペット編集モードの場合はIDを取得
+  const editingPetId = document.querySelector('[data-editing-pet-id]')?.dataset.editingPetId;
+  return editingPetId || null;
+}
+
+// 進行状況表示
+function showUploadProgress(show) {
+  const progressElement = document.getElementById('uploadProgress');
+  if (progressElement) {
+    progressElement.style.display = show ? 'block' : 'none';
+  }
+  if (!show) {
+    updateProgressBar(0, '');
+  }
+}
+
+function updateProgressBar(percentage, text) {
+  const progressFill = document.getElementById('progressFill');
+  const progressText = document.getElementById('progressText');
+  
+  if (progressFill) {
+    progressFill.style.width = `${percentage}%`;
+  }
+  if (progressText) {
+    progressText.textContent = text;
+  }
+}
+
+// アップロードメッセージ表示
+function showUploadMessage(message, type) {
+  const messageElement = document.getElementById('uploadMessage');
+  if (messageElement) {
+    messageElement.textContent = message;
+    messageElement.className = `upload-message ${type}`;
+    messageElement.style.display = 'block';
+    
+    // 3秒後に自動で非表示
+    setTimeout(() => {
+      messageElement.style.display = 'none';
+    }, 3000);
+  }
+}
+
+// ペット画像一覧表示
+async function displayPetImages(petId) {
+  const gridElement = document.getElementById('petImagesGrid');
+  if (!gridElement || !petId) return;
+
+  try {
+    gridElement.innerHTML = '<div class="loading-placeholder">画像を読み込み中...</div>';
+    
+    const images = await petImageManager.getPetImages(petId);
+    
+    gridElement.innerHTML = '';
+    
+    if (images.length === 0) {
+      gridElement.innerHTML = `
+        <div class="no-images-placeholder">
+          <i data-feather="image"></i>
+          <p>まだ画像がありません</p>
+        </div>
+      `;
+      // Featherアイコンを再初期化
+      if (typeof feather !== 'undefined') feather.replace();
+      return;
+    }
+
+    images.forEach(imageData => {
+      const imageItem = document.createElement('div');
+      imageItem.className = 'pet-image-item';
+      imageItem.innerHTML = `
+        <img src="${imageData.downloadURL}" alt="${imageData.metadata?.description || '画像'}" 
+             onclick="openImageModal('${imageData.downloadURL}', '${imageData.metadata?.description || ''}')">
+        <div class="pet-image-info">
+          <div class="pet-image-meta">
+            ${imageData.metadata?.bodyPart || ''} ${imageData.metadata?.symptom ? '｜' + imageData.metadata.symptom : ''}
+          </div>
+          <div class="pet-image-actions">
+            <button type="button" class="btn-ghost" onclick="openImageModal('${imageData.downloadURL}', '${imageData.metadata?.description || ''}')">
+              <i data-feather="eye"></i> 表示
+            </button>
+            <button type="button" class="delete-image-btn" onclick="deletePetImage('${imageData.id}', '${imageData.storagePath}', '${petId}')">
+              <i data-feather="trash-2"></i> 削除
+            </button>
+          </div>
+        </div>
+      `;
+      gridElement.appendChild(imageItem);
+    });
+
+    // Featherアイコンを再初期化
+    if (typeof feather !== 'undefined') feather.replace();
+
+  } catch (error) {
+    console.error('画像表示エラー:', error);
+    gridElement.innerHTML = '<div class="error-placeholder">画像の読み込みに失敗しました</div>';
+  }
+}
+
+// 画像モーダル表示
+window.openImageModal = function(imageUrl, description) {
+  const modal = document.createElement('div');
+  modal.className = 'image-modal-overlay';
+  modal.style.cssText = `
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.8); z-index: 1000; display: flex;
+    align-items: center; justify-content: center; padding: 20px;
+  `;
+  modal.innerHTML = `
+    <div class="image-modal" style="
+      background: white; border-radius: 20px; max-width: 90vw; max-height: 90vh;
+      display: flex; flex-direction: column; overflow: hidden;
+    ">
+      <div class="image-modal-header" style="
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 16px 20px; border-bottom: 1px solid #e2e8f0;
+      ">
+        <h3 style="margin: 0; font-weight: 600;">${description}</h3>
+        <button type="button" onclick="closeImageModal()" style="
+          background: none; border: none; cursor: pointer; padding: 8px;
+          border-radius: 12px; display: flex; align-items: center;
+        ">
+          <i data-feather="x"></i>
+        </button>
+      </div>
+      <div class="image-modal-content" style="padding: 20px; text-align: center;">
+        <img src="${imageUrl}" alt="${description}" style="max-width:100%;max-height:70vh;object-fit:contain;border-radius:12px;">
+      </div>
+    </div>
+  `;
+  
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeImageModal();
+  });
+  
+  document.body.appendChild(modal);
+  document.body.style.overflow = 'hidden';
+  
+  // Featherアイコンを再初期化
+  if (typeof feather !== 'undefined') feather.replace();
+};
+
+// 画像モーダル閉じる
+window.closeImageModal = function() {
+  const modal = document.querySelector('.image-modal-overlay');
+  if (modal) {
+    modal.remove();
+    document.body.style.overflow = '';
+  }
+};
+
+// ペット画像削除
+window.deletePetImage = async function(imageId, storagePath, petId) {
+  if (!confirm('この画像を削除しますか？')) return;
+
+  try {
+    await petImageManager.deletePetImage(imageId, storagePath);
+    showNotification('画像を削除しました', 'success');
+    await displayPetImages(petId);
+  } catch (error) {
+    console.error('画像削除エラー:', error);
+    showNotification('削除に失敗しました: ' + error.message, 'error');
+  }
+};
+
 // ペット画像表示更新関数
 async function refreshPetImages(petId) {
   try {
@@ -6967,6 +7221,9 @@ window.showAuthModal = showAuthModal;
       exportCustomersBtn.addEventListener('click', exportCustomersToCSV);
       console.log('CSVエクスポートボタンにイベントリスナーを設定');
     }
+    
+    // ペット画像アップロード機能のイベントリスナー
+    setupPetImageUpload();
     
     // Featherアイコンを再初期化（認証UIのアイコン用）
     if (typeof feather !== 'undefined') {
