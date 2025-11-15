@@ -1,19 +1,15 @@
-// Arflex Gallery Firebase Configuration
-// Replace with your actual Firebase config
+// Unite Gallery Firebase Configuration
+// Production Firebase config for unite-e8567 project
 
-const firebaseConfig = {
-    apiKey: "demo-api-key",
-    authDomain: "arflex-gallery-demo.firebaseapp.com",
-    projectId: "arflex-gallery-demo",
-    storageBucket: "arflex-gallery-demo.appspot.com",
-    messagingSenderId: "123456789",
-    appId: "1:123456789:web:demo-app-id"
+// Global Firebase configuration for Unite Gallery
+window.firebaseConfig = {
+    apiKey: "AIzaSyCJ8UmNgJa3qpX_KFheMFrzhrMjbULJZ4c",
+    authDomain: "unite-e8567.firebaseapp.com",
+    projectId: "unite-e8567",
+    storageBucket: "unite-e8567.firebasestorage.app",
+    messagingSenderId: "1010079914673",
+    appId: "1:1010079914673:web:66048f89ee3da841ae6090",
+    measurementId: "G-12BZYF52XS"
 };
 
-// Demo credentials for testing
-const demoCredentials = {
-    email: "demo@arflex.gallery",
-    password: "arflex2025"
-};
-
-export { firebaseConfig, demoCredentials };
+console.log('📋 Firebase configuration loaded successfully');

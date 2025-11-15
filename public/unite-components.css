@@ -1,8 +1,66 @@
-/* Arflex-Inspired Components */
+/* Unite Gallery Components */
 /* エディトリアル × 高級ペットサロン専用コンポーネント */
 
 /* ============================================
-   ARFLEX RESERVATION TIMELINE
+   INITIAL LOADING STATE - Flicker Prevention
+   ページ読み込み時のちらつき防止
+   ============================================ */
+
+/* 認証状態確定まで滑らかな遷移を保証 */
+.unite-main-content {
+  transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out, display 0.4s ease-in-out;
+}
+
+.unite-login-screen {
+  transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out, display 0.4s ease-in-out;
+}
+
+/* 初期読み込み時の完全な安定化 */
+body.loading .unite-main-content {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  display: none !important;
+}
+
+body.loading .unite-login-screen {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  display: none !important;
+}
+
+/* 認証待機中の状態 */
+.unite-login-screen.fade-in {
+  animation: fadeInLogin 0.4s ease-in-out forwards;
+}
+
+.unite-main-content.fade-in {
+  animation: fadeInMain 0.4s ease-in-out forwards;
+}
+
+@keyframes fadeInLogin {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInMain {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   UNITE RESERVATION TIMELINE
    展示会風レイアウト
    ============================================ */
 
@@ -127,7 +185,7 @@
 }
 
 /* ============================================
-   ARFLEX ATTENTION SECTION
+   UNITE ATTENTION SECTION
    ギャラリー風の注意喚起
    ============================================ */
 
@@ -216,7 +274,7 @@
 }
 
 /* ============================================
-   ARFLEX ANALYTICS
+   UNITE ANALYTICS
    エディトリアル風チャートセクション
    ============================================ */
 
@@ -294,7 +352,7 @@
 }
 
 /* ============================================
-   ARFLEX ACTIVITY FEED
+   UNITE ACTIVITY FEED
    雑誌風レイアウト
    ============================================ */
 
@@ -371,7 +429,7 @@
 }
 
 /* ============================================
-   ARFLEX BUTTONS & ACTIONS
+   UNITE BUTTONS & ACTIONS
    控えめ・上品なボタンデザイン
    ============================================ */
 
@@ -672,7 +730,7 @@ input[type="button"]:not(.unite-btn):active {
 }
 
 /* ============================================
-   ARFLEX LOGIN SCREEN
+   UNITE LOGIN SCREEN
    ============================================ */
 
 .unite-login-screen {
@@ -776,7 +834,7 @@ input[type="button"]:not(.unite-btn):active {
 }
 
 /* ============================================
-   ARFLEX MODAL & AUTH
+   UNITE MODAL & AUTH
    ============================================ */
 
 .unite-modal {
@@ -902,7 +960,7 @@ input[type="button"]:not(.unite-btn):active {
 }
 
 /* ============================================
-   ARFLEX UTILITIES
+   UNITE UTILITIES
    ============================================ */
 
 .unite-text-center { text-align: center; }

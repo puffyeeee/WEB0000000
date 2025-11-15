@@ -1,11 +1,11 @@
-/* Arflex-Inspired Luxury Salon Design System */
-/* 参考: https://www.arflex.co.jp/2025-26collection/ */
+/* Unite Gallery Luxury Salon Design System */
+/* Tiffany-Style Milky Gradient Design System */
 /* エディトリアル × 高級ペットサロン × 既存ブルー色味 */
 
 /* ============================================
-   🏛️ ARFLEX-INSPIRED COLOR PALETTE
-   既存のブルー系グラデーションを高級化
-   ============================================ */
+  🏛️ UNITE GALLERY TIFFANY COLOR PALETTE
+  既存のブルー系グラデーションを高級化
+  ============================================ */
 
 :root {
   /* === Unite Tiffany Milky Gradient System (ティファニー系ミルキーグラデーション) === */
@@ -20,7 +20,7 @@
   --unite-blue-refined: #C8A8F0;       /* 透明感のあるラベンダー */
   --unite-blue-midnight: #B8A2E8;      /* 深いラベンダー(アクセント用) */
   
-  /* === Neutral Palette (Arflex風グレー階調) === */
+  /* === Neutral Palette (Unite Galleryグレー階調) === */
   --unite-white: #ffffff;             /* 純白 */
   --unite-snow: #fefefe;              /* スノーホワイト */
   --unite-whisper: #fafcfe;           /* ささやき */
@@ -43,7 +43,7 @@
   --unite-purple-mist: #e9e5f1;       /* パープルミスト */
   --unite-purple-gentle: #d8d1e3;     /* 優しいパープル */
   
-  /* === Typography (Arflex準拠) === */
+  /* === Typography (Unite Gallery準拠) === */
   --unite-font-primary: 'Noto Sans JP', -apple-system, sans-serif;
   --unite-font-english: 'Inter', -apple-system, sans-serif;
   --unite-font-display: 'Inter', -apple-system, sans-serif;  /* セリフを避けてクリーンに */
@@ -65,7 +65,7 @@
   --unite-font-medium: 500;
   --unite-font-semibold: 600;
   
-  /* === Spacing (余白重視・Arflex準拠) === */
+  /* === Spacing (余白重視・Unite Gallery準拠) === */
   --unite-space-xs: 0.5rem;     /* 8px */
   --unite-space-sm: 0.75rem;    /* 12px */
   --unite-space-md: 1rem;       /* 16px */
@@ -84,7 +84,7 @@
   --unite-radius-lg: 6px;
   --unite-radius-xl: 8px;
   
-  /* === Shadows (透明感・Arflex準拠) === */
+  /* === Shadows (透明感・Unite Gallery準拠) === */
   --unite-shadow-subtle: 0 1px 3px rgba(45, 62, 77, 0.03), 0 1px 2px rgba(45, 62, 77, 0.04);
   --unite-shadow-soft: 0 2px 8px rgba(45, 62, 77, 0.04), 0 1px 3px rgba(45, 62, 77, 0.06);
   --unite-shadow-medium: 0 4px 16px rgba(45, 62, 77, 0.06), 0 2px 6px rgba(45, 62, 77, 0.08);
@@ -103,7 +103,7 @@
 }
 
 /* ============================================
-   🎯 ARFLEX BASE STYLES
+   🎯 UNITE GALLERY BASE STYLES
    ============================================ */
 
 * {
@@ -140,7 +140,7 @@ body:not(.loaded) .unite-main-content {
 }
 
 /* ============================================
-   🏛️ ARFLEX LAYOUT SYSTEM
+   🏛️ UNITE GALLERY LAYOUT SYSTEM
    エディトリアル・展示会風レイアウト
    ============================================ */
 
@@ -166,7 +166,7 @@ body:not(.loaded) .unite-main-content {
 }
 
 /* ============================================
-   👑 ARFLEX HEADER (シンプル・エレガント)
+   👑 UNITE GALLERY HEADER (シンプル・エレガント)
    ============================================ */
 
 .unite-header {
@@ -243,8 +243,8 @@ body:not(.loaded) .unite-main-content {
 }
 
 /* ============================================
-   🖼️ ARFLEX HERO SECTION
-   大きな写真 + 短いコピー（Arflex準拠）
+   🖼️ UNITE GALLERY HERO SECTION
+   大きな写真 + 短いコピー（Unite Gallery準拠）
    ============================================ */
 
 .unite-hero {
@@ -285,7 +285,7 @@ body:not(.loaded) .unite-main-content {
 }
 
 /* ============================================
-   📊 ARFLEX METRICS (控えめ・右下配置)
+   📊 UNITE GALLERY METRICS (控えめ・右下配置)
    ============================================ */
 
 .unite-metrics {
@@ -335,7 +335,7 @@ body:not(.loaded) .unite-main-content {
 }
 
 /* ============================================
-   🎨 ARFLEX CONTENT BLOCKS
+   🎨 UNITE CONTENT BLOCKS
    エディトリアル風ブロック配置
    ============================================ */
 
@@ -379,7 +379,7 @@ body:not(.loaded) .unite-main-content {
 }
 
 /* ============================================
-   🐕 ARFLEX PET CARDS
+   🐕 UNITE PET CARDS
    作品展示風の配置
    ============================================ */
 
@@ -481,11 +481,11 @@ body:not(.loaded) .unite-main-content {
 }
 
 /* ============================================
-   ✨ ARFLEX ANIMATIONS
+   ✨ UNITE ANIMATIONS
    控えめ・上品なアニメーション
    ============================================ */
 
-@keyframes arflex-fade-in {
+@keyframes unite-fade-in {
   from {
     opacity: 0;
     transform: translateY(16px);
@@ -497,7 +497,7 @@ body:not(.loaded) .unite-main-content {
 }
 
 .unite-fade-in {
-  animation: arflex-fade-in 0.8s ease-out;
+  animation: unite-fade-in 0.8s ease-out;
 }
 
 /* アクセシビリティ */

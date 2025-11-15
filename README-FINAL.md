@@ -37,10 +37,9 @@ npm run unite    # Uniteギャラリーモード
 ├── unite-design.css             # メインデザインシステム
 ├── unite-components.css         # コンポーネントライブラリ
 ├── app.js                       # アプリケーションロジック
+├── firebase-config.js           # Firebase設定ファイル
 ├── style.css                    # レガシーCSS(使用せず)
 ├── index-original-backup.html   # 元のバックアップ
-├── arflex-gallery.html         # 旧バージョン(使用せず)
-├── firebase-config.js           # Firebase設定ファイル
 └── sw.js                        # Service Worker
 ```
 
@@ -239,4 +238,4 @@ main ブランチへの push で自動デプロイ
 *Unite Gallery Design System*  
 *ティファニー系ミルキーグラデーションでプレミアムペットサロン体験を*
 
-**最終更新**: 2025年11月14日 - プロダクション準備完了
+**最終更新**: 2025年11月15日 - 完全統一・最適化完了

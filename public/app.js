@@ -6047,32 +6047,54 @@ if (auth && isFirebaseAvailable) {
     updateFeatureAccess();
   });
 } else {
-  console.log('📝 Firebase Auth が初期化されていません - デモモードで動作');
-  // デモモードでの初期設定
+  console.log('📝 Firebase Auth handled by index.html - app.js will not interfere');
+  // 認証はindex.htmlで管理されるため、app.jsでは初期化を行わない
+  // グローバル認証状態をチェック（遅延実行でindex.htmlの処理完了を待つ）
   setTimeout(() => {
-    console.log('📝 デモモード初期化開始');
-    currentUser = null;
-    isAuthenticated = false;
-    updateAuthUI();
-    updateFeatureAccess();
-    console.log('📝 デモモード初期化完了 - ログイン画面を表示');
-  }, 1000);
+    console.log('📝 認証状態確認開始');
+    if (window.currentUser && window.isAuthenticated) {
+      console.log('📝 index.htmlから認証状態を取得:', window.currentUser.email);
+      currentUser = window.currentUser;
+      isAuthenticated = window.isAuthenticated;
+      updateAuthUI();
+      updateFeatureAccess();
+    } else {
+      console.log('📝 認証されていません - index.htmlの認証システムを待機');
+      // 認証状態の定期チェックを設定
+      const authCheckInterval = setInterval(() => {
+        if (window.currentUser && window.isAuthenticated) {
+          console.log('📝 認証状態変化検出:', window.currentUser.email);
+          currentUser = window.currentUser;
+          isAuthenticated = window.isAuthenticated;
+          updateAuthUI();
+          updateFeatureAccess();
+          clearInterval(authCheckInterval);
+        }
+      }, 500);
+      
+      // 5秒後にタイムアウト
+      setTimeout(() => clearInterval(authCheckInterval), 5000);
+    }
+  }, 300);
 }
 
-// 認証UI更新
+// 認証UI更新 (app.js内の要素のみ更新、index.htmlの認証UIには干渉しない)
  function updateAuthUI() {
-  const loginButton = document.getElementById("loginButton");
-  const userInfo = document.getElementById("userInfo");
+  // index.htmlの認証システムには干渉しない
+  // app.js内の特定の要素のみ更新
   const userName = document.getElementById("userName");
+  const userDisplayName = document.getElementById("userDisplayName");
 
   if (isAuthenticated && currentUser) {
-    if (loginButton) loginButton.style.display = "none";
-    if (userInfo) userInfo.style.display = "flex";
-    if (userName)
+    if (userName) {
       userName.textContent = currentUser.displayName || currentUser.email;
+    }
+    if (userDisplayName) {
+      userDisplayName.textContent = currentUser.displayName || currentUser.email;
+    }
+    console.log('📝 app.js認証UI更新完了:', currentUser.email);
   } else {
-    if (loginButton) loginButton.style.display = "flex";
-    if (userInfo) userInfo.style.display = "none";
+    console.log('📝 app.js: 未認証状態 - index.htmlの認証システムに委譲');
   }
 }
 

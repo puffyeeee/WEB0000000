@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Unite Pet Salon Gallery | 高級ペットサロン</title>
     
-    <!-- Arflex Design System -->
+    <!-- Unite Design System -->
     <link rel="stylesheet" href="unite-design.css">
     <link rel="stylesheet" href="unite-components.css">
     
@@ -18,9 +18,12 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-functions-compat.js"></script>
+    
+    <!-- Firebase Configuration -->
+    <script src="firebase-config.js"></script>
 </head>
 
-<body>
+<body class="loading">
     <noscript>
         <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); display: flex; align-items: center; justify-content: center; z-index: 9999;">
             <div style="background: white; padding: 2rem; border-radius: 12px; text-align: center; max-width: 400px;">
@@ -30,10 +33,10 @@
         </div>
     </noscript>
     <!-- LOGIN SCREEN -->
-    <div id="loginScreen" class="unite-login-screen" style="display: flex;">
+    <div id="loginScreen" class="unite-login-screen" style="display: none; opacity: 0;">
         <div class="unite-login-container">
             <div class="unite-login-header">
-                <h1 class="unite-login-title">Unite Gallery</h1>
+                <h1 id="loginTitle" class="unite-login-title">Unite Gallery</h1>
                 <p class="unite-login-subtitle">Pet Salon Gallery Access</p>
             </div>
             
@@ -44,14 +47,14 @@
                 </div>
                 
                 <div class="unite-auth-content" id="emailAuth">
-                    <form id="emailLoginForm">
+                    <form id="emailLoginForm" role="form" aria-labelledby="loginTitle">
                         <div class="unite-form-group">
-                            <label>Email Address</label>
-                            <input type="email" id="loginEmail" required placeholder="your@email.com">
+                            <label for="loginEmail">Email Address</label>
+                            <input type="email" id="loginEmail" name="email" autocomplete="email" required placeholder="your@email.com" aria-label="Email Address">
                         </div>
                         <div class="unite-form-group">
-                            <label>Password</label>
-                            <input type="password" id="loginPassword" required placeholder="Password">
+                            <label for="loginPassword">Password</label>
+                            <input type="password" id="loginPassword" name="password" autocomplete="current-password" required placeholder="Password" aria-label="Password">
                         </div>
                         <button type="submit" class="unite-btn unite-btn-primary unite-login-btn">
                             <i data-feather="log-in"></i>
@@ -88,7 +91,7 @@
     </div>
 
     <!-- MAIN CONTENT (Hidden until authenticated) -->
-    <div id="mainContent" class="unite-main-content" style="display: none; opacity: 0;">
+    <div id="mainContent" class="unite-main-content" style="display: none; opacity: 0; visibility: hidden;">
         <!-- User Info Header -->
         <div class="unite-user-header">
             <div class="unite-user-info">
@@ -100,7 +103,7 @@
             </div>
         </div>
         
-        <!-- ARFLEX HEADER GALLERY -->
+        <!-- UNITE GALLERY HERO -->
         <div class="unite-hero">
         <div class="unite-hero-content">
             <div class="unite-hero-text">
@@ -383,8 +386,8 @@
         <!-- スタッフ管理 -->
         <div id="staffList" class="list-container"></div>
         <form id="staffForm" class="form-container">
-            <input type="text" name="name" placeholder="スタッフ名" required>
-            <input type="email" name="email" placeholder="メールアドレス">
+            <input type="text" name="name" placeholder="スタッフ名" autocomplete="name" required>
+            <input type="email" name="email" placeholder="メールアドレス" autocomplete="email">
             <button type="submit" id="btnCreateStaff">スタッフ登録</button>
         </form>
         <div id="staffMsg" class="message-area"></div>
@@ -392,9 +395,9 @@
         <!-- 支払方法管理 -->
         <div id="paymentList" class="list-container"></div>
         <form id="paymentForm" class="form-container">
-            <input type="text" name="name" placeholder="支払方法名" required>
-            <input type="text" name="code" placeholder="コード" required>
-            <input type="number" name="sort" placeholder="表示順" min="0">
+            <input type="text" name="name" placeholder="支払方法名" autocomplete="off" required>
+            <input type="text" name="code" placeholder="コード" autocomplete="off" required>
+            <input type="number" name="sort" placeholder="表示順" autocomplete="off" min="0">
             <button type="submit" id="btnCreatePayment">支払方法登録</button>
         </form>
         <div id="pmMsg" class="message-area"></div>
@@ -402,13 +405,13 @@
         <!-- チケット管理 -->
         <div id="ticketList" class="list-container"></div>
         <form id="ticketForm" class="form-container">
-            <input type="text" name="title" placeholder="タイトル" required>
+            <input type="text" name="title" placeholder="タイトル" autocomplete="off" required>
             <select name="category">
                 <option value="問い合わせ">問い合わせ</option>
                 <option value="要望">要望</option>
                 <option value="バグ報告">バグ報告</option>
             </select>
-            <textarea name="description" placeholder="詳細説明"></textarea>
+            <textarea name="description" placeholder="詳細説明" autocomplete="off"></textarea>
             <button type="submit" id="btnCreateTicket">チケット作成</button>
         </form>
         <div id="ticketMsg" class="message-area"></div>
@@ -427,7 +430,7 @@
     <script>
         // Firebase Configuration - Disabled for demo mode
         // デモ環境ではFirebase API呼び出しを防止するため、無効化
-        const firebaseConfig = null; // Demo mode: Firebase disabled
+        // firebaseConfig will be declared below
         
         // 本番環境では以下のような設定を使用してください。
         // const firebaseConfig = {
@@ -439,38 +442,111 @@
         //     appId: "your-app-id"
         // };
 
-        // Firebase initialization disabled for demo mode
+        // Firebase initialization for Unite Gallery
         let firebaseApp = null;
-        if (typeof firebase !== 'undefined' && firebaseConfig) {
-            try {
-                // Only initialize if config is provided and Firebase not already initialized
-                firebaseApp = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
-                console.log('Firebase initialized successfully');
-            } catch (error) {
-                console.log('Firebase initialization skipped:', error.message);
-                firebaseApp = null;
+        let isFirebaseInitialized = false;
+        
+        // Firebase初期化を確実に実行
+        function initializeFirebase() {
+            console.log('🔥 Starting Firebase initialization...');
+            
+            if (typeof firebase === 'undefined') {
+                console.error('❌ Firebase SDK not loaded');
+                return false;
             }
-        } else {
-            console.log('Firebase initialization skipped - demo mode or no config');
+            
+            if (!window.firebaseConfig) {
+                console.error('❌ Firebase configuration not loaded');
+                return false;
+            }
+            
+            try {
+                // Firebase App初期化
+                if (firebase.apps.length === 0) {
+                    firebaseApp = firebase.initializeApp(window.firebaseConfig);
+                    console.log('✅ Firebase App initialized successfully with external config');
+                } else {
+                    firebaseApp = firebase.apps[0];
+                    console.log('✅ Using existing Firebase App instance');
+                }
+                
+                // Firebase Auth service検証
+                if (!firebase.auth) {
+                    throw new Error('Firebase Auth service not available');
+                }
+                
+                // Auth service初期化テスト
+                const auth = firebase.auth();
+                if (!auth) {
+                    throw new Error('Cannot get Firebase Auth instance');
+                }
+                
+                console.log('✅ Firebase Auth service verified');
+                isFirebaseInitialized = true;
+                return true;
+                
+            } catch (error) {
+                console.error('❌ Firebase initialization failed:', error);
+                firebaseApp = null;
+                isFirebaseInitialized = false;
+                return false;
+            }
         }
-
+        
         // Authentication State Management
         let currentUser = null;
 
+        // 正常な初期化フロー管理
+        function completeInitialization() {
+            // 初期化完了時にloadingクラスを削除
+            document.body.classList.remove('loading');
+            console.log('✅ Unite Gallery初期化完了 - ローディング状態解除');
+        }
+
         // Check authentication state on load
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Unite Gallery初期化開始...');
+            
+            // Firebase初期化をDOMContentLoaded後に実行（設定ファイル読み込み確実化）
+            const firebaseReady = initializeFirebase();
+            
             try {
-                // Initialize Feather Icons
+                // Initialize Feather Icons first
                 if (typeof feather !== 'undefined' && feather.replace) {
                     feather.replace();
+                    console.log('✅ Feather icons initialized');
+                } else {
+                    console.log('⚠️ Feather icons not available');
                 }
                 
-                // Ensure login screen is visible initially
-                showLoginScreen();
-                
-                // Firebase認証監視は有効なFirebase設定がある場合のみ
-                if (typeof firebase !== 'undefined' && firebase.auth && firebaseApp && firebaseConfig !== null) {
-                    console.log('Firebase authentication monitoring started');
+                // Firebase認証監視は正しく初期化された場合のみ
+                if (isFirebaseInitialized && typeof firebase !== 'undefined' && firebase.auth && firebaseApp) {
+                    console.log('✅ Firebase authentication monitoring started');
+                    
+                    // 現在の認証状態を即座にチェック
+                    const currentAuthUser = firebase.auth().currentUser;
+                    if (currentAuthUser) {
+                        console.log('📝 既存の認証セッション検出:', currentAuthUser.email);
+                        // 既存セッションがある場合、ちらつき防止のためログイン画面をスキップ
+                        const authorizedUID = 'IbuYD2GuBTdS55LY5uuzBsHIF7s2';
+                        if (currentAuthUser.uid === authorizedUID) {
+                            console.log('📝 既存セッション認証成功 - 直接メイン画面へ');
+                            currentUser = currentAuthUser;
+                            window.currentUser = currentAuthUser;
+                            showMainContent(currentAuthUser);
+                        } else {
+                            console.log('📝 既存セッション認証失敗 - ログアウト');
+                            firebase.auth().signOut();
+                            showLoginScreen();
+                        }
+                    } else {
+                        console.log('📝 既存セッションなし - ログイン画面表示');
+                        // 滑らかなフェードインでログイン画面を表示
+                        setTimeout(() => {
+                            showLoginScreen();
+                        }, 100);
+                    }
+                    
                     firebase.auth().onAuthStateChanged((user) => {
                         const authorizedUID = 'IbuYD2GuBTdS55LY5uuzBsHIF7s2';
                         
@@ -496,51 +572,106 @@
                         }
                     });
                 } else {
-                    console.log('Demo mode: Firebase auth monitoring skipped, showing login screen');
+                    console.log('❌ Firebase authentication not available - initialization failed or missing');
+                    console.log('❌ isFirebaseInitialized:', isFirebaseInitialized);
+                    console.log('❌ firebase available:', typeof firebase !== 'undefined');
+                    console.log('❌ firebase.auth available:', typeof firebase !== 'undefined' && !!firebase.auth);
+                    console.log('❌ firebaseApp:', !!firebaseApp);
+                    // Firebase利用不可の場合はログイン画面を表示
+                    showLoginScreen();
+                    console.log('📝 Firebase利用不可 - ログイン画面表示');
                 }
                 
                 setupEventListeners();
+                
+                // 初期化完了 - ローディング状態解除（認証状態確定後）
+                setTimeout(() => {
+                    completeInitialization();
+                }, 300);
             } catch (error) {
-                console.error('Initialization error:', error);
-                // Fallback: ensure login screen is visible
+                console.error('❌ 初期化エラー:', error);
+                // エラー時もloadingクラスを削除してログイン画面を表示
+                completeInitialization();
                 const loginScreen = document.getElementById('loginScreen');
                 if (loginScreen) {
                     loginScreen.style.display = 'flex';
+                    loginScreen.style.opacity = '1';
                 }
+                showAuthError('初期化エラーが発生しました。ページを再読み込みしてください。');
             }
         });
 
         function showLoginScreen() {
+            // loading状態を解除して画面表示を確実にする
+            completeInitialization();
+            
             const loginScreen = document.getElementById('loginScreen');
             const mainContent = document.getElementById('mainContent');
             if (loginScreen && mainContent) {
-                loginScreen.style.display = 'flex';
+                // メインコンテンツを非表示
                 mainContent.style.display = 'none';
+                mainContent.style.opacity = '0';
+                mainContent.style.visibility = 'hidden';
                 mainContent.classList.remove('loaded');
+                
+                // ログイン画面を滑らかに表示
+                loginScreen.style.display = 'flex';
+                loginScreen.style.visibility = 'visible';
+                
+                // フェードインアニメーション
+                requestAnimationFrame(() => {
+                    loginScreen.style.opacity = '1';
+                });
+                
+                console.log('📝 ログイン画面表示完了');
+            } else {
+                console.error('❌ ログイン画面要素が見つかりません');
             }
         }
 
         function showMainContent(user) {
             console.log('Showing main content for user:', user?.email);
             
+            // loading状態を解除して画面表示を確実にする
+            completeInitialization();
+            
             const loginScreen = document.getElementById('loginScreen');
             const mainContent = document.getElementById('mainContent');
             const userDisplay = document.getElementById('userDisplayName');
             
             if (loginScreen && mainContent) {
-                // Force hide login screen
-                loginScreen.style.display = 'none';
-                loginScreen.style.visibility = 'hidden';
+                // ログイン画面をフェードアウト
+                loginScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loginScreen.style.display = 'none';
+                    loginScreen.style.visibility = 'hidden';
+                }, 200);
                 
-                // Force show main content
+                // メインコンテンツを表示
                 mainContent.style.display = 'block';
                 mainContent.style.visibility = 'visible';
-                mainContent.style.opacity = '1';
+                
+                // フェードインアニメーション
+                requestAnimationFrame(() => {
+                    mainContent.style.opacity = '1';
+                    mainContent.classList.add('fade-in');
+                });
                 
                 // Update user display
                 if (userDisplay) {
                     const displayName = user?.displayName || user?.email || 'Gallery User';
                     userDisplay.textContent = displayName;
+                }
+                
+                // Sync authentication state with app.js
+                window.currentUser = user;
+                window.isAuthenticated = true;
+                currentUser = user;
+                
+                // Update app.js authentication state if available
+                if (typeof window.updateAuthState === 'function') {
+                    window.updateAuthState(user, true);
+                    console.log('✅ app.js認証状態を同期しました');
                 }
                 
                 // Add loaded animation
@@ -666,48 +797,78 @@
             // Firebase UIDベースの認証システム
             const authorizedUID = 'IbuYD2GuBTdS55LY5uuzBsHIF7s2';
             
-            // Create a test UID based on email and password combination
-            const testUID = btoa(email + ':' + password).replace(/[^a-zA-Z0-9]/g, '').substring(0, 28);
+            console.log('📝 Attempting Firebase Authentication...');
             
-            // Check if this matches the authorized UID pattern or use exact UID match
-            console.log('📝 Checking authorization for email pattern and password...');
-            console.log('📝 Test UID generated:', testUID);
-            console.log('📝 Expected UID:', authorizedUID);
+            // Firebase状態の詳細チェック
+            console.log('🔍 Firebase状態チェック:');
+            console.log('  - isFirebaseInitialized:', isFirebaseInitialized);
+            console.log('  - firebase available:', typeof firebase !== 'undefined');
+            console.log('  - firebase.auth available:', typeof firebase !== 'undefined' && !!firebase.auth);
+            console.log('  - firebaseApp:', !!firebaseApp);
             
-            // 直接的な認証チェック - 特定のメールアドレスとパスワードのみ許可
-            const authorizedEmail = 'duffy.chocolate.aya@gmail.com';
-            const authorizedPassword = 'duffychocolate2024';
+            if (!isFirebaseInitialized) {
+                console.log('❌ Firebase not initialized - attempting reinitialization...');
+                const reinitSuccess = initializeFirebase();
+                if (!reinitSuccess) {
+                    showAuthError('Firebase認証サービスの初期化に失敗しました。ページをリロードしてください。');
+                    return;
+                }
+            }
             
-            if (email === authorizedEmail && password === authorizedPassword) {
-                
-                console.log('✅ Email and password match - authentication successful!');
-                console.log('✅ Authorized Firebase UID authentication successful');
-                const authorizedUser = {
-                    email: email,
-                    displayName: email.split('@')[0],
-                    photoURL: null,
-                    uid: authorizedUID
-                };
-                
-                // Set authentication state
-                currentUser = authorizedUser;
-                window.currentUser = authorizedUser;
-                window.isAuthenticated = true;
-                
-                console.log('✅ Authentication state set, hiding auth screen...');
-                console.log('✅ Current user object:', authorizedUser);
-                hideAuthError();
-                showMainContent(authorizedUser);
-                console.log('✅ Authorized Firebase UID login completed successfully');
-                return;
-            } else {
-                console.log('❌ Authorization failed - email or password incorrect');
-                console.log('❌ Provided email:', email);
-                console.log('❌ Expected email:', authorizedEmail);
-                console.log('❌ Password check:', password === authorizedPassword ? 'PASS' : 'FAIL');
-                showAuthError('認証に失敗しました。許可されたアカウントでログインしてください。');
+            if (typeof firebase === 'undefined' || !firebase.auth) {
+                console.log('❌ Firebase Auth service unavailable');
+                showAuthError('Firebase認証サービスが利用できません。ページをリロードしてください。');
                 return;
             }
+            
+            // Firebase Authenticationでログイン
+            firebase.auth().signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    console.log('✅ Firebase authentication successful');
+                    console.log('📝 User UID:', user.uid);
+                    console.log('📝 Expected UID:', authorizedUID);
+                    
+                    // UIDチェック
+                    if (user.uid === authorizedUID) {
+                        console.log('✅ Authorized UID confirmed - access granted');
+                        
+                        // Set authentication state
+                        currentUser = user;
+                        window.currentUser = user;
+                        window.isAuthenticated = true;
+                        
+                        hideAuthError();
+                        showMainContent(user);
+                        console.log('✅ Firebase UID login completed successfully');
+                    } else {
+                        console.log('❌ Unauthorized UID - access denied');
+                        console.log('❌ User UID:', user.uid);
+                        console.log('❌ Expected UID:', authorizedUID);
+                        
+                        // Sign out unauthorized user
+                        firebase.auth().signOut();
+                        showAuthError('このアカウントは許可されていません。');
+                    }
+                })
+                .catch((error) => {
+                    console.log('❌ Firebase authentication failed:', error.code, error.message);
+                    
+                    let errorMessage = '認証に失敗しました。';
+                    if (error.code === 'auth/user-not-found') {
+                        errorMessage = 'アカウントが見つかりません。';
+                    } else if (error.code === 'auth/wrong-password') {
+                        errorMessage = 'パスワードが正しくありません。';
+                    } else if (error.code === 'auth/invalid-email') {
+                        errorMessage = 'メールアドレスの形式が正しくありません。';
+                    } else if (error.code === 'auth/too-many-requests') {
+                        errorMessage = 'ログイン試行回数が上限に達しました。しばらく時間をおいてから再度お試しください。';
+                    }
+                    
+                    showAuthError(errorMessage);
+                });
+            
+            return;
 
             // Firebaseが有効で本番設定の場合のみ実際の認証を試みる
             // デモ環境ではFirebase認証を完全にスキップしてエラーを防止
@@ -761,7 +922,8 @@
                         showAuthError(error.message);
                     });
             } else {
-                handleDemoLogin();
+                console.log('❌ Firebase not available for Google login');
+                showAuthError('Firebase認証サービスが利用できません。');
             }
         }
 
@@ -797,6 +959,21 @@
         
         // Add smooth scrolling behavior
         document.documentElement.style.scrollBehavior = 'smooth';
+        
+        // 安全装置: 3秒後にloading状態が残っている場合のフォールバック
+        setTimeout(() => {
+            if (document.body.classList.contains('loading')) {
+                console.warn('⚠️ Loading状態が残存 - フォールバック実行');
+                completeInitialization();
+                // ログイン画面も確実に表示
+                const loginScreen = document.getElementById('loginScreen');
+                if (loginScreen) {
+                    loginScreen.style.display = 'flex';
+                    loginScreen.style.opacity = '1';
+                }
+                showAuthError('読み込みに時間がかかっています。ページを再読み込みしてください。');
+            }
+        }, 3000);
     </script>
     
     <!-- Original Application Script -->
