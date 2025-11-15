@@ -216,47 +216,10 @@ console.log('app.js loading...');
   (function(){
     const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // Ripple: attach to buttons and elements with .ripple-target
+    // Minimal button interaction - no ripple effects
     window.__attachRipple = function(root=document){
-      if (prefersReduced) return;
-      root.addEventListener('pointerdown', (ev)=>{
-        try{
-          const el = ev.target.closest('button, .btn, .ripple-target');
-          if (!el) return;
-          
-          // Store original styles to restore them later
-          const originalPosition = el.style.position;
-          const originalOverflow = el.style.overflow;
-          
-          const style = getComputedStyle(el);
-          if (style.position === 'static') el.style.position = 'relative';
-          el.style.overflow = 'hidden';
-          
-          const rect = el.getBoundingClientRect();
-          const size = Math.max(rect.width, rect.height) * 1.2;
-          const span = document.createElement('span');
-          span.className = 'ripple';
-          const x = ev.clientX - rect.left - size/2;
-          const y = ev.clientY - rect.top - size/2;
-          span.style.width = span.style.height = size + 'px';
-          span.style.left = x + 'px';
-          span.style.top = y + 'px';
-          el.appendChild(span);
-          
-          // Restore original styles when ripple animation ends
-          span.addEventListener('animationend', ()=> { 
-            try{ 
-              span.remove();
-              // Restore original styles to prevent permanent changes
-              if (originalPosition) el.style.position = originalPosition;
-              else el.style.removeProperty('position');
-              
-              if (originalOverflow) el.style.overflow = originalOverflow;
-              else el.style.removeProperty('overflow');
-            }catch(_){} 
-          }, { once:true });
-        }catch(e){ console.error('[ripple]', e); }
-      }, true);
+      // Disabled for minimal design approach
+      return;
     };
 
     // Toast API: create/dismiss simple toasts
@@ -6014,30 +5977,9 @@ let isFirebaseAvailable = false;
 
 try {
   // Firebase設定の有効性をチェック
-  if (typeof firebaseConfig !== 'undefined' && 
-      firebaseConfig.apiKey && 
-      !firebaseConfig.apiKey.includes('your-') &&
-      !firebaseConfig.apiKey.includes('demo')) {
-    
-    // 既存のFirebaseアプリがある場合はそれを使用
-    if (firebase.apps.length > 0) {
-      app = firebase.app();
-      console.log('Using existing Firebase app');
-    } else {
-      app = firebase.initializeApp(firebaseConfig);
-      console.log('Firebase app initialized with valid config');
-    }
-    
-    auth = firebase.auth();
-    db = firebase.firestore();
-    storage = firebase.storage();
-    functions = firebase.functions();
-    isFirebaseAvailable = true;
-    console.log('Firebase services initialized successfully');
-  } else {
-    console.log('📝 Firebase config is demo/placeholder - running in demo mode');
-    isFirebaseAvailable = false;
-  }
+  // Firebase initialization handled by index.html to prevent conflicts
+  console.log('Firebase initialization skipped in app.js - handled by index.html');
+  isFirebaseAvailable = false;
 } catch (error) {
   console.warn("Firebase initialization failed:", error);
   console.log('📝 Falling back to demo mode');
@@ -7109,9 +7051,9 @@ window.showAuthModal = showAuthModal;
 
   // 認証必須ページガード (Unite Gallery では無効化)
   function enforceAuthRequired() {
-    console.log('🔒 Arflex Gallery - 独自認証システム使用中');
+    console.log('Unite Gallery - authentication handled by index.html');
     
-    // Arflex Galleryの独自認証システムを使用するため、
+    // Unite Galleryの独自認証システムを使用するため、
     // app.jsの認証ガードは無効化
     return;
     

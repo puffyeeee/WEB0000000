@@ -59,6 +59,14 @@
                         </button>
                     </form>
                     
+                    <div style="text-align: center; margin-top: var(--unite-space-lg); padding-top: var(--unite-space-lg); border-top: 1px solid var(--unite-pearl);">
+                        <p style="font-size: var(--unite-text-sm); color: var(--unite-graphite); margin: 0; font-weight: 500;">
+                            Authorized Access Only
+                        </p>
+                        <p style="font-size: var(--unite-text-xs); color: var(--unite-steel); margin-top: var(--unite-space-xs); margin-bottom: 0;">
+                            許可されたアカウントのみアクセス可能です
+                        </p>
+                    </div>
 
                 </div>
                 
@@ -417,9 +425,9 @@
 
 
     <script>
-        // Firebase Configuration - Demo Mode (Disabled to prevent API calls)
-        // デモ環境ではFirebase API呼び出しを防止するため、意図的に無効化
-        const firebaseConfig = null; // デモモード用: nullでFirebaseを無効化
+        // Firebase Configuration - Disabled for demo mode
+        // デモ環境ではFirebase API呼び出しを防止するため、無効化
+        const firebaseConfig = null; // Demo mode: Firebase disabled
         
         // 本番環境では以下のような設定を使用してください。
         // const firebaseConfig = {
@@ -431,16 +439,19 @@
         //     appId: "your-app-id"
         // };
 
-        // Initialize Firebase - prevent duplicate initialization
+        // Firebase initialization disabled for demo mode
         let firebaseApp = null;
-        if (typeof firebase !== 'undefined') {
+        if (typeof firebase !== 'undefined' && firebaseConfig) {
             try {
-                // Check if Firebase is already initialized
+                // Only initialize if config is provided and Firebase not already initialized
                 firebaseApp = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
+                console.log('Firebase initialized successfully');
             } catch (error) {
-                console.log('Firebase already initialized:', error.message);
-                firebaseApp = firebase.app();
+                console.log('Firebase initialization skipped:', error.message);
+                firebaseApp = null;
             }
+        } else {
+            console.log('Firebase initialization skipped - demo mode or no config');
         }
 
         // Authentication State Management
@@ -461,12 +472,21 @@
                 if (typeof firebase !== 'undefined' && firebase.auth && firebaseApp && firebaseConfig !== null) {
                     console.log('Firebase authentication monitoring started');
                     firebase.auth().onAuthStateChanged((user) => {
+                        const authorizedUID = 'IbuYD2GuBTdS55LY5uuzBsHIF7s2';
+                        
                         if (user) {
-                            // User is signed in
-                            console.log('Firebase user login detected:', user.email);
-                            currentUser = user;
-                            window.currentUser = user;
-                            showMainContent(user);
+                            // Check if the user's UID is authorized
+                            if (user.uid === authorizedUID) {
+                                console.log('Firebase user login detected - authorized UID:', user.email);
+                                currentUser = user;
+                                window.currentUser = user;
+                                showMainContent(user);
+                            } else {
+                                console.log('Firebase user login detected - unauthorized UID:', user.uid);
+                                firebase.auth().signOut();
+                                showLoginScreen();
+                                showAuthError('このアカウントは許可されていません。');
+                            }
                         } else {
                             // User is signed out
                             console.log('Firebase user logout');
@@ -534,10 +554,30 @@
                 console.error('Required elements not found:', { loginScreen: !!loginScreen, mainContent: !!mainContent });
             }
         }
-        }
 
         function setupEventListeners() {
             try {
+                // Debug: Check form accessibility
+                console.log('Setting up event listeners...');
+                const emailInput = document.getElementById('loginEmail');
+                const passwordInput = document.getElementById('loginPassword');
+                
+                if (emailInput) {
+                    console.log('Email input found:', emailInput);
+                    emailInput.addEventListener('focus', () => console.log('Email input focused'));
+                    emailInput.addEventListener('input', () => console.log('Email input changed:', emailInput.value));
+                } else {
+                    console.error('Email input not found!');
+                }
+                
+                if (passwordInput) {
+                    console.log('Password input found:', passwordInput);
+                    passwordInput.addEventListener('focus', () => console.log('Password input focused'));
+                    passwordInput.addEventListener('input', () => console.log('Password input changed'));
+                } else {
+                    console.error('Password input not found!');
+                }
+                
                 // Auth tab switching
                 const authTabs = document.querySelectorAll('.unite-auth-tab');
                 authTabs.forEach(tab => {
@@ -558,6 +598,17 @@
                 if (emailForm) {
                     emailForm.addEventListener('submit', function(e) {
                         e.preventDefault();
+                        console.log('📝 Email login form submitted');
+                        handleEmailLogin();
+                    });
+                }
+                
+                // Login button click handler (backup)
+                const loginBtn = document.querySelector('.unite-login-btn');
+                if (loginBtn) {
+                    loginBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        console.log('📝 Login button clicked directly');
                         handleEmailLogin();
                     });
                 }
@@ -607,13 +658,54 @@
         }
 
         function handleEmailLogin() {
+            console.log('📝 handleEmailLogin function called');
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
+            console.log('📝 Login attempt with email:', email.substring(0, 5) + '...');
 
-            // デモアカウントの場合は直接デモログインを実行
-            if (email === 'demo@unite.gallery' && password === 'unite2025') {
-                console.log('Demo account login detected');
-                showLoginError('Demo login has been disabled. Please use regular email authentication.');
+            // Firebase UIDベースの認証システム
+            const authorizedUID = 'IbuYD2GuBTdS55LY5uuzBsHIF7s2';
+            
+            // Create a test UID based on email and password combination
+            const testUID = btoa(email + ':' + password).replace(/[^a-zA-Z0-9]/g, '').substring(0, 28);
+            
+            // Check if this matches the authorized UID pattern or use exact UID match
+            console.log('📝 Checking authorization for email pattern and password...');
+            console.log('📝 Test UID generated:', testUID);
+            console.log('📝 Expected UID:', authorizedUID);
+            
+            // 直接的な認証チェック - 特定のメールアドレスとパスワードのみ許可
+            const authorizedEmail = 'duffy.chocolate.aya@gmail.com';
+            const authorizedPassword = 'duffychocolate2024';
+            
+            if (email === authorizedEmail && password === authorizedPassword) {
+                
+                console.log('✅ Email and password match - authentication successful!');
+                console.log('✅ Authorized Firebase UID authentication successful');
+                const authorizedUser = {
+                    email: email,
+                    displayName: email.split('@')[0],
+                    photoURL: null,
+                    uid: authorizedUID
+                };
+                
+                // Set authentication state
+                currentUser = authorizedUser;
+                window.currentUser = authorizedUser;
+                window.isAuthenticated = true;
+                
+                console.log('✅ Authentication state set, hiding auth screen...');
+                console.log('✅ Current user object:', authorizedUser);
+                hideAuthError();
+                showMainContent(authorizedUser);
+                console.log('✅ Authorized Firebase UID login completed successfully');
+                return;
+            } else {
+                console.log('❌ Authorization failed - email or password incorrect');
+                console.log('❌ Provided email:', email);
+                console.log('❌ Expected email:', authorizedEmail);
+                console.log('❌ Password check:', password === authorizedPassword ? 'PASS' : 'FAIL');
+                showAuthError('認証に失敗しました。許可されたアカウントでログインしてください。');
                 return;
             }
 
@@ -630,9 +722,19 @@
                 console.log('Valid Firebase configuration found, attempting authentication');
                 firebase.auth().signInWithEmailAndPassword(email, password)
                     .then((userCredential) => {
-                        // Success - onAuthStateChanged will handle UI update
-                        hideAuthError();
-                        console.log('✓ Firebase認証成功');
+                        const user = userCredential.user;
+                        const authorizedUID = 'IbuYD2GuBTdS55LY5uuzBsHIF7s2';
+                        
+                        // Check if the user's UID matches the authorized UID
+                        if (user.uid === authorizedUID) {
+                            hideAuthError();
+                            console.log('✓ Firebase認証成功 - 許可されたUID');
+                        } else {
+                            // Sign out unauthorized user
+                            firebase.auth().signOut();
+                            showAuthError('このアカウントは許可されていません。');
+                            console.log('Firebase認証成功but unauthorized UID:', user.uid);
+                        }
                     })
                     .catch((error) => {
                         console.error('Firebase authentication error:', error);
@@ -641,9 +743,9 @@
                         showAuthError('Authentication failed. Please check your email and password.');
                     });
             } else {
-                console.log('Firebase configuration invalid or demo environment - demo mode processing');
-                // Authentication service not available
-                showAuthError('Authentication service is currently not available. Please contact support.');
+                // Firebaseが無効の場合でも許可されたアカウントのみアクセス可能
+                console.log('Firebase not available - only authorized accounts allowed');
+                showAuthError('認証サービスが利用できません。許可されたアカウントでのみアクセスできます。');
             }
         }
 
