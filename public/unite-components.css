@@ -28,67 +28,6 @@ body.loading .unite-login-screen {
   display: flex !important;
 }
 
-/* ============================================
-   LEGACY OPERATIONS SHELL
-   既存業務システムをiframeで再表示
-   ============================================ */
-
-.legacy-app-shell {
-  width: 100%;
-  max-width: 1600px;
-  margin: var(--unite-space-3xl) auto;
-  display: none;
-  flex-direction: column;
-  gap: var(--unite-space-xl);
-  min-height: 70vh;
-}
-
-.legacy-app-loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--unite-space-lg);
-  padding: var(--unite-space-2xl);
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: var(--unite-radius-lg);
-  border: 1px solid var(--unite-pearl);
-  color: var(--unite-graphite);
-  font-size: var(--unite-text-base);
-  box-shadow: var(--unite-shadow-soft);
-}
-
-.legacy-loading-spinner {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 3px solid rgba(26, 83, 92, 0.2);
-  border-top-color: var(--unite-blue-serene);
-  animation: legacySpin 1s linear infinite;
-}
-
-@keyframes legacySpin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.legacy-app-frame {
-  display: none;
-  width: 100%;
-  min-height: 120vh;
-  border: none;
-  border-radius: var(--unite-radius-lg);
-  box-shadow: var(--unite-shadow-soft);
-  background: var(--unite-gradient-whisper);
-}
-
-.legacy-app-frame.visible {
-  display: block;
-}
-
 /* 認証待機中の状態 */
 .unite-login-screen.fade-in {
   animation: fadeInLogin 0.4s ease-in-out forwards;

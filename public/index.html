@@ -8,9 +8,31 @@
     <!-- Unite Design System -->
     <link rel="stylesheet" href="unite-design.css">
     <link rel="stylesheet" href="unite-components.css">
+    <link rel="stylesheet" href="style.css">
     
     <!-- Icons -->
     <script src="https://unpkg.com/feather-icons"></script>
+    <script>
+        window.tailwind = window.tailwind || {};
+        window.tailwind.config = {
+            corePlugins: {
+                preflight: false
+            },
+            theme: {
+                extend: {
+                    colors: {
+                        uniteTeal: '#A8F1E5',
+                        uniteMidnight: '#1E293B',
+                        unitePearl: '#F8FAFC'
+                    },
+                    boxShadow: {
+                        'unite-glow': '0 25px 60px rgba(15, 23, 42, 0.18)'
+                    }
+                }
+            }
+        };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Firebase SDK (defer to avoid blocking initial render) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
@@ -23,7 +45,7 @@
     <script defer src="firebase-config.js"></script>
 </head>
 
-<body class="loading">
+<body class="loading antialiased">
     <script>
         (function() {
             var FALLBACK_DELAY = 1200;
@@ -48,17 +70,16 @@
             }
         })();
     </script>
+
     <noscript>
-        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); display: flex; align-items: center; justify-content: center; z-index: 9999;">
-            <div style="background: white; padding: 2rem; border-radius: 12px; text-align: center; max-width: 400px;">
-                <h1 style="color: #1e293b; margin-bottom: 1rem;">Unite Gallery</h1>
-                <p style="color: #64748b;">JavaScript is required to access this gallery.</p>
-            </div>
+        <div style="padding: 2rem; text-align: center; color: #64748b;">
+            <p>JavaScript is required to access this gallery.</p>
         </div>
     </noscript>
+
     <!-- LOGIN SCREEN -->
-    <div id="loginScreen" class="unite-login-screen">
-        <div class="unite-login-container">
+    <div id="loginScreen" class="unite-login-screen relative">
+        <div class="unite-login-container shadow-unite-glow ring-1 ring-white/60">
             <div class="unite-login-header">
                 <h1 id="loginTitle" class="unite-login-title">Unite Gallery</h1>
                 <p class="unite-login-subtitle">Pet Salon Gallery Access</p>
@@ -80,7 +101,7 @@
                             <label for="loginPassword">Password</label>
                             <input type="password" id="loginPassword" name="password" autocomplete="current-password" required placeholder="Password" aria-label="Password">
                         </div>
-                        <button type="submit" class="unite-btn unite-btn-primary unite-login-btn">
+                        <button type="submit" class="unite-btn unite-btn-primary unite-login-btn transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-uniteTeal/70">
                             <i data-feather="log-in"></i>
                             Enter Gallery
                         </button>
@@ -98,7 +119,7 @@
                 </div>
                 
                 <div class="unite-auth-content" id="googleAuth" style="display: none;">
-                    <button id="googleLoginButton" class="unite-btn unite-btn-outline unite-login-btn">
+                    <button id="googleLoginButton" class="unite-btn unite-btn-outline unite-login-btn transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-uniteTeal/60">
                         <svg width="20" height="20" viewBox="0 0 24 24">
                             <path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                             <path fill="#34a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -117,10 +138,10 @@
     <!-- MAIN CONTENT (Hidden until authenticated) -->
     <div id="mainContent" class="unite-main-content" style="display: none; opacity: 0; visibility: hidden;">
         <!-- User Info Header -->
-        <div class="unite-user-header">
+        <div class="unite-user-header shadow-sm shadow-slate-200/70">
             <div class="unite-user-info">
                 <span id="userDisplayName">Loading...</span>
-                <button id="logoutBtn" class="unite-btn unite-btn-ghost">
+                <button id="logoutBtn" class="unite-btn unite-btn-ghost focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-uniteTeal/50">
                     <i data-feather="log-out"></i>
                     Logout
                 </button>
@@ -403,65 +424,60 @@
         </div>
     </div>
 
-    <!-- LEGACY APP SHELL -->
-    <div id="legacyAppShell" class="legacy-app-shell" style="display: none;">
-        <div id="legacyAppLoading" class="legacy-app-loading">
-            <div class="legacy-loading-spinner" aria-hidden="true"></div>
-            <p style="margin: 0;">Unite Operations Consoleを読み込み中です…</p>
+    <!-- Legacy operational interface will be injected below after login -->
+    <div id="legacyAppMount" class="legacy-app-mount" aria-live="polite">
+        <div class="legacy-app-placeholder">
+            システムUIを読み込んでいます...
         </div>
-        <iframe
-            id="legacyAppFrame"
-            class="legacy-app-frame"
-            title="Unite Operations Console"
-            loading="lazy"
-            referrerpolicy="same-origin"
-            aria-live="polite"
-        ></iframe>
     </div>
 
-    <!-- HIDDEN APPLICATION STRUCTURE (from original index.html) -->
-    <div id="appStructure" style="display: none;">
-        <!-- 管理機能用DOM要素 -->
-        
-        <!-- スタッフ管理 -->
-        <div id="staffList" class="list-container"></div>
-        <form id="staffForm" class="form-container">
-            <input type="text" name="name" placeholder="スタッフ名" autocomplete="name" required>
-            <input type="email" name="email" placeholder="メールアドレス" autocomplete="email">
-            <button type="submit" id="btnCreateStaff">スタッフ登録</button>
-        </form>
-        <div id="staffMsg" class="message-area"></div>
-        
-        <!-- 支払方法管理 -->
-        <div id="paymentList" class="list-container"></div>
-        <form id="paymentForm" class="form-container">
-            <input type="text" name="name" placeholder="支払方法名" autocomplete="off" required>
-            <input type="text" name="code" placeholder="コード" autocomplete="off" required>
-            <input type="number" name="sort" placeholder="表示順" autocomplete="off" min="0">
-            <button type="submit" id="btnCreatePayment">支払方法登録</button>
-        </form>
-        <div id="pmMsg" class="message-area"></div>
-        
-        <!-- チケット管理 -->
-        <div id="ticketList" class="list-container"></div>
-        <form id="ticketForm" class="form-container">
-            <input type="text" name="title" placeholder="タイトル" autocomplete="off" required>
-            <select name="category">
-                <option value="問い合わせ">問い合わせ</option>
-                <option value="要望">要望</option>
-                <option value="バグ報告">バグ報告</option>
-            </select>
-            <textarea name="description" placeholder="詳細説明" autocomplete="off"></textarea>
-            <button type="submit" id="btnCreateTicket">チケット作成</button>
-        </form>
-        <div id="ticketMsg" class="message-area"></div>
-        
-        <!-- その他の管理要素 -->
-        <div id="customerList" class="list-container"></div>
-        <div id="petList" class="list-container"></div>
-        <div id="appointmentList" class="list-container"></div>
-        <div id="serviceList" class="list-container"></div>
-    </div>
+    <script>
+        (function loadLegacyAppShell() {
+            const mount = document.getElementById('legacyAppMount');
+            const shellUrl = 'legacy-app-shell.html';
+
+            function appendAppScript() {
+                if (document.querySelector('script[data-legacy-app]')) {
+                    return;
+                }
+                const script = document.createElement('script');
+                script.src = 'app.js';
+                script.async = false;
+                script.setAttribute('data-legacy-app', 'true');
+                document.body.appendChild(script);
+            }
+
+            function setPlaceholder(message) {
+                if (!mount) return;
+                mount.innerHTML = '<div class="legacy-app-placeholder">' + message + '</div>';
+            }
+
+            if (!mount) {
+                console.warn('Legacy app mount point not found.');
+                appendAppScript();
+                return;
+            }
+
+            fetch(shellUrl, { cache: 'no-cache' })
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw new Error('Shell fetch failed: ' + response.status);
+                    }
+                    return response.text();
+                })
+                .then(function(markup) {
+                    const template = document.createElement('template');
+                    template.innerHTML = markup;
+                    mount.replaceChildren(template.content.cloneNode(true));
+                    appendAppScript();
+                })
+                .catch(function(err) {
+                    console.error('Legacy shell load error:', err);
+                    setPlaceholder('アプリUIの読み込みに失敗しました。再読み込みしてください。');
+                    appendAppScript();
+                });
+        })();
+    </script>
     </div>
     <!-- End of Main Content -->
 
@@ -485,7 +501,6 @@
         // Firebase initialization for Unite Gallery
         let firebaseApp = null;
         let isFirebaseInitialized = false;
-        let legacyAppInitialized = false;
         
         // Firebase初期化を確実に実行
         function initializeFirebase() {
@@ -645,7 +660,6 @@
         function showLoginScreen() {
             // loading状態を解除して画面表示を確実にする
             completeInitialization();
-            resetLegacyAppShell();
             
             const loginScreen = document.getElementById('loginScreen');
             const mainContent = document.getElementById('mainContent');
@@ -722,64 +736,10 @@
                     console.log('Main content animation completed');
                 }, 100);
                 
-                // Hide Unite showcase and reveal legacy console after the fade
-                setTimeout(() => {
-                    mainContent.style.display = 'none';
-                    mainContent.style.opacity = '0';
-                    mainContent.style.visibility = 'hidden';
-                    loadLegacyAppShell();
-                }, 350);
-
                 console.log('Screen switch completed successfully');
             } else {
                 console.error('Required elements not found:', { loginScreen: !!loginScreen, mainContent: !!mainContent });
             }
-        }
-
-        function loadLegacyAppShell() {
-            const shell = document.getElementById('legacyAppShell');
-            const frame = document.getElementById('legacyAppFrame');
-            const loading = document.getElementById('legacyAppLoading');
-            if (!shell || !frame) {
-                console.warn('Legacy shell container not found');
-                return;
-            }
-
-            shell.style.display = 'flex';
-
-            if (legacyAppInitialized) {
-                if (loading) loading.style.display = 'none';
-                frame.classList.add('visible');
-                return;
-            }
-
-            if (loading) loading.style.display = 'flex';
-            frame.classList.remove('visible');
-
-            frame.addEventListener('load', function handleLegacyLoad() {
-                if (loading) loading.style.display = 'none';
-                frame.classList.add('visible');
-                console.log('Legacy operations console loaded');
-            }, { once: true });
-
-            frame.src = 'index-original-backup.html';
-            legacyAppInitialized = true;
-        }
-
-        function resetLegacyAppShell() {
-            const shell = document.getElementById('legacyAppShell');
-            const frame = document.getElementById('legacyAppFrame');
-            const loading = document.getElementById('legacyAppLoading');
-
-            if (shell) shell.style.display = 'none';
-            if (loading) loading.style.display = 'flex';
-
-            if (frame) {
-                frame.classList.remove('visible');
-                frame.removeAttribute('src');
-            }
-
-            legacyAppInitialized = false;
         }
 
         function setupEventListeners() {

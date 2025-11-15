@@ -62,8 +62,6 @@ npm run unite    # Uniteギャラリーモード
 - **スタッフノート**: 連絡事項・注意事項の管理
 - **検索機能**: グローバル検索・フィルタリング
 
-
-
 ## デザインコンセプト
 
 ### Unite Gallery Aesthetic - Tiffany Milky Gradient
