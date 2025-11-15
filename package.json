@@ -14,12 +14,15 @@
   "type": "module",
   "keywords": [
     "unite-gallery",
-    "gallery-design", 
+    "gallery-design",
     "editorial-ui",
     "luxury-salon",
     "pet-care",
     "tranquil-design",
     "premium-ui",
     "minimalist-design"
-  ]
+  ],
+  "devDependencies": {
+    "playwright": "^1.56.1"
+  }
 }
